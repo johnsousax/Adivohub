@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>AdvoHub — Apresentação</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/*
+  Versões:
+  - completa (padrão): todos os slides, inclusive o plano de execução (.internal)
+  - clientes: <body class="client"> esconde .internal e mostra .only-client
+*/
+:root{
+  --navy:#0D1626; --navy2:#152238; --line:#2A3B5C;
+  --gold:#C9A24A; --gold2:#E3C47A; --gold-ink:#8C6A1F; --paper:#F6F2EA; --paper2:#ECE5D8;
+  --ink:#121826; --mute:#6B7385; --mute2:#9AA3B5; --ok:#3FA56B; --bad:#D0524C;
+  --serif:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,sans-serif;
+}
+@page{size:1280px 720px;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#555}
+body{font-family:var(--sans);color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact;counter-reset:pg}
+body.client .internal{display:none}
+body:not(.client) .only-client{display:none}
+
+.s{width:1280px;height:720px;position:relative;overflow:hidden;page-break-after:always;break-after:page;
+  padding:64px 72px;background:var(--paper);counter-increment:pg}
+.s.dark{background:var(--navy);color:#EEF1F6}
+.s.dark .mute{color:var(--mute2)}
+.mute{color:var(--mute)}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+h1,h2,h3{font-family:var(--serif);font-weight:600;letter-spacing:-.015em}
+h2{font-size:44px;line-height:1.08;margin-bottom:12px}
+h3{font-size:22px;line-height:1.2;margin-bottom:8px}
+p{font-size:17px;line-height:1.55}
+.lead{font-size:20px;line-height:1.5;max-width:900px}
+.foot{position:absolute;left:72px;right:72px;bottom:28px;display:flex;justify-content:space-between;font-size:12px;color:var(--mute)}
+.dark .foot{color:var(--mute2)}
+.foot .sub{font-family:var(--sans);font-weight:500}
+.pg:after{content:counter(pg,decimal-leading-zero)}
+.brand{font-family:var(--serif);font-weight:700}
+.brand b{color:var(--gold)}
+.grid{display:grid;gap:20px}
+.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.card{background:#fff;border:1px solid var(--paper2);border-radius:16px;padding:24px}
+.dark .card{background:var(--navy2);border-color:var(--line)}
+.card p{font-size:15px}
+.card.hl{border-color:var(--gold)}
+.num{font-family:var(--serif);font-size:15px;color:var(--gold);font-weight:700;margin-bottom:10px}
+ul.l{list-style:none}
+ul.l li{position:relative;padding-left:22px;font-size:15.5px;line-height:1.5;margin-bottom:8px}
+ul.l li:before{content:"";position:absolute;left:0;top:9px;width:9px;height:9px;border-radius:2px;background:var(--gold);transform:rotate(45deg)}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;background:rgba(201,162,74,.15);color:var(--gold-ink);white-space:nowrap}
+.dark .pill{color:var(--gold2)}
+.rule{height:2px;width:64px;background:var(--gold);margin:18px 0 22px}
+.strip{margin-top:24px;border-left:3px solid var(--gold);padding:14px 20px;background:#fff;border-radius:0 12px 12px 0;font-size:17px;line-height:1.5}
+.dark .strip{background:var(--navy2)}
+
+/* ícones */
+.ic{width:46px;height:46px;border-radius:12px;background:rgba(201,162,74,.14);display:flex;align-items:center;justify-content:center;margin-bottom:16px;color:#A8832F;flex:none}
+.dark .ic{color:var(--gold2);background:rgba(201,162,74,.12)}
+.ic svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.ic.sm{width:38px;height:38px;border-radius:10px;margin-bottom:0}
+.ic.sm svg{width:20px;height:20px}
+.ih{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.ih .num{margin:0;font-size:17px}
+
+/* capa e divisórias */
+.cover{display:flex;flex-direction:column;justify-content:center;padding:80px 96px}
+.cover h1{font-size:92px;line-height:1;margin-bottom:22px}
+.cover h1 b{color:var(--gold);font-weight:700}
+.cover .tag{font-size:26px;line-height:1.4;max-width:760px;color:#D7DCE6;font-family:var(--serif);font-weight:500}
+.seal{position:absolute;right:-120px;top:50%;transform:translateY(-50%);width:620px;height:620px;border-radius:50%;border:1px solid rgba(201,162,74,.35)}
+.seal:before,.seal:after{content:"";position:absolute;inset:60px;border-radius:50%;border:1px solid rgba(201,162,74,.25)}
+.seal:after{inset:140px;border-color:rgba(201,162,74,.18);background:radial-gradient(circle,rgba(201,162,74,.12),transparent 70%)}
+.scale{position:absolute;right:120px;top:50%;transform:translateY(-50%)}
+
+/* janelas de interface */
+.win{background:#fff;border-radius:14px;box-shadow:0 20px 50px rgba(13,22,38,.18);overflow:hidden;border:1px solid #E3DED3;color:var(--ink)}
+.winbar{height:30px;background:#F1EDE5;display:flex;align-items:center;gap:6px;padding:0 12px}
+.winbar i{width:9px;height:9px;border-radius:50%;background:#D8D1C3;display:block}
+.kpi{background:#FAF8F4;border:1px solid #EEE8DC;border-radius:10px;padding:12px 14px}
+.kpi .k{font-size:11px;color:var(--mute);font-weight:500}
+.kpi .v{font-family:var(--serif);font-size:24px;font-weight:600;margin-top:2px}
+.kpi .d{font-size:11px;font-weight:600;color:var(--ok)}
+
+/* WhatsApp */
+.phone{width:370px;background:#0B141A;border-radius:34px;padding:12px;box-shadow:0 30px 60px rgba(0,0,0,.35);border:1px solid #23303A}
+.wa-top{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#1F2C34;border-radius:22px 22px 0 0;color:#E9EDEF;font-size:14px;font-weight:600}
+.wa-top .av{width:32px;height:32px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--serif);color:var(--navy);font-weight:700}
+.wa-top small{display:block;font-weight:400;font-size:11px;color:#8696A0}
+.wa{background:#0B141A;padding:12px 10px 14px;display:flex;flex-direction:column;gap:7px;border-radius:0 0 22px 22px;
+  background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:14px 14px}
+.b{max-width:84%;font-size:12.5px;line-height:1.45;padding:7px 10px;border-radius:10px;color:#E9EDEF}
+.b.in{background:#202C33;align-self:flex-start;border-top-left-radius:2px}
+.b.out{background:#005C4B;align-self:flex-end;border-top-right-radius:2px}
+.b .t{display:block;text-align:right;font-size:10px;color:#8696A0;margin-top:2px}
+
+table.t{width:100%;border-collapse:separate;border-spacing:0;font-size:15px}
+table.t th,table.t td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--paper2);vertical-align:top}
+table.t th{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);font-weight:600}
+.dark table.t th,.dark table.t td{border-color:var(--line)}
+.dark table.t th{color:var(--mute2)}
+table.t .r{text-align:right;white-space:nowrap}
+
+/* preços */
+.price{border-radius:18px;padding:28px 26px;background:#fff;border:1px solid var(--paper2);display:flex;flex-direction:column}
+.price.hl{background:var(--navy);color:#EEF1F6;border-color:var(--navy);transform:translateY(-10px);box-shadow:0 24px 50px rgba(13,22,38,.25)}
+.price .nm{font-family:var(--serif);font-size:24px;font-weight:600}
+.price .vl{font-family:var(--serif);font-size:46px;font-weight:700;margin:10px 0 2px}
+.price .vl small{font-size:16px;font-family:var(--sans);font-weight:500;opacity:.7}
+.price ul.l li{font-size:14.5px}
+.price.hl .mute{color:var(--mute2)}
+.price.hl .pill{color:var(--gold2)}
+
+/* régua de cobrança */
+.regua{display:grid;grid-template-columns:190px 1fr;gap:26px;align-items:start;margin-top:20px}
+.regua .k{font-size:12px;color:var(--mute);font-weight:500}
+.regua .t{font-family:var(--serif);font-size:22px;font-weight:600;line-height:1.2;margin:4px 0 10px}
+.rg{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;position:relative}
+.rg:before{content:"";position:absolute;left:8px;right:8px;top:7px;height:2px;background:#E7DCC2}
+.rg .st{position:relative}
+.rg .dot{width:16px;height:16px;border-radius:50%;background:var(--gold);border:3px solid #fff;box-shadow:0 0 0 1px #E7DCC2;margin-bottom:10px}
+.rg .d{font-size:12px;font-weight:700;color:var(--gold-ink);letter-spacing:.06em}
+.rg .lb{font-weight:600;font-size:14.5px;margin:2px 0 8px}
+.rg .msg{font-size:12.5px;line-height:1.45;background:#EEF6F1;border:1px solid #D5E8DC;border-radius:10px;padding:8px 10px;color:#24372B}
+.rg .msg.int{background:#FBF6EA;border-color:#EFE2C1;color:#4A3A12}
+
+/* roadmap */
+.road{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;position:relative;margin-top:26px}
+.road:before{content:"";position:absolute;left:0;right:0;top:15px;height:2px;background:var(--line)}
+.ph .dot{width:32px;height:32px;border-radius:50%;background:var(--gold);color:var(--navy);font-weight:700;display:flex;align-items:center;justify-content:center;position:relative;font-size:14px;margin-bottom:14px}
+.ph .wk{font-size:12px;font-weight:600;color:var(--gold2);letter-spacing:.08em;text-transform:uppercase}
+.ph h3{font-size:20px;margin:4px 0 8px}
+.ph ul.l li{font-size:13.5px;margin-bottom:4px;padding-left:18px}
+.ph ul.l li:before{width:7px;height:7px;top:8px}
+.gantt{margin-top:28px}
+.gantt .hd,.gantt .row{display:grid;grid-template-columns:170px 1fr;align-items:center}
+.gantt .months{display:grid;grid-template-columns:repeat(6,1fr);font-size:11px;color:var(--mute2);letter-spacing:.08em;text-transform:uppercase}
+.gantt .months span{border-left:1px solid var(--line);padding-left:8px}
+.gantt .row{height:24px;margin-top:5px}
+.gantt .lbl{font-size:13px;color:#D7DCE6}
+.gantt .track{position:relative;height:24px;background-image:linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:calc(100% / 6) 100%}
+.gantt .bar{position:absolute;top:6px;height:12px;border-radius:6px;background:var(--gold)}
+.gantt .bar.pilot{background:transparent;border:1.5px dashed var(--gold2)}
+
+/* tecnologia */
+.arch{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.layer{border-radius:12px;padding:12px 16px;background:#fff;border:1px solid var(--paper2)}
+.layer .k{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:600}
+.layer .v{font-weight:600;font-size:15px;margin-top:4px}
+.flow{display:grid;grid-template-columns:1fr 18px 1fr 18px 1fr 18px 1fr 18px 1fr;align-items:stretch;margin-top:12px}
+.flow .fs{background:var(--navy);color:#EEF1F6;border-radius:12px;padding:14px 14px}
+.flow .fs .n{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold2)}
+.flow .fs .h{font-family:var(--serif);font-size:18px;font-weight:600;margin:2px 0 4px}
+.flow .fs p{font-size:12.5px;line-height:1.45;color:#C3CAD7}
+.flow .ar{display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:16px}
+.sec-t{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin-top:24px}
+.dark .sec-t{color:var(--mute2)}
+.dark .flow .fs{background:var(--navy2);border:1px solid var(--line)}
+.extra{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}
+.extra .card{padding:16px 20px}
+.extra .k{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:600}
+.extra .v{font-family:var(--serif);font-size:19px;font-weight:600;margin:3px 0 2px}
+.extra p{font-size:13px;line-height:1.45}
+
+.bar{height:10px;border-radius:5px;background:var(--paper2);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--gold)}
+.mrr{display:grid;grid-template-columns:120px 1fr 120px;align-items:center;gap:12px;margin-top:12px;font-size:14px}
+.mrr .track{height:14px;border-radius:7px;background:var(--line);overflow:hidden}
+.mrr .track i{display:block;height:100%;background:var(--gold);border-radius:7px}
+.big{font-family:var(--serif);font-weight:700;color:var(--gold)}
+</style>
+</head>
+<body>
+
+<!-- ============ PARTE 1 · PRODUTO ============ -->
+
+<!-- CAPA -->
+<section class="s dark cover">
+  <div class="seal"></div>
+  <svg class="scale" width="260" height="260" viewBox="0 0 100 100" fill="none" stroke="#C9A24A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M50 14v70M30 84h40M50 22l-30 6M50 22l30 6"/>
+    <path d="M20 28l-10 24h20zM80 28l-10 24h20z"/>
+    <path d="M10 52a10 6 0 0 0 20 0M70 52a10 6 0 0 0 20 0"/>
+    <circle cx="50" cy="14" r="3"/>
+  </svg>
+  <div class="eyebrow">Apresentação do produto · 2026</div>
+  <h1>Advo<b>Hub</b></h1>
+  <p class="tag">A plataforma que organiza o escritório, controla prazos e dinheiro — e coloca uma IA para atender seus clientes 24 horas.</p>
+  <div class="rule"></div>
+  <p class="mute" style="font-size:16px">Gestão de casos · Agenda · Financeiro · Dashboard · IA no WhatsApp</p>
+</section>
+
+<!-- PROBLEMA -->
+<section class="s">
+  <div class="eyebrow">O problema</div>
+  <h2>O advogado é técnico, gestor,<br>vendedor e cobrador ao mesmo tempo.</h2>
+  <p class="lead mute">Planilha de honorários, agenda do celular, WhatsApp pessoal, pasta no Drive, sistema de publicações e banco. Ferramentas soltas que não conversam entre si — e o escritório perde dinheiro em três pontos.</p>
+  <div class="grid g3" style="margin-top:34px">
+    <div class="card">
+      <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div>
+      <h3>Prazo perdido</h3><p class="mute">Publicações lidas no improviso e prazos controlados de cabeça. Um único erro pode custar o caso — e o cliente.</p>
+    </div>
+    <div class="card">
+      <div class="ic"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></div>
+      <h3>Honorário não cobrado</h3><p class="mute">Parcelas atrasadas sem lembrete, êxito esquecido após o alvará, despesas que nunca voltam ao caixa.</p>
+    </div>
+    <div class="card">
+      <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/></svg></div>
+      <h3>Cliente sem resposta</h3><p class="mute">O lead que chega às 22h e só é respondido no dia seguinte já fechou com outro escritório.</p>
+    </div>
+  </div>
+  <div class="strip"><b>Resultado:</b> horas que deveriam ser de advocacia viram horas de administração — e dinheiro fica na mesa.</div>
+  <div class="foot"><span class="brand">Advo<b>Hub</b></span><span class="pg"></span></div>
+</section>
+
+<!-- PARA QUEM -->
+<section class="s">
+  <div class="eyebrow">Para quem</div>
+  <h2>Feito para escritórios que querem crescer sem inchar a equipe.</h2>
+  <div class="grid g3" style="margin-top:34px">
+    <div class="card hl">
+      <div class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14.2c2.8.3 5 2.3 5 5.3"/></svg></div>
+      <h3>Escritórios de 2 a 15 advogados</h3><p class="mute">Já sentem o peso da gestão: muitos casos, equipe crescendo e o financeiro ainda na planilha.</p>
+    </div>
+    <div class="card">
+      <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg></div>
+      <h3>Advogados autônomos de alto volume</h3><p class="mute">Muito lead no WhatsApp, muitos processos e pouco tempo para atender, cobrar e organizar.</p>
+    </div>
+    <div class="card">
+      <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 21V5l8-3v19"/><path d="M12 8h8v13"/><path d="M2 21h20"/><path d="M8 8v.01M8 12v.01M8 16v.01M16 12v.01M16 16v.01"/></svg></div>
+      <h3>Escritórios maiores e jurídicos internos</h3><p class="mute">De 15 a 50 advogados, com filiais, metas por equipe e necessidade de controle fino de acesso.</p>
+    </div>
+  </div>
+  <div style="margin-top:26px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <span style="font-size:15px;font-weight:600;margin-right:6px">Áreas com melhor encaixe:</span>
+    <span class="pill" style="font-size:13px">Previdenciário</span><span class="pill" style="font-size:13px">Trabalhista</span>
+    <span class="pill" style="font-size:13px">Família</span><span class="pill" style="font-size:13px">Consumidor</span><span class="pill" style="font-size:13px">Cível</span>
+  </div>
+  <div class="foot"><span class="brand">Advo<b>Hub</b></span><span class="pg"></span></div>
+</section>
+
+<!-- SOLUÇÃO -->
+<section class="s dark">
+  <div class="eyebrow">A solução</div>
+  <h2>Um só sistema para o escritório inteiro.<br>Com uma IA que trabalha junto.</h2>
+  <div class="grid g3" style="margin-top:32px">
+    <div class="card"><div class="ih"><div class="ic sm"><svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/></svg></div><div class="num">Casos e processos</div></div><p class="mute">Processos monitorados automaticamente, prazos com alerta, Kanban por fase e linha do tempo completa.</p></div>
+    <div class="card"><div class="ih"><div class="ic sm"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14.2c2.8.3 5 2.3 5 5.3"/></svg></div><div class="num">Clientes e CRM</div></div><p class="mute">Funil de captação, histórico completo e portal para o cliente acompanhar o processo.</p></div>
+    <div class="card"><div class="ih"><div class="ic sm"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></div><div class="num">Agenda</div></div><p class="mute">Audiências, reuniões e prazos sincronizados com Google e Outlook, com lembretes automáticos.</p></div>
+    <div class="card"><div class="ih"><div class="ic sm"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M16.5 14.5v.01"/></svg></div><div class="num">Financeiro</div></div><p class="mute">Contratos de honorários, Pix/boleto/cartão, cobrança automática, êxito, NFS-e e fluxo de caixa.</p></div>
+    <div class="card"><div class="ih"><div class="ic sm"><svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5.5 17v-5M10 17V8M14.5 17v-7M19 17V5"/></svg></div><div class="num">Dashboard</div></div><p class="mute">Faturamento, inadimplência, conversão de leads e produtividade da equipe em tempo real.</p></div>
+    <div class="card hl"><div class="ih"><div class="ic sm"><svg viewBox="0 0 24 24"><path d="M11 3l1.8 4.7L17.5 9.5l-4.7 1.8L11 16l-1.8-4.7L4.5 9.5l4.7-1.8z"/><path d="M18.5 14l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></svg></div><div class="num">Inteligência Artificial</div></div><p class="mute">Briefing diário, resumo de publicações, rascunhos de peças e atendente 24h no WhatsApp.</p></div>
+  </div>
+  <div class="foot"><span class="brand">Advo<b>Hub</b></span><span class="pg"></span></div>
+</section>
+
+<!-- CASOS + AGENDA -->
+<section class="s">
+  <div class="grid" style="grid-template-columns:1fr 1.15fr;gap:48px;align-items:center;height:100%">
+    <div>
+      <div class="eyebrow">Casos, processos e agenda</div>
+      <h2>Nenhum prazo passa despercebido.</h2>
+      <div class="rule"></div>
+      <ul class="l">
+        <li><b>Monitoramento automático</b> de processos e publicações nos tribunais.</li>
+        <li><b>O prazo nasce da publicação</b>: data fatal, data interna (D-2) e responsável.</li>
+        <li>Kanban por fase e <b>fluxos prontos</b> por tipo de ação.</li>
+        <li>Linha do tempo: andamentos, documentos, conversas e financeiro do caso.</li>
+        <li>Agenda única sincronizada com <b>Google e Outlook</b>.</li>
+        <li><b>Link de agendamento online</b> com pagamento antecipado da consulta.</li>
+      </ul>
+    </div>
+    <div class="win">
+      <div class="winbar"><i></i><i></i><i></i></div>
+      <div style="padding:18px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div style="font-family:var(--serif);font-size:19px;font-weight:600">Próximos prazos</div>
+          <span class="pill">5 abertos</span>
+        </div>
+        <table class="t" style="font-size:13px">
+          <tr><th>Caso</th><th>Providência</th><th>Fatal</th><th>Resp.</th></tr>
+          <tr><td>Silva × INSS</td><td>Recurso inominado</td><td style="color:var(--bad);font-weight:600">Hoje</td><td>Ana</td></tr>
+          <tr><td>Rocha × Banco X</td><td>Réplica</td><td>Qua, 25</td><td>Pedro</td></tr>
+          <tr><td>Souza (divórcio)</td><td>Audiência de conciliação</td><td>Qui, 26</td><td>Ana</td></tr>
+          <tr><td>Lima × Empresa Y</td><td>Manifestação sobre laudo</td><td>Sex, 27</td><td>Júlia</td></tr>
+          <tr><td>Costa × Construtora</td><td>Contrarrazões</td><td>Seg, 30</td><td>Pedro</td></tr>
+        </table>
+        <div style="margin-top:14px;padding:12px 14px;border-radius:10px;background:#FBF6EA;border:1px solid #EFE2C1;font-size:13px;line-height:1.5">
+          <b style="color:var(--gold-ink)">IA ·</b> Nova intimação em <b>Mendes × Seguradora Z</b>: réplica em 15 dias úteis, vencimento em 15/12. Data interna sugerida: 11/12 (Pedro). <u>Confirmar prazo</u>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="brand">Advo<b>Hub</b></span><span class="pg"></span></div>
+</section>
+
+<!-- FINANCEIRO -->
+<section class="s">
+  <div class="eyebrow">Financeiro e faturamento</div>
+  <h2>Onde o sócio sente o resultado: no caixa.</h2>
+  <p class="lead mute">Do contrato de honorários ao dinheiro na conta, sem planilha.</p>
+  <div class="grid g4" style="margin-top:28px;gap:16px">
+    <div class="card"><h3>Contratos</h3><p class="mute">Fixo, parcelado, mensal (partido), êxito e híbrido. Gerados por modelo e assinados eletronicamente.</p></div>
+    <div class="card"><h3>Cobrança</h3><p class="mute">Pix, boleto e cartão com baixa automática e régua de cobrança pela IA no WhatsApp.</p></div>
+    <div class="card"><h3>Êxito</h3><p class="mute">Previsão a partir do valor da causa e alerta quando sai alvará, RPV ou precatório.</p></div>
+    <div class="card"><h3>Gestão</h3><p class="mute">Fluxo de caixa, DRE, despesas reembolsáveis, repasse entre sócios, timesheet e NFS-e.</p></div>
+  </div>
+  <div class="card regua">
+    <div><div class="k">Régua de cobrança automática</div><div class="t">4 toques, zero esforço</div><span class="pill">WhatsApp + e-mail</span></div>
+    <div class="rg">
+      <div class="st"><div class="dot"></div><div class="d">D-3</div><div class="lb">Lembrete amigável</div><div class="msg">"Oi, Maria! Sua parcela de R$&nbsp;850 vence sexta. Segue o Pix 😉"</div></div>
+      <div class="st"><div class="dot"></div><div class="d">D0</div><div class="lb">Dia do vencimento</div><div class="msg">"Vence hoje! O Pix para pagamento está logo abaixo 👇"</div></div>
+      <div class="st"><div class="dot"></div><div class="d">D+3</div><div class="lb">Cobrança gentil</div><div class="msg">"Não identificamos o pagamento. Posso gerar um novo boleto?"</div></div>
+      <div class="st"><div class="dot"></div><div class="d">D+10</div><div class="lb">Aviso ao sócio</div><div class="msg int">Maria S. com parcela 10 dias em atraso. Sugiro contato pessoal.</div></div>
+    </div>
+  </div>
+  <div class="foot"><span class="brand">Advo<b>Hub</b></span><span class="pg"></span></div>
+</section>
+
+<!-- DASHBOARD -->
+<section class="s dark">
+  <div class="grid" style="grid-template-columns:.8fr 1.4fr;gap:44px;align-items:center;height:100%">
+    <div>
+      <div class="eyebrow">Dashboard</div>
+      <h2>O escritório inteiro em uma tela.</h2>
+      <div class="rule"></div>
+      <ul class="l">
+        <li>Faturamento, a receber e inadimplência</li>
+        <li>Previsão de honorários de êxito</li>
+        <li>Leads, conversão e origem dos clientes</li>
+        <li>Produtividade e metas por advogado</li>
+        <li>Prazos e audiências da semana</li>
+      </ul>
+    </div>
+    <div class="win">
+      <div class="winbar"><i></i><i></i><i></i></div>
+      <div style="padding:18px">
+        <div style="font-family:var(--serif);font-size:19px;font-weight:600;margin-bottom:12px">Novembro · visão do sócio</div>
+        <div class="grid g4" style="gap:10px">
+          <div class="kpi"><div class="k">Faturado</div><div class="v">R$&nbsp;184 mil</div><div class="d">+12% vs out</div></div>
+          <div class="kpi"><div class="k">A receber</div><div class="v">R$&nbsp;62 mil</div><div class="d">31 parcelas</div></div>
+          <div class="kpi"><div class="k">Inadimplência</div><div class="v">4,1%</div><div class="d">−3,2 p.p.</div></div>
+          <div class="kpi"><div class="k">Novos clientes</div><div class="v">23</div><div class="d">38% conversão</div></div>
+        </div>
+        <div class="grid" style="grid-template-columns:1.5fr 1fr;gap:12px;margin-top:12px">
+          <div class="kpi">
+            <div class="k">Faturamento mensal (R$&nbsp;mil)</div>
+            <svg viewBox="0 0 300 110" width="100%" height="120" style="margin-top:6px">
+              <g fill="#C9A24A">
+                <rect x="8" y="52" width="26" height="48" rx="3" opacity=".45"/><rect x="56" y="44" width="26" height="56" rx="3" opacity=".45"/>
+                <rect x="104" y="48" width="26" height="52" rx="3" opacity=".45"/><rect x="152" y="34" width="26" height="66" rx="3" opacity=".45"/>
+                <rect x="200" y="26" width="26" height="74" rx="3" opacity=".45"/><rect x="248" y="14" width="26" height="86" rx="3"/>
+              </g>
+              <g font-size="9" fill="#6B7385" font-family="Inter"><text x="12" y="109">jun</text><text x="61" y="109">jul</text><text x="107" y="109">ago</text><text x="156" y="109">set</text><text x="205" y="109">out</text><text x="252" y="109">nov</text></g>
+            </svg>
+          </div>
+          <div class="kpi">
+            <div class="k">Receita por área</div>
+            <div style="margin-top:10px;display:flex;flex-direction:column;gap:9px;font-size:11.5px">
+              <div>Previdenciário <div class="bar"><i style="width:82%"></i></div></div>
+              <div>Trabalhista <div class="bar"><i style="width:61%"></i></div></div>
+              <div>Família <div class="bar"><i style="width:38%"></i></div></div>
+              <div>Cível <div class="bar"><i style="width:27%"></i></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="brand">Advo<b>Hub</b></span><span class="pg"></span></div>
+</section>
+
+<!-- IA · ASSISTENTE -->
+<section class="s">
+  <div class="grid" style="grid-template-columns:1.25fr 1fr;gap:40px;align-items:center;height:100%">
+    <div>
+      <div class="eyebrow">IA · Assistente do advogado</div>
+      <h2>Uma assistente que já chega sabendo tudo do seu dia.</h2>
+      <div class="rule"></div>
+      <ul class="l">
+        <li><b>Briefing diário às 7h</b> no WhatsApp: audiências, prazos, publicações e pagamentos.</li>
+        <li><b>Resumo de cada publicação</b> com sugestão de providência e prazo — o advogado confirma.</li>
+        <li><b>Converse com o processo</b>: "o que aconteceu nesse caso nos últimos 6 meses?"</li>
+        <li>Leitura de sentenças, laudos e contratos com pontos de atenção.</li>
+        <li>Rascunhos de petições e contratos a partir dos <b>modelos do próprio escritório</b>.</li>
+        <li>Comandos por texto ou áudio: "marca audiência do João dia 12 às 14h".</li>
+      </ul>
+    </div>
+    <div style="display:flex;justify-content:center">
+      <div class="phone">
+        <div class="wa-top"><div class="av">A</div><div>AdvoHub IA<small>assistente do escritório</small></div></div>
+        <div class="wa">
+          <div class="b in">Bom dia, Dra. Ana! ☀️ Seu dia:<br><br>⚖️ <b>2 audiências</b> — 10h Ferreira (TJ) e 15h Martins (TRT)<br>⏰ <b>1 prazo fatal hoje</b>: recurso em Silva × INSS<br>📄 <b>4 publicações novas</b> (1 exige providência)<br>💰 R$&nbsp;7.400 recebidos ontem · 2 parcelas atrasadas<span class="t">07:00</span></div>
+          <div class="b out">resume a publicação do Mendes<span class="t">07:12</span></div>
+          <div class="b in">Intimação para réplica à contestação da Seguradora Z. Prazo de 15 dias úteis: vence em 15/12. Sugiro data interna 11/12 com o Pedro. Confirmo?<span class="t">07:12</span></div>
+          <div class="b out">confirma 👍<span class="t">07:13</span></div>
+          <div class="b in">Prazo criado e Pedro avisado ✅<span class="t">07:13</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="brand">Advo<b>Hub</b></span><span class="pg"></span></div>
+</section>
+
+<!-- IA · ATENDENTE -->
+<section class="s dark">
+  <div class="grid" style="grid-template-columns:1fr 1.25fr;gap:40px;align-items:center;height:100%">
+    <div style="display:flex;justify-content:center">
+      <div class="phone">
+        <div class="wa-top"><div class="av">S</div><div>Silva &amp; Associados<small>conta comercial oficial</small></div></div>
+        <div class="wa">
+          <div class="b out">Boa noite! Fui demitido e não recebi minhas verbas. Vocês atendem?<span class="t">22:41</span></div>
+          <div class="b in">Boa noite! Aqui é o atendimento virtual do escritório. Atendemos, sim. Me conta: quando foi a demissão e quanto tempo você trabalhou lá?<span class="t">22:41</span></div>
+          <div class="b out">Mês passado. Trabalhei 4 anos.<span class="t">22:42</span></div>
+          <div class="b in">Perfeito! O Dr. Pedro tem horário amanhã às <b>10h</b> ou <b>16h</b> (online). Qual prefere?<span class="t">22:42</span></div>
+          <div class="b out">16h<span class="t">22:43</span></div>
+          <div class="b in">Agendado ✅ Te lembro 1h antes. Se puder, envie aqui a carteira de trabalho e o termo de rescisão.<span class="t">22:43</span></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="eyebrow">IA · Atendente para clientes</div>
+      <h2>Seu escritório atendendo 24h, no WhatsApp oficial.</h2>
+      <div class="rule"></div>
+      <ul class="l">
+        <li><b>Triagem de leads</b>: identifica a área, qualifica e agenda a consulta.</li>
+        <li>Responde <b>"como está meu processo?"</b> em linguagem simples, direto do sistema.</li>
+        <li>Recebe documentos e arquiva na pasta do caso.</li>
+        <li>Lembretes de audiência e cobrança amigável.</li>
+        <li><b>Caixa de entrada da equipe</b> e transferência para humano a qualquer momento.</li>
+        <li>Identifica-se como atendimento virtual e não dá parecer: o mérito fica com o advogado.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span class="brand">Advo<b>Hub</b></span><span class="pg"></span></div>
+</section>
+
+<!-- SEGURANÇA / ÉTICA -->
+<section class="s">
+  <div class="eyebrow">Segurança, LGPD e ética</div>
+  <h2>Feito para o sigilo que a advocacia exige.</h2>
+  <div class="grid g3" style="margin-top:32px">
+    <div class="card">
+      <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></div>
+      <h3>Dados protegidos</h3>
+      <ul class="l" style="margin-top:12px"><li>Hospedagem no Brasil</li><li>Criptografia em trânsito e em repouso</li><li>Isolamento total entre escritórios</li><li>Backups diários</li></ul>
+    </div>
+    <div class="card">
+      <div class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></div>
+      <h3>Controle de acesso</h3>
+      <ul class="l" style="margin-top:12px"><li>Perfis: sócio, advogado, estagiário, financeiro</li><li>Autenticação em dois fatores</li><li>Registro de auditoria de cada ação</li><li>Termo de tratamento de dados (LGPD)</li></ul>
+    </div>
+    <div class="card">
+      <div class="ic"><svg viewBox="0 0 24 24"><path d="M11 3l1.8 4.7L17.5 9.5l-4.7 1.8L11 16l-1.8-4.7L4.5 9.5l4.7-1.8z"/><path d="M18.5 14l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></svg></div>
+      <h3>IA responsável</h3>
+      <ul class="l" style="margin-top:12px"><li>A IA sugere, o advogado decide</li><li>Modo rascunho com aprovação</li><li>Atende só quem procura o escritório — sem captação ativa</li><li>Registro de tudo o que a IA faz</li></ul>
+    </div>
+  </div>
+  <div style="margin-top:24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <span style="font-size:15px;font-weight:600;margin-right:6px">Conformidade:</span>
+    <span class="pill" style="font-size:13px">LGPD (Lei 13.709/2018)</span>
+    <span class="pill" style="font-size:13px">Código de Ética e Disciplina da OAB</span>
+    <span class="pill" style="font-size:13px">Provimento 205/2021 (publicidade)</span>
+    <span class="pill" style="font-size:13px">Testes de segurança periódicos</span>
+  </div>
+  <div class="foot"><span class="brand">Advo<b>Hub</b></span><span class="pg"></span></div>
+</section>
+
+<!-- DIFERENCIAIS -->
+<section class="s">
+  <div class="eyebrow">Diferenciais</div>
+  <h2>Não é mais um cadastro de processos.</h2>
+  <p class="lead mute">Os sistemas tradicionais organizam informação. O AdvoHub <b style="color:var(--ink)">age</b> sobre ela.</p>
+  <table class="t" style="margin-top:24px;font-size:16px">
+    <tr><th style="width:26%"></th><th style="width:34%">Sistemas tradicionais</th><th style="color:var(--gold-ink)">AdvoHub</th></tr>
+    <tr><td><b>Inteligência Artificial</b></td><td class="mute">Chat avulso ou recurso extra</td><td>Agente que agenda, cobra, resume e responde</td></tr>
+    <tr><td><b>WhatsApp</b></td><td class="mute">Canal externo, no celular pessoal</td><td>Centro do atendimento: número oficial e caixa da equipe</td></tr>
+    <tr><td><b>Financeiro</b></td><td class="mute">Controle básico de recebíveis</td><td>Êxito, repasses, régua de cobrança, Pix e NFS-e</td></tr>
+    <tr><td><b>Implantação</b></td><td class="mute">"Faça você mesmo"</td><td>Migração e configuração feitas pela nossa equipe</td></tr>
+    <tr><td><b>Experiência</b></td><td class="mute">Telas densas, curva de aprendizado longa</td><td>Simples, moderno e funciona no celular</td></tr>
+  </table>
+  <div class="foot"><span class="brand">Advo<b>Hub</b></span><span class="pg"></span></div>
+</section>
+
+<!-- PREÇOS -->
+<section class="s">
+  <div class="eyebrow">Planos</div>
+  <h2>Investimento à altura do resultado.</h2>
+  <div class="grid g3" style="margin-top:34px;gap:22px;align-items:start">
+    <div class="price">
+      <div class="nm">Profissional</div><div class="mute" style="font-size:14px">Até 3 usuários</div>
+      <div class="vl">R$&nbsp;2.197<small>/mês</small></div>
+      <ul class="l" style="margin-top:14px"><li>Até 500 processos monitorados</li><li>Atendente IA · 1.000 conversas/mês</li><li>Assistente IA do advogado</li><li>Financeiro e cobrança automática</li><li>Onboarding remoto</li></ul>
+    </div>
+    <div class="price hl">
+      <div style="display:flex;justify-content:space-between;align-items:center"><div class="nm">Escritório</div><span class="pill">mais escolhido</span></div><div class="mute" style="font-size:14px">Até 10 usuários</div>
+      <div class="vl">R$&nbsp;3.497<small>/mês</small></div>
+      <ul class="l" style="margin-top:14px"><li>Até 2.000 processos monitorados</li><li>2 números · 3.000 conversas/mês</li><li>Portal do cliente</li><li>NFS-e, repasses e DRE</li><li>Migração de dados inclusa</li></ul>
+    </div>
+    <div class="price">
+      <div class="nm">Enterprise</div><div class="mute" style="font-size:14px">Usuários ilimitados</div>
+      <div class="vl">R$&nbsp;5.900<small>+/mês</small></div>
+      <ul class="l" style="margin-top:14px"><li>Volumes sob medida</li><li>IA ajustada ao acervo do escritório</li><li>Multi-filial</li><li>Gerente de conta dedicado</li><li>SLA e integrações exclusivas</li></ul>
+    </div>
+  </div>
+  <p class="mute" style="font-size:14px;margin-top:20px">Implantação de R$&nbsp;2.500 a R$&nbsp;6.000 (isenta no plano anual) · Plano anual com 2 meses grátis · Pacotes extras de conversas e processos.</p>
+  <div class="foot"><span class="brand">Advo<b>Hub</b></span><span class="pg"></span></div>
+</section>
+
+<!-- ROI -->
+<section class="s dark">
+  <div class="grid" style="grid-template-columns:1fr 1fr;gap:50px;align-items:center;height:100%">
+    <div>
+      <div class="eyebrow">Retorno sobre o investimento</div>
+      <h2>O AdvoHub se paga com um contrato a mais por mês.</h2>
+      <div class="rule"></div>
+      <p class="mute">Estimativa para um escritório de 3 a 5 advogados. Um único prazo perdido pode custar mais do que um ano de assinatura.</p>
+      <p class="mute" style="font-size:13px;margin-top:18px">Estimativas ilustrativas; os ganhos variam conforme o escritório.</p>
+    </div>
+    <div>
+      <table class="t">
+        <tr><th>Ganho mensal estimado</th><th class="r">R$</th></tr>
+        <tr><td>Atendimento coberto pela IA</td><td class="r">2.000 – 3.000</td></tr>
+        <tr><td>Redução de inadimplência</td><td class="r">4.000 – 8.000</td></tr>
+        <tr><td>Leads respondidos em 1 min, 24h</td><td class="r">≈ 6.000</td></tr>
+        <tr><td>Horas de advogado liberadas</td><td class="r">≈ 4.000</td></tr>
+        <tr><td style="font-family:var(--serif);font-size:20px;color:var(--gold2)"><b>Potencial total</b></td><td class="r" style="font-family:var(--serif);font-size:20px;color:var(--gold2)"><b>16 – 21 mil</b></td></tr>
+      </table>
+      <div style="margin-top:18px;display:flex;gap:14px;align-items:center">
+        <div class="big" style="font-size:54px">7×</div>
+        <div class="mute" style="font-size:15px">retorno potencial sobre a mensalidade do plano Profissional, no cenário conservador</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="brand">Advo<b>Hub</b></span><span class="pg"></span></div>
+</section>
+
+<!-- CTA · somente na versão para clientes -->
+<section class="s dark cover only-client">
+  <div class="seal"></div>
+  <div class="eyebrow">Escritórios fundadores</div>
+  <h2 style="font-size:54px;max-width:780px">Seja um dos primeiros escritórios a usar o AdvoHub.</h2>
+  <div class="rule"></div>
+  <ul class="l" style="max-width:660px">
+    <li style="font-size:18px">Condições especiais para os primeiros escritórios parceiros</li>
+    <li style="font-size:18px">Implantação e migração de dados feitas pela nossa equipe</li>
+    <li style="font-size:18px">Participação direta na evolução do produto</li>
+    <li style="font-size:18px">Demonstração de 30 minutos + diagnóstico gratuito do seu escritório</li>
+  </ul>
+  <p class="brand" style="font-size:30px;margin-top:40px">Advo<b>Hub</b></p>
+</section>
+
+<!-- ============ PARTE 2 · PLANO DE EXECUÇÃO (interno) ============ -->
+
+<!-- DIVISÓRIA -->
+<section class="s dark cover internal">
+  <div class="seal"></div>
+  <div class="eyebrow">Parte 2</div>
+  <h1 style="font-size:72px">Plano de execução</h1>
+  <div class="rule"></div>
+  <div class="grid g2" style="max-width:620px;gap:6px 40px">
+    <ul class="l"><li style="font-size:18px">Tecnologia</li><li style="font-size:18px">Roadmap</li><li style="font-size:18px">Modelo de negócio</li></ul>
+    <ul class="l"><li style="font-size:18px">Go-to-market</li><li style="font-size:18px">Riscos</li><li style="font-size:18px">Próximos passos</li></ul>
+  </div>
+</section>
+
+<!-- TECNOLOGIA -->
+<section class="s internal">
+  <div class="eyebrow">Tecnologia</div>
+  <h2>Arquitetura moderna, pronta para escalar.</h2>
+  <p class="lead mute">Plataforma web (desktop e celular), multi-escritório, com integrações oficiais.</p>
+  <div class="arch" style="margin-top:24px">
+    <div class="layer"><div class="k">Interface</div><div class="v">Next.js · TypeScript · Tailwind</div></div>
+    <div class="layer"><div class="k">Banco de dados</div><div class="v">PostgreSQL multi-tenant (RLS)</div></div>
+    <div class="layer"><div class="k">Inteligência Artificial</div><div class="v">Claude · Haiku, Sonnet e Opus</div></div>
+    <div class="layer"><div class="k">Automação</div><div class="v">Filas de tarefas + n8n</div></div>
+    <div class="layer"><div class="k">Mensageria</div><div class="v">WhatsApp Business Platform</div></div>
+    <div class="layer"><div class="k">Pagamentos</div><div class="v">Pix · boleto · cartão · NFS-e</div></div>
+    <div class="layer"><div class="k">Processos</div><div class="v">Provedor de dados dos tribunais</div></div>
+    <div class="layer"><div class="k">Agenda e assinatura</div><div class="v">Google · Outlook · e-assinatura</div></div>
+  </div>
+  <div class="sec-t">Como a IA trabalha</div>
+  <div class="flow">
+    <div class="fs"><div class="n">1 · Entrada</div><div class="h">Chega o pedido</div><p>Mensagem no WhatsApp, publicação nova ou comando no painel.</p></div>
+    <div class="ar">›</div>
+    <div class="fs"><div class="n">2 · Entende</div><div class="h">Interpreta</div><p>O modelo lê o pedido com o contexto do caso e do escritório.</p></div>
+    <div class="ar">›</div>
+    <div class="fs"><div class="n">3 · Age</div><div class="h">Usa ferramentas</div><p>Consulta casos, agenda, financeiro e documentos do sistema.</p></div>
+    <div class="ar">›</div>
+    <div class="fs"><div class="n">4 · Confere</div><div class="h">Guardrails</div><p>Regras de ética, permissões e aprovação do advogado quando preciso.</p></div>
+    <div class="ar">›</div>
+    <div class="fs"><div class="n">5 · Responde</div><div class="h">Entrega</div><p>Resposta, rascunho, prazo sugerido ou alerta — tudo auditado.</p></div>
+  </div>
+  <div class="foot"><span class="brand">Advo<b>Hub</b> <span class="sub">· Plano de execução</span></span><span class="pg"></span></div>
+</section>
+
+<!-- ROADMAP -->
+<section class="s dark internal">
+  <div class="eyebrow">Roadmap</div>
+  <h2>Do protótipo à versão comercial em ~6 meses.</h2>
+  <div class="road">
+    <div class="ph"><div class="dot">0</div><div class="wk">2 semanas</div><h3>Descoberta</h3><ul class="l"><li>Entrevistas com advogados</li><li>Protótipo navegável</li><li>Escritórios piloto</li></ul></div>
+    <div class="ph"><div class="dot">1</div><div class="wk">8 semanas</div><h3>MVP Core</h3><ul class="l"><li>Clientes, casos, prazos</li><li>Agenda + Google</li><li>Financeiro básico</li><li>Dashboard v1</li></ul></div>
+    <div class="ph"><div class="dot">2</div><div class="wk">6 semanas</div><h3>IA + WhatsApp</h3><ul class="l"><li>Briefing diário</li><li>Atendente e triagem</li><li>Caixa de entrada</li><li>Régua de cobrança</li></ul></div>
+    <div class="ph"><div class="dot">3</div><div class="wk">4 semanas</div><h3>Processos + Docs</h3><ul class="l"><li>Monitoramento</li><li>Documentos e modelos</li><li>Assinatura eletrônica</li><li>Portal do cliente</li></ul></div>
+    <div class="ph"><div class="dot">4</div><div class="wk">4 semanas</div><h3>Financeiro Pro</h3><ul class="l"><li>Êxito e repasses</li><li>NFS-e e DRE</li><li>Timesheet</li><li>Lançamento</li></ul></div>
+  </div>
+  <div class="gantt">
+    <div class="hd"><div></div><div class="months"><span>Mês 1</span><span>Mês 2</span><span>Mês 3</span><span>Mês 4</span><span>Mês 5</span><span>Mês 6</span></div></div>
+    <div class="row"><div class="lbl">0 · Descoberta</div><div class="track"><div class="bar" style="left:0;width:8.333%"></div></div></div>
+    <div class="row"><div class="lbl">1 · MVP Core</div><div class="track"><div class="bar" style="left:8.333%;width:33.333%"></div></div></div>
+    <div class="row"><div class="lbl">2 · IA + WhatsApp</div><div class="track"><div class="bar" style="left:41.667%;width:25%"></div></div></div>
+    <div class="row"><div class="lbl">3 · Processos + Docs</div><div class="track"><div class="bar" style="left:66.667%;width:16.667%"></div></div></div>
+    <div class="row"><div class="lbl">4 · Financeiro Pro</div><div class="track"><div class="bar" style="left:83.333%;width:16.667%"></div></div></div>
+    <div class="row"><div class="lbl" style="color:var(--gold2)">Escritórios piloto</div><div class="track"><div class="bar pilot" style="left:41.667%;width:58.333%"></div></div></div>
+  </div>
+  <p class="mute" style="font-size:14px;margin-top:16px">Time mínimo: 1 tech lead full-stack · 1–2 devs full-stack · 1 designer (parcial) · 1 especialista jurídico de produto · suporte a partir do lançamento.</p>
+  <div class="foot"><span class="brand">Advo<b>Hub</b> <span class="sub">· Plano de execução</span></span><span class="pg"></span></div>
+</section>
+
+<!-- MODELO DE NEGÓCIO -->
+<section class="s internal">
+  <div class="eyebrow">Modelo de negócio</div>
+  <h2>Margem saudável, receita que se acumula.</h2>
+  <div class="grid" style="grid-template-columns:1.1fr 1fr;gap:28px;margin-top:28px">
+    <div class="card">
+      <h3 style="font-size:19px">Custo mensal por escritório · plano Profissional</h3>
+      <table class="t" style="margin-top:8px">
+        <tr><td>IA (Claude, com roteamento de modelos e cache)</td><td class="r">R$&nbsp;200 – 600</td></tr>
+        <tr><td>WhatsApp Business Platform</td><td class="r">R$&nbsp;80 – 200</td></tr>
+        <tr><td>Monitoramento de processos e publicações</td><td class="r">R$&nbsp;100 – 300</td></tr>
+        <tr><td>Infraestrutura, armazenamento e e-mail</td><td class="r">R$&nbsp;40 – 80</td></tr>
+        <tr><td><b>Total</b></td><td class="r"><b>R$&nbsp;420 – 1.180</b></td></tr>
+      </table>
+      <p class="mute" style="font-size:13px;margin-top:12px">Custo típico ≈ R$&nbsp;650. Limites por plano e pacotes de excedente protegem a margem no uso intenso.</p>
+    </div>
+    <div class="card" style="background:var(--navy);border-color:var(--navy);color:#EEF1F6">
+      <div style="display:flex;align-items:baseline;gap:14px">
+        <div class="big" style="font-size:56px">~70%</div>
+        <div style="font-size:15px;color:#C3CAD7">margem bruta típica<br>no plano Profissional</div>
+      </div>
+      <div style="font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--mute2);margin-top:18px">Marcos de receita recorrente</div>
+      <div class="mrr"><span>10 escritórios</span><div class="track"><i style="width:3.4%"></i></div><span style="text-align:right">R$&nbsp;25 mil/mês</span></div>
+      <div class="mrr"><span>30 escritórios</span><div class="track"><i style="width:10%"></i></div><span style="text-align:right">R$&nbsp;75 mil/mês</span></div>
+      <div class="mrr"><span>100 escritórios</span><div class="track"><i style="width:33.3%"></i></div><span style="text-align:right">R$&nbsp;250 mil/mês</span></div>
+      <div class="mrr"><span>300 escritórios</span><div class="track"><i style="width:100%"></i></div><span style="text-align:right">R$&nbsp;750 mil/mês</span></div>
+      <p style="font-size:12.5px;color:var(--mute2);margin-top:14px">Considerando ticket médio de R$&nbsp;2.500 (mix Profissional / Escritório).</p>
+    </div>
+  </div>
+  <div class="extra">
+    <div class="card"><div class="k">Implantação</div><div class="v">R$&nbsp;2.500 – 6.000</div><p class="mute">por escritório; paga o custo do onboarding e da migração.</p></div>
+    <div class="card"><div class="k">Plano anual</div><div class="v">12 meses pelo preço de 10</div><p class="mute">à vista ou em 12x: antecipa caixa e reduz cancelamento.</p></div>
+    <div class="card"><div class="k">Excedentes</div><div class="v">Pacotes extras</div><p class="mute">conversas de IA e processos monitorados acima do plano.</p></div>
+  </div>
+  <div class="foot"><span class="brand">Advo<b>Hub</b> <span class="sub">· Plano de execução</span></span><span class="pg"></span></div>
+</section>
+
+<!-- GO-TO-MARKET -->
+<section class="s dark internal">
+  <div class="eyebrow">Estratégia de mercado</div>
+  <h2>Como chegamos aos primeiros 100 escritórios.</h2>
+  <div class="grid g2" style="margin-top:30px;gap:28px">
+    <div class="card">
+      <h3>Canais</h3>
+      <ul class="l" style="margin-top:12px">
+        <li><b>Pilotos</b>: 5–10 escritórios com 50% de desconto por 3 meses</li>
+        <li><b>Conteúdo</b>: gestão e IA na advocacia (Instagram, LinkedIn, YouTube)</li>
+        <li><b>Venda consultiva</b>: demo de 30 min + diagnóstico gratuito</li>
+        <li><b>Parcerias</b>: subseções da OAB, cursos jurídicos, contadores</li>
+        <li><b>Indicação</b>: 1 mês grátis por escritório indicado</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Metas e indicadores</h3>
+      <div class="grid g2" style="gap:16px;margin-top:14px">
+        <div><div class="big" style="font-size:34px">100</div><div class="mute" style="font-size:14px">escritórios ativos</div></div>
+        <div><div class="big" style="font-size:34px">R$&nbsp;250 mil</div><div class="mute" style="font-size:14px">de receita recorrente/mês</div></div>
+        <div><div class="big" style="font-size:34px">&lt; 2%</div><div class="mute" style="font-size:14px">cancelamento mensal</div></div>
+        <div><div class="big" style="font-size:34px">&gt; 3×</div><div class="mute" style="font-size:14px">LTV / CAC</div></div>
+      </div>
+      <p class="mute" style="font-size:13.5px;margin-top:16px">Meta de ativação: primeiro briefing da IA no dia da implantação.</p>
+    </div>
+  </div>
+  <div class="sec-t">Jornada de venda</div>
+  <div class="flow">
+    <div class="fs"><div class="n">1 · Atração</div><div class="h">Conteúdo</div><p>Conteúdo, parcerias e anúncios voltados a sócios de escritórios.</p></div>
+    <div class="ar">›</div>
+    <div class="fs"><div class="n">2 · Demo</div><div class="h">30 minutos</div><p>Demonstração com a rotina e os dados do próprio escritório.</p></div>
+    <div class="ar">›</div>
+    <div class="fs"><div class="n">3 · Diagnóstico</div><div class="h">Quanto perde hoje</div><p>Prazos, inadimplência e leads sem resposta, em reais.</p></div>
+    <div class="ar">›</div>
+    <div class="fs"><div class="n">4 · Implantação</div><div class="h">Pronto em 7 dias</div><p>Migração, WhatsApp oficial e treinamento da equipe (meta).</p></div>
+    <div class="ar">›</div>
+    <div class="fs"><div class="n">5 · Expansão</div><div class="h">Cresce junto</div><p>Mais usuários, números de WhatsApp e upgrade de plano.</p></div>
+  </div>
+  <div class="foot"><span class="brand">Advo<b>Hub</b> <span class="sub">· Plano de execução</span></span><span class="pg"></span></div>
+</section>
+
+<!-- RISCOS -->
+<section class="s internal">
+  <div class="eyebrow">Riscos</div>
+  <h2>O que pode dar errado — e como evitamos.</h2>
+  <table class="t" style="margin-top:24px;font-size:15.5px">
+    <tr><th style="width:30%">Risco</th><th>Mitigação</th></tr>
+    <tr><td><b>Ética da OAB no uso de IA</b></td><td>IA não dá parecer nem promete resultado; aprovação humana; só responde contatos iniciados pelo cliente; consultoria jurídica especializada.</td></tr>
+    <tr><td><b>Vazamento de dados (LGPD)</b></td><td>Isolamento por escritório, criptografia, auditoria, teste de invasão antes do lançamento e termo de tratamento de dados.</td></tr>
+    <tr><td><b>Erro da IA em prazo</b></td><td>A IA só sugere; o prazo vale após confirmação do advogado; dupla checagem de datas.</td></tr>
+    <tr><td><b>Dependência de fornecedores</b></td><td>Camada de integração desacoplada e segundo fornecedor homologado (WhatsApp, pagamentos, dados dos tribunais).</td></tr>
+    <tr><td><b>Ciclo de venda longo</b></td><td>Piloto com desconto, migração gratuita e demonstração com os dados do próprio escritório.</td></tr>
+    <tr><td><b>Custo de IA crescer</b></td><td>Cache de contexto, modelos menores para tarefas simples e limites por plano.</td></tr>
+  </table>
+  <div class="foot"><span class="brand">Advo<b>Hub</b> <span class="sub">· Plano de execução</span></span><span class="pg"></span></div>
+</section>
+
+<!-- PRÓXIMOS PASSOS -->
+<section class="s dark cover internal">
+  <div class="seal"></div>
+  <div class="eyebrow">Próximos passos · 2 semanas</div>
+  <h2 style="font-size:54px;max-width:760px">Vamos construir o escritório do futuro.</h2>
+  <div class="rule"></div>
+  <ul class="l" style="max-width:660px">
+    <li style="font-size:18px">Validar nome, marca e domínio</li>
+    <li style="font-size:18px">Entrevistar 10 advogados e sócios</li>
+    <li style="font-size:18px">Protótipo navegável: Dashboard, Caso, Agenda, Financeiro e Caixa da IA</li>
+    <li style="font-size:18px">Fechar fornecedores: WhatsApp, pagamentos e dados dos tribunais</li>
+    <li style="font-size:18px">Iniciar o MVP Core e selecionar os escritórios piloto</li>
+  </ul>
+  <p class="brand" style="font-size:30px;margin-top:40px">Advo<b>Hub</b></p>
+</section>
+
+</body>
+</html>
