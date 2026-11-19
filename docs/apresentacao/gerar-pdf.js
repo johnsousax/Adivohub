@@ -24,7 +24,7 @@ const { chromium } = require('playwright');
         const sb = s.getBoundingClientRect();
         let worst = 0;
         s.querySelectorAll('*').forEach(e => {
-          if (e.closest('.foot') || e.classList.contains('seal') || e.closest('.seal')) return;
+          if (e.closest('.foot') || e.closest('.ft') || e.closest('.seal') || e.closest('.glow')) return;
           const r = e.getBoundingClientRect();
           if (r.width === 0 || r.height === 0) return;
           worst = Math.max(worst, r.bottom - sb.top);
