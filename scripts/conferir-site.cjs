@@ -70,10 +70,11 @@ const t = (nome, cond, det) => {
   t("referrer-policy", h["referrer-policy"] === "strict-origin-when-cross-origin", h["referrer-policy"]);
   t("permissions-policy", (h["permissions-policy"] || "").includes("camera=()"), h["permissions-policy"]);
   t("sem x-powered-by", !h["x-powered-by"], h["x-powered-by"]);
+  // Nas pré-visualizações a Vercel injeta a barra de comentários dela (vercel.live), que a CSP do site bloqueia.
   const semNonce = await page.evaluate(
     () =>
       Array.from(document.querySelectorAll("script")).filter(
-        (s) => (s.src || s.textContent.trim()) && s.type !== "application/ld+json" && !s.nonce,
+        (s) => (s.src || s.textContent.trim()) && s.type !== "application/ld+json" && !s.nonce && !s.src.includes("vercel.live"),
       ).length,
   );
   t("todo script com nonce", semNonce === 0, semNonce);
@@ -175,7 +176,7 @@ const t = (nome, cond, det) => {
   const largura = await pc.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   t("celular sem rolagem lateral", largura <= 1, largura);
 
-  const graves = errs.filter((e) => !e.includes("401") && !e.includes("403"));
+  const graves = errs.filter((e) => !e.includes("401") && !e.includes("403") && !e.includes("vercel.live"));
   t("console sem erros nem violacao de CSP", graves.length === 0, graves.join(" | "));
 
   // Pedidos que o site deve recusar. Ficam no fim de propósito: depois de alguns deles, a Vercel
@@ -213,7 +214,7 @@ const t = (nome, cond, det) => {
   const wh = await pedir("/api/whatsapp/webhook", { method: "POST", headers: json, data: { entry: [] } });
   t("webhook fechado sem assinatura", [401, 503].includes(wh.status()), wh.status());
 
-  for (const c of ["/wp-admin", "/wp-login.php", "/.env", "/.git/config", "/phpmyadmin/", "/backup.sql", "/cgi-bin/test.cgi"]) {
+  for (const c of ["/wp-admin", "/wp-login.php", "/.env", "/.git/config", "/phpmyadmin", "/backup.sql", "/cgi-bin/test.cgi"]) {
     const r = await pedir(c);
     t(
       "borda nega " + c,
