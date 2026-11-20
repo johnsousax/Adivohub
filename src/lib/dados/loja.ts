@@ -29,7 +29,7 @@ import { criarSemente } from "./semente";
  * nenhuma tela precisa mudar.
  */
 
-const CHAVE = "vade:dados:v1";
+const CHAVE = "justixup:dados:v1";
 
 type NovoRegistro<T> = Omit<T, "id">;
 

@@ -42,7 +42,7 @@ describe("política de segurança de conteúdo (CSP)", () => {
 });
 
 describe("origem das requisições (CSRF)", () => {
-  const host = "vade-juridico.vercel.app";
+  const host = "justixup.vercel.app";
 
   it("aceita chamadas do próprio site", () => {
     expect(origemPermitida({ origin: `https://${host}`, secFetchSite: "same-origin", host })).toBe(true);

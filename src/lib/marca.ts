@@ -3,8 +3,8 @@
  * Para trocar o nome, o WhatsApp de vendas ou os planos, edite apenas este arquivo.
  */
 export const MARCA = {
-  nome: "Vade",
-  slogan: "Vai com você.",
+  nome: "JustixUp",
+  slogan: "Seu escritório um passo à frente.",
   descricao: "Gestão jurídica com inteligência artificial: casos, prazos, agenda, honorários e atendimento 24h no WhatsApp em um só lugar.",
   /** Número de vendas: recebe os contatos da landing page. */
   whatsapp: {
@@ -19,7 +19,7 @@ export const MARCA = {
  * Campos vazios simplesmente não aparecem nas páginas.
  */
 export const LEGAL = {
-  /** Razão social (ou nome completo) de quem responde pelo Vade. */
+  /** Razão social (ou nome completo) de quem responde pelo JustixUp. */
   responsavel: "",
   /** CNPJ ou CPF do responsável, já formatado. */
   documento: "",

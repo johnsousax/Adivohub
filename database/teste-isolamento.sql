@@ -6,9 +6,9 @@
 -- ser barrada; se alguma passar, o teste para com "FALHA DE SEGURANÇA".
 --
 -- Uso:
---   createdb vade_teste
---   psql -v ON_ERROR_STOP=1 -d vade_teste -f database/teste-isolamento.sql
---   dropdb vade_teste
+--   createdb justixup_teste
+--   psql -v ON_ERROR_STOP=1 -d justixup_teste -f database/teste-isolamento.sql
+--   dropdb justixup_teste
 -- =============================================================================
 \set QUIET on
 \pset tuples_only on

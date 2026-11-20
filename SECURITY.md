@@ -1,4 +1,4 @@
-# Segurança do Vade
+# Segurança do JustixUp
 
 Este arquivo tem duas partes: como avisar de uma falha e as regras que todo código do projeto segue.
 O retrato atual da segurança (o que está feito, o que falta e os riscos que sobraram) está em [`docs/SEGURANCA.md`](docs/SEGURANCA.md).
@@ -92,4 +92,4 @@ if (!pedido.success) return erro(requisicao, 400, "Pedido inválido.");
 - Mudou o que o site coleta ou com quem compartilha? Atualize `/privacidade` e a versão em `src/lib/marca.ts`.
 - Revise o checklist de `docs/SEGURANCA.md`.
 
-Depois de publicar, confira o endereço de fora: `node scripts/conferir-site.cjs https://vade-juridico.vercel.app`.
+Depois de publicar, confira o endereço de fora: `node scripts/conferir-site.cjs https://justixup.vercel.app`.

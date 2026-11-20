@@ -35,7 +35,7 @@ describe("hash de senha", () => {
 });
 
 describe("sessão em cookie assinado", () => {
-  const dados = { sub: "usr-ana", nome: "Dra. Ana Almeida", email: "demo@vade.example", papel: "demo" } as const;
+  const dados = { sub: "usr-ana", nome: "Dra. Ana Almeida", email: "demo@justixup.example", papel: "demo" } as const;
 
   it("lê de volta o que assinou", async () => {
     const token = await assinarSessao(dados);

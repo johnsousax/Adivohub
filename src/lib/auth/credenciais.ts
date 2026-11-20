@@ -14,7 +14,7 @@ import { conferirSenha, hashDeSenhaValido } from "./senha";
  */
 
 /** Visitante da demonstração. O e-mail usa domínio reservado e serve só de identificação. */
-export const USUARIO_DEMO = { sub: "usr-ana", nome: "Dra. Ana Almeida", email: "demo@vade.example" } as const;
+export const USUARIO_DEMO = { sub: "usr-ana", nome: "Dra. Ana Almeida", email: "demo@justixup.example" } as const;
 
 export function demoPublica(): boolean {
   return process.env.DEMO_PUBLICA !== "false";

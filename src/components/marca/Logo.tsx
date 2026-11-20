@@ -1,19 +1,34 @@
 import { cn } from "@/lib/cn";
 import { MARCA } from "@/lib/marca";
 
-/** Símbolo: um "V" dourado, que também lembra um marcador de página do Vade Mecum. */
+/** Símbolo: um "J" dourado cuja ponta é uma seta para cima, o "Up" do nome. */
 export function Simbolo({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 32 32" className={cn("size-8", className)} aria-hidden="true">
       <defs>
-        <linearGradient id="vade-ouro" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id="marca-ouro" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#F4E2B6" />
           <stop offset="0.5" stopColor="#D9B774" />
           <stop offset="1" stopColor="#A9823F" />
         </linearGradient>
       </defs>
       <rect width="32" height="32" rx="9" fill="#0B0B0C" />
-      <path d="M9 10l7 13 7-13" fill="none" stroke="url(#vade-ouro)" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M19.5 9.5v9.2a5 5 0 0 1-10 0"
+        fill="none"
+        stroke="url(#marca-ouro)"
+        strokeWidth="3.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M15.6 12.9l3.9-3.9 3.9 3.9"
+        fill="none"
+        stroke="url(#marca-ouro)"
+        strokeWidth="3.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }

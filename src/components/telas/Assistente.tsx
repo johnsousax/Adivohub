@@ -127,7 +127,7 @@ export function TelaAssistente() {
         const corpo = (await resposta.json().catch(() => null)) as { erro?: string } | null;
         throw new Error(corpo?.erro ?? "Não foi possível responder agora.");
       }
-      definirModo(resposta.headers.get("X-Vade-IA") === "claude" ? "claude" : "demo");
+      definirModo(resposta.headers.get("X-JustixUp-IA") === "claude" ? "claude" : "demo");
 
       const leitor = resposta.body.getReader();
       const decodificador = new TextDecoder();

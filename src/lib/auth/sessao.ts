@@ -12,7 +12,7 @@
  * Em produção o cookie usa o prefixo "__Host-": o navegador só o aceita com
  * Secure, Path=/ e sem Domain, então um subdomínio não consegue forjar a sessão.
  */
-export const COOKIE_SESSAO = process.env.NODE_ENV === "production" ? "__Host-vade_sessao" : "vade_sessao";
+export const COOKIE_SESSAO = process.env.NODE_ENV === "production" ? "__Host-justixup_sessao" : "justixup_sessao";
 export const DURACAO_SESSAO_SEGUNDOS = 60 * 60 * 8;
 
 /** "demo": visitante da demonstração pública. "equipe": acesso privado, com senha. */

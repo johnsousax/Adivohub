@@ -13,7 +13,7 @@ function cabecalhos(modo: ModoIA): HeadersInit {
   return {
     "Content-Type": "text/plain; charset=utf-8",
     "Cache-Control": "no-store",
-    "X-Vade-IA": modo,
+    "X-JustixUp-IA": modo,
   };
 }
 

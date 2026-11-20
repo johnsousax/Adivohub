@@ -81,7 +81,7 @@ export function TelaConfiguracoes() {
     const url = URL.createObjectURL(arquivo);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `vade-dados-${geradoEm}.json`;
+    link.download = `justixup-dados-${geradoEm}.json`;
     link.click();
     URL.revokeObjectURL(url);
     avisar("Arquivo com os dados baixado.");

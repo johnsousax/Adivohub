@@ -1,8 +1,8 @@
 {
-  "name": "vade",
+  "name": "justixup",
   "version": "0.1.0",
   "private": true,
-  "description": "Vade — gestão jurídica com inteligência artificial para escritórios de advocacia.",
+  "description": "JustixUp — gestão jurídica com inteligência artificial para escritórios de advocacia.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

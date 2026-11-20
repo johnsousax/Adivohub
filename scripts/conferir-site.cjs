@@ -6,7 +6,7 @@
  * a demonstração, os preços e as animações da landing page.
  *
  * Uso, depois de cada publicação:
- *   node scripts/conferir-site.cjs https://vade-juridico.vercel.app
+ *   node scripts/conferir-site.cjs https://justixup.vercel.app
  *
  * Precisa do Playwright com o Chromium instalado (npx playwright install chromium).
  * Os bloqueios na borda só existem na Vercel: em um servidor local, essas dez
@@ -102,11 +102,11 @@ const t = (nome, cond, det) => {
   const json = { "content-type": "application/json" };
   const demo = await pedir("/api/auth/demo", { method: "POST", headers: Object.assign({ origin: BASE }, json), data: {} });
   const cookie =
-    (demo.headersArray().find((x) => x.name.toLowerCase() === "set-cookie" && x.value.includes("vade_sessao")) || {}).value || "";
+    (demo.headersArray().find((x) => x.name.toLowerCase() === "set-cookie" && x.value.includes("justixup_sessao")) || {}).value || "";
   t("demonstracao abre sem senha", demo.status() === 200, demo.status() + " " + (await demo.text()).slice(0, 90));
   t(
     "cookie __Host- HttpOnly Secure SameSite",
-    cookie.startsWith("__Host-vade_sessao=") &&
+    cookie.startsWith("__Host-justixup_sessao=") &&
       cookie.includes("HttpOnly") &&
       cookie.includes("Secure") &&
       cookie.includes("SameSite=Lax") &&
@@ -120,7 +120,7 @@ const t = (nome, cond, det) => {
   const iaDemo = await pedir("/api/integracoes");
   const iaTexto = await iaDemo.text();
   t("integracoes nao expoe chave", iaDemo.status() === 200 && !iaTexto.includes("sk-ant"), iaDemo.status());
-  await ctx.clearCookies({ name: "__Host-vade_sessao" });
+  await ctx.clearCookies({ name: "__Host-justixup_sessao" });
 
   await page.goto(BASE + "/", { waitUntil: "networkidle" });
   const texto = await page.evaluate(() => document.body.innerText);
@@ -181,7 +181,7 @@ const t = (nome, cond, det) => {
 
   // Pedidos que o site deve recusar. Ficam no fim de propósito: depois de alguns deles, a Vercel
   // passa a desconfiar do endereço de quem testa e exige uma verificação antes de responder.
-  await ctx.clearCookies({ name: "__Host-vade_sessao" });
+  await ctx.clearCookies({ name: "__Host-justixup_sessao" });
   const ia = await pedir("/api/ia/assistente", {
     method: "POST",
     headers: Object.assign({ origin: BASE }, json),

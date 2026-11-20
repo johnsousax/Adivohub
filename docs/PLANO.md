@@ -1,12 +1,13 @@
-# Vade — Plano Completo do Produto
+# JustixUp — Plano Completo do Produto
 
 > Plataforma de gestão para escritórios de advocacia com IA nativa.
 > Meta comercial: planos a partir de **R$ 297/mês** por escritório, com ganho no volume de clientes.
-> Documento de trabalho — versão 1.2 (nov/2026). O nome do produto é **Vade** (de _Vade Mecum_, "vai comigo");
-> nas primeiras versões deste plano ele aparecia como "AdvoHub". Falta confirmar a marca no INPI e o domínio.
+> Documento de trabalho — versão 1.2 (nov/2026). O nome do produto é **JustixUp** (_Justiça_ + _Up_: o escritório um passo à frente);
+> versões anteriores deste plano usavam "AdvoHub" e "Vade". Os domínios `justixup.com.br` e `justixup.com` estavam livres em 20/11/2026;
+> falta registrar o domínio e confirmar a marca no INPI.
 >
-> Apresentações: `Vade-Apresentacao.pdf` (completa, com o plano de execução) e
-> `Vade-Apresentacao-Clientes.pdf` (versão para mostrar a escritórios, sem custos, margens e estratégia interna).
+> Apresentações: `JustixUp-Apresentacao.pdf` (completa, com o plano de execução) e
+> `JustixUp-Apresentacao-Clientes.pdf` (versão para mostrar a escritórios, sem custos, margens e estratégia interna).
 > Fonte editável dos slides: `apresentacao/slides.html`.
 >
 > O aplicativo já existe em modo demonstração (ver `README.md` na raiz): painel, casos, prazos, agenda, clientes,
@@ -21,7 +22,7 @@ Ele usa 5 a 8 ferramentas soltas (planilha de honorários, agenda do Google, Wha
 pasta no Drive, sistema de publicações, banco) e perde dinheiro em três pontos: **prazo perdido**,
 **honorário não cobrado** e **cliente/lead sem resposta**.
 
-O Vade junta tudo em um só lugar e coloca uma IA que **trabalha junto**: ela avisa, resume,
+O JustixUp junta tudo em um só lugar e coloca uma IA que **trabalha junto**: ela avisa, resume,
 responde o cliente, cobra e agenda — sempre sob supervisão do advogado.
 
 **Promessa central:** "Seu escritório organizado, seus prazos sob controle e seus clientes atendidos 24h — sem contratar mais ninguém."
@@ -181,7 +182,7 @@ o preço caiu para caber no caixa de escritórios pequenos, e a conta de custos 
 | Horas de advogado liberadas (20h × R$ 200/h) | R$ 4.000 |
 | **Total potencial** | **R$ 16.000 – R$ 21.000/mês** |
 
-Mensagem de venda: **"O Vade se paga com uma parcela recuperada por mês."** A mensalidade do plano Profissional custa menos que duas horas de trabalho de um advogado, e um único prazo perdido pode custar mais que anos de assinatura.
+Mensagem de venda: **"O JustixUp se paga com uma parcela recuperada por mês."** A mensalidade do plano Profissional custa menos que duas horas de trabalho de um advogado, e um único prazo perdido pode custar mais que anos de assinatura.
 
 > Os números acima são estimativas de referência para a apresentação comercial e devem ser validados com os escritórios piloto.
 
@@ -216,7 +217,7 @@ Meta: com 100 escritórios ativos ≈ R$ 45 mil de MRR (ticket médio em torno d
 Mercado tem players consolidados (Astrea/Aurum, Projuris, ADVBOX, Legal One, EasyJur, CPJ).
 A maioria é forte em cadastro de processos, mas trata IA como acessório e o WhatsApp como canal externo.
 
-**Diferenciais do Vade:**
+**Diferenciais do JustixUp:**
 1. **IA que age** (agente com ferramentas), não só um chat — ela agenda, cobra, responde e resume.
 2. **WhatsApp oficial como centro do atendimento**, com caixa de entrada da equipe.
 3. **Financeiro de verdade** (êxito, repasse, cobrança automática, NFS-e) — onde o sócio sente o dinheiro.

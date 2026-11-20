@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { CSSProperties } from "react";
 import { Logo } from "@/components/marca/Logo";
+import { MARCA } from "@/lib/marca";
 import { BotaoLink } from "@/components/ui/Botao";
 import { linkWhatsApp, MENSAGENS_VENDA } from "@/lib/whatsapp";
 import telaPainel from "../../../public/produto/painel.png";
@@ -21,7 +22,7 @@ export function Navegacao() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/[0.08] bg-noite/70 backdrop-blur-xl">
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-6 px-5 sm:px-8">
-        <Link href="/" aria-label="Vade — página inicial">
+        <Link href="/" aria-label={`${MARCA.nome} — página inicial`}>
           <Logo claro />
         </Link>
         <nav aria-label="Seções" className="ml-4 hidden items-center gap-6 md:flex">
@@ -86,12 +87,12 @@ export function Heroi() {
         {/* A janela sobe na entrada e, ao rolar, se apruma (começa levemente inclinada). */}
         <div className="entrada-janela mx-auto mt-14 max-w-5xl sm:mt-20" style={atraso(520)}>
           <div className="aprumar origin-bottom">
-            <Janela titulo="Vade — visão geral" className="rounded-b-none">
+            <Janela titulo={`${MARCA.nome} — visão geral`} className="rounded-b-none">
               {/* No celular a imagem é ampliada e deslocada para mostrar o conteúdo, sem o menu lateral. */}
               <div className="max-h-[25rem] overflow-hidden sm:max-h-none">
                 <Image
                   src={telaPainel}
-                  alt="Tela inicial do Vade: resumo do dia feito pela IA, valores recebidos e a receber, gráfico de recebimentos por mês e a lista dos próximos prazos."
+                  alt={`Tela inicial do ${MARCA.nome}: resumo do dia feito pela IA, valores recebidos e a receber, gráfico de recebimentos por mês e a lista dos próximos prazos.`}
                   priority
                   sizes="(min-width: 1100px) 1024px, (min-width: 640px) 100vw, 220vw"
                   className="-ml-[44%] block w-[220%] max-w-none sm:ml-0 sm:w-full"

@@ -1,5 +1,5 @@
 -- =============================================================================
--- Vade — esquema do banco de dados (PostgreSQL 15+ / Supabase)
+-- JustixUp — esquema do banco de dados (PostgreSQL 15+ / Supabase)
 --
 -- Ainda NÃO está aplicado em nenhum banco: o aplicativo roda em modo
 -- demonstração, com os dados no navegador. Este arquivo é a primeira migração

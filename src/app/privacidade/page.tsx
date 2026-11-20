@@ -84,7 +84,7 @@ export default function PaginaPrivacidade() {
         <p>Podemos também compartilhar dados quando a lei ou uma ordem judicial exigir.</p>
       </Clausula>
 
-      <Clausula titulo="5. Escritórios que contratam o Vade">
+      <Clausula titulo={`5. Escritórios que contratam o ${MARCA.nome}`}>
         <p>
           Quando um escritório contrata o {MARCA.nome}, os dados dos clientes e dos processos pertencem ao escritório, que decide como
           usá-los (ele é o controlador). O {MARCA.nome} atua como operador: trata esses dados apenas para prestar o serviço, conforme o

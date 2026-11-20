@@ -1,12 +1,12 @@
-# Relatório de segurança do Vade
+# Relatório de segurança do JustixUp
 
-Atualizado em 20/11/2026. Retrato do que está no ar em `vade-juridico.vercel.app`, auditado contra o padrão "Segurança Máxima" adotado pelo projeto. As regras para código novo estão em [`SECURITY.md`](../SECURITY.md).
+Atualizado em 20/11/2026. Retrato do que está no ar em `justixup.vercel.app` (o endereço antigo `vade-juridico.vercel.app` abre o mesmo site), auditado contra o padrão "Segurança Máxima" adotado pelo projeto. As regras para código novo estão em [`SECURITY.md`](../SECURITY.md).
 
 Nenhum sistema é impossível de invadir. Este relatório diz com clareza o que protege hoje, o que ainda falta e de quem depende.
 
 ## 1. Tipo de sistema e seções aplicadas
 
-| O que o Vade é hoje | Seções do padrão aplicadas |
+| O que o JustixUp é hoje | Seções do padrão aplicadas |
 | --- | --- |
 | Landing page pública | Frontend, Infraestrutura, LGPD |
 | Painel de gestão em modo demonstração (sem banco: os dados ficam no navegador) | Autenticação e sessões, Autorização, API e backend, Banco de dados (como projeto), Logs |
@@ -180,7 +180,7 @@ Não se aplicam hoje, por não existirem no sistema: **Pagamentos**, **Uploads d
 | RLS em 100% das tabelas e Security Advisor sem alerta crítico | Não se aplica ainda: banco não conectado. O esquema pronto tem RLS em todas as tabelas e passa nos 172 cenários do teste. O Security Advisor só roda depois de aplicado no Supabase |
 | Usuário A não lê nem edita dado do B; empresa A não vê a B | Não se aplica ainda (sem dados no servidor). Coberto pelo teste do esquema |
 | Usuário comum recebe 403 nas ações de administrador | Não se aplica ainda (não há área de administrador). Coberto pelo teste do esquema |
-| Nenhum segredo no frontend, no app ou no Git | Feito. Busca no histórico sem achados do Vade; ver item 3 da seção 4 sobre o arquivo antigo |
+| Nenhum segredo no frontend, no app ou no Git | Feito. Busca no histórico sem achados do projeto; ver item 3 da seção 4 sobre o arquivo antigo |
 | Preço, total, saldo e status de pagamento só no servidor | Não se aplica: não há pagamentos |
 | Webhooks com assinatura, idempotência e reconsulta | Assinatura e repetição: feito. Reconsulta: não se aplica (não é pagamento) |
 | Limite em login, cadastro, reset de senha, IA e rotas caras | Feito para login, demonstração e IA, em memória. Cadastro e reset não existem. Limite na borda: depende de você (item 4) |

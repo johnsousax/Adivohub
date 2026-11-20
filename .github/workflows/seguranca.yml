@@ -46,7 +46,7 @@ jobs:
         env:
           # Banco descartável, que só existe durante esta tarefa.
           POSTGRES_HOST_AUTH_METHOD: trust
-          POSTGRES_DB: vade_teste
+          POSTGRES_DB: justixup_teste
         ports:
           - 5432:5432
         options: >-
@@ -59,7 +59,7 @@ jobs:
         with:
           persist-credentials: false
       # Aplica database/schema.sql e tenta cada ataque. Qualquer um que passe derruba a tarefa.
-      - run: psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d vade_teste -f database/teste-isolamento.sql
+      - run: psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d justixup_teste -f database/teste-isolamento.sql
 
   segredos:
     name: Procurar segredos no histórico

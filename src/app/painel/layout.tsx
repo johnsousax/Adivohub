@@ -4,7 +4,7 @@ import { EsqueletoPainel } from "@/components/painel/Esqueleto";
 import { Painel } from "@/components/painel/Painel";
 
 export const metadata: Metadata = {
-  title: { default: "Painel", template: "%s · Vade" },
+  title: { default: "Painel", template: "%s · JustixUp" },
   robots: { index: false, follow: false },
 };
 

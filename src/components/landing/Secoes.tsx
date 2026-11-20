@@ -172,7 +172,7 @@ export function InteligenciaArtificial() {
           </Revelar>
           <Revelar efeito="escala" atraso={120} className="flex justify-center">
             <Telefone
-              nome="Vade IA"
+              nome={`${MARCA.nome} IA`}
               legenda="assistente do escritório"
               baloes={[
                 {
@@ -526,7 +526,7 @@ export function WhatsAppFlutuante() {
       href={linkWhatsApp(MENSAGENS_VENDA.geral)}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Falar com o Vade no WhatsApp"
+      aria-label={`Falar com o ${MARCA.nome} no WhatsApp`}
       className="flutuante-vivo fundo-ouro fixed right-4 bottom-4 z-40 flex h-14 items-center gap-2.5 rounded-full px-5 font-semibold text-tinta shadow-[0_18px_40px_-10px_rgb(0_0_0/0.55)] transition-[scale] duration-300 hover:scale-[1.04] sm:right-6 sm:bottom-6"
     >
       <IconeWhatsApp className="size-6" />

@@ -27,6 +27,7 @@ import { emRecessoForense, feriadoEm } from "@/lib/datas";
 import { brl, dataLonga, dataSemana, hora, mesAno, mesCurto, milhares, percentual, plural } from "@/lib/formatos";
 import { AREAS, ETAPAS_FUNIL, TIPOS_EVENTO } from "@/lib/tipos";
 import { linkCompartilharWhatsApp } from "@/lib/whatsapp";
+import { MARCA } from "@/lib/marca";
 
 function saudacao(): string {
   const horas = new Date().getHours();
@@ -105,7 +106,7 @@ export function TelaVisaoGeral() {
       : "Nenhuma publicação nova",
     `${brl(briefing.recebidoOntem, { centavos: false })} recebidos ontem · ${plural(briefing.parcelasEmAtraso, "parcela em atraso", "parcelas em atraso")}`,
   ];
-  const textoWhatsApp = `*${saudacao()}, ${primeiroNome}!* Resumo de ${dataSemana(hoje)}:\n\n${linhasBriefing.map((l) => `• ${l}`).join("\n")}\n\n_Enviado pelo Vade_`;
+  const textoWhatsApp = `*${saudacao()}, ${primeiroNome}!* Resumo de ${dataSemana(hoje)}:\n\n${linhasBriefing.map((l) => `• ${l}`).join("\n")}\n\n_Enviado pelo ${MARCA.nome}_`;
 
   return (
     <>

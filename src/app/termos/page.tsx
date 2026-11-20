@@ -22,7 +22,7 @@ export default function PaginaTermos() {
       titulo="Termos de uso"
       resumo={`Estes termos valem para o site e para a demonstração do ${MARCA.nome}. Ao usar um ou outro, você concorda com eles.`}
     >
-      <Clausula titulo="1. O que é o Vade">
+      <Clausula titulo={`1. O que é o ${MARCA.nome}`}>
         <p>
           O {MARCA.nome} é um sistema de gestão para escritórios de advocacia: casos, prazos, agenda, financeiro e atendimento com apoio de
           inteligência artificial.{responsavel ? ` É oferecido por ${responsavel}.` : ""} O produto está em lançamento, e a página inicial

@@ -26,9 +26,9 @@ O aplicativo ainda roda sem banco (os dados ficam no navegador). Esta pasta guar
 Com um PostgreSQL local:
 
 ```bash
-createdb vade_teste
-psql -v ON_ERROR_STOP=1 -d vade_teste -f database/teste-isolamento.sql
-dropdb vade_teste
+createdb justixup_teste
+psql -v ON_ERROR_STOP=1 -d justixup_teste -f database/teste-isolamento.sql
+dropdb justixup_teste
 ```
 
 A saída lista cada cenário conferido e termina com `OK: 172 cenários conferidos. Nenhum ataque passou.`
