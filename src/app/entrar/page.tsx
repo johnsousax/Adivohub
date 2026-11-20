@@ -45,8 +45,8 @@ export default function PaginaEntrar() {
           <FormLogin demonstracao={demoPublica()} />
           <p className="mt-8 text-sm text-mudo">
             Ainda não é cliente?{" "}
-            <Link href="/#planos" className="font-medium text-tinta underline-offset-4 hover:underline">
-              Conheça os planos
+            <Link href="/" className="font-medium text-tinta underline-offset-4 hover:underline">
+              Conheça o {MARCA.nome}
             </Link>
           </p>
         </div>

@@ -125,9 +125,9 @@ const t = (nome, cond, det) => {
   await page.goto(BASE + "/", { waitUntil: "networkidle" });
   const texto = await page.evaluate(() => document.body.innerText);
   t(
-    "precos novos na landing",
-    texto.includes("297") && texto.includes("597") && texto.includes("1.497") && !texto.includes("2.197"),
-    "precos",
+    "landing sem a secao de planos",
+    (await page.locator("#planos").count()) === 0 && !texto.includes("297") && !texto.includes("/mês"),
+    "planos",
   );
   t(
     "secao de seguranca e links legais",

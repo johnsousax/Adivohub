@@ -93,11 +93,6 @@ export const PLANOS: Plano[] = [
   },
 ];
 
-/** Taxa única de implantação (configuração, migração e treinamento). Isenta no plano anual. */
-export const IMPLANTACAO = {
-  aPartirDe: 497,
-} as const;
-
 export const URL_SITE =
   process.env.NEXT_PUBLIC_SITE_URL ||
   (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000");

@@ -11,7 +11,6 @@ import { IconeWhatsApp, Janela } from "./Pecas";
 const LINKS = [
   { href: "#recursos", rotulo: "Recursos" },
   { href: "#ia", rotulo: "Inteligência artificial" },
-  { href: "#planos", rotulo: "Planos" },
   { href: "#duvidas", rotulo: "Dúvidas" },
 ];
 

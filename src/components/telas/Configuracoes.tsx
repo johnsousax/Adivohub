@@ -9,7 +9,7 @@ import { Botao, BotaoLink } from "@/components/ui/Botao";
 import { Entrada } from "@/components/ui/Campos";
 import { Modal, RodapeModal, useDialogo } from "@/components/ui/Modal";
 import { fotografarDados, useLoja } from "@/lib/dados/loja";
-import { brl, dataCurta } from "@/lib/formatos";
+import { dataCurta } from "@/lib/formatos";
 import { MARCA, PLANOS } from "@/lib/marca";
 import type { Papel } from "@/lib/tipos";
 import { linkWhatsApp } from "@/lib/whatsapp";
@@ -106,13 +106,7 @@ export function TelaConfiguracoes() {
         <Cartao className="flex flex-col">
           <CabecalhoCartao titulo="Plano" acao={<Etiqueta tom="ouro">Demonstração</Etiqueta>} />
           <div className="flex flex-1 flex-col px-5 pb-5 sm:px-6">
-            <p className="text-2xl font-bold tracking-[-0.03em]">
-              {plano.nome}{" "}
-              <span className="text-base font-medium text-mudo">
-                {brl(plano.preco, { centavos: false })}
-                {plano.sufixoPreco}
-              </span>
-            </p>
+            <p className="text-2xl font-bold tracking-[-0.03em]">{plano.nome}</p>
             <ul className="mt-3 space-y-1.5 text-sm text-tinta-2">
               {plano.recursos.slice(0, 4).map((recurso) => (
                 <li key={recurso} className="flex gap-2.5">

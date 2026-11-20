@@ -21,7 +21,6 @@ export function linkCompartilharWhatsApp(mensagem: string): string {
 export const MENSAGENS_VENDA = {
   geral: `Olá! Conheci o ${MARCA.nome} pelo site e quero contratar o sistema para o meu escritório.`,
   demonstracao: `Olá! Quero agendar uma demonstração do ${MARCA.nome} para o meu escritório.`,
-  plano: (nome: string) => `Olá! Quero contratar o plano ${nome} do ${MARCA.nome}.`,
 } as const;
 
 /** "Olá, Maria!" para pessoa física; "Olá!" para empresa ou contato sem cadastro. */

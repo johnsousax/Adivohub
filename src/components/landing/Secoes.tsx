@@ -17,9 +17,7 @@ import {
 import Link from "next/link";
 import { Logo } from "@/components/marca/Logo";
 import { BotaoLink } from "@/components/ui/Botao";
-import { cn } from "@/lib/cn";
-import { brl } from "@/lib/formatos";
-import { IMPLANTACAO, MARCA, PLANOS } from "@/lib/marca";
+import { MARCA } from "@/lib/marca";
 import { linkWhatsApp, MENSAGENS_VENDA } from "@/lib/whatsapp";
 import { IconeWhatsApp, Secao, Sobretitulo, Telefone, TituloSecao } from "./Pecas";
 import { Revelar } from "./Revelar";
@@ -381,76 +379,6 @@ export function Lancamento() {
   );
 }
 
-/* --------------------------------- Planos --------------------------------- */
-
-export function Planos() {
-  return (
-    <Secao id="planos" tom="cinza">
-      <Revelar efeito="foco" className="text-center">
-        <Sobretitulo>Planos</Sobretitulo>
-        <TituloSecao className="mx-auto">Planos que cabem no escritório.</TituloSecao>
-        <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-mudo">
-          Uma parcela esquecida ou um prazo perdido custam mais do que a mensalidade.
-        </p>
-      </Revelar>
-
-      <ul className="mt-14 grid grid-cols-1 items-start gap-4 lg:grid-cols-3">
-        {PLANOS.map((plano, indice) => (
-          <Revelar como="li" key={plano.id} efeito="escala" atraso={indice * 120} className={cn("flex", plano.destaque && "lg:-mt-4")}>
-            <div
-              className={cn(
-                "flex w-full flex-col rounded-[1.9rem] p-8",
-                plano.destaque
-                  ? "contorno-vivo bg-noite text-white shadow-[0_40px_80px_-30px_rgb(0_0_0/0.5)] lg:pb-12"
-                  : "cartao-vivo bg-white shadow-cartao ring-1 ring-black/[0.04]",
-              )}
-            >
-              <div className="flex items-center justify-between gap-3">
-                <h3 className="text-xl font-semibold">{plano.nome}</h3>
-                {plano.destaque && (
-                  <span className="rounded-full bg-ouro-400/15 px-2.5 py-1 text-xs font-semibold text-ouro-300">Mais escolhido</span>
-                )}
-              </div>
-              <p className={cn("mt-1 text-sm", plano.destaque ? "text-white/50" : "text-mudo")}>{plano.publico}</p>
-              {/* Linha reservada em todos os cartões, para os preços ficarem alinhados. */}
-              <p className={cn("mt-5 h-5 text-sm", plano.destaque ? "text-white/50" : "text-mudo")}>{plano.prefixoPreco ?? ""}</p>
-              <p className="mt-1 flex items-baseline gap-1">
-                <span className={cn("text-[2.9rem] leading-none font-bold tracking-[-0.045em]", plano.destaque && "texto-ouro")}>
-                  {brl(plano.preco, { centavos: false })}
-                </span>
-                <span className={cn("text-sm font-medium", plano.destaque ? "text-white/50" : "text-mudo")}>{plano.sufixoPreco}</span>
-              </p>
-              <ul className="mt-7 flex-1 space-y-3">
-                {plano.recursos.map((recurso) => (
-                  <li
-                    key={recurso}
-                    className={cn("flex gap-3 text-[0.95rem] leading-relaxed", plano.destaque ? "text-white/80" : "text-tinta-2")}
-                  >
-                    <Check className={cn("mt-1 size-4 shrink-0", plano.destaque ? "text-ouro-300" : "text-ouro-600")} aria-hidden="true" />
-                    {recurso}
-                  </li>
-                ))}
-              </ul>
-              <BotaoLink
-                href={linkWhatsApp(MENSAGENS_VENDA.plano(plano.nome))}
-                variante={plano.destaque ? "ouro" : "primario"}
-                tamanho="g"
-                className="mt-8 w-full"
-              >
-                <IconeWhatsApp />
-                Contratar o {plano.nome}
-              </BotaoLink>
-            </div>
-          </Revelar>
-        ))}
-      </ul>
-      <p className="mt-8 text-center text-sm text-mudo">
-        Implantação a partir de {brl(IMPLANTACAO.aPartirDe, { centavos: false })}, isenta no plano anual · Plano anual com 2 meses grátis
-      </p>
-    </Secao>
-  );
-}
-
 /* --------------------------------- Dúvidas -------------------------------- */
 
 const DUVIDAS = [
@@ -483,10 +411,6 @@ const DUVIDAS = [
     pergunta: "O que já funciona e o que ainda depende da implantação?",
     resposta:
       "Painel, casos, prazos, agenda, financeiro, clientes e a IA já funcionam na demonstração. O número oficial de WhatsApp, a captura de publicações dos tribunais e a cobrança por Pix e boleto são ligados na implantação, porque dependem de contas do próprio escritório.",
-  },
-  {
-    pergunta: "Quanto custa a implantação?",
-    resposta: `A partir de ${brl(IMPLANTACAO.aPartirDe, { centavos: false })}, conforme o tamanho do escritório e o volume de dados a migrar. No plano anual, a implantação é isenta.`,
   },
 ];
 
@@ -576,9 +500,6 @@ export function Rodape() {
         <nav aria-label="Rodapé" className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/65">
           <Link href="/#recursos" className="hover:text-white">
             Recursos
-          </Link>
-          <Link href="/#planos" className="hover:text-white">
-            Planos
           </Link>
           <Link href="/privacidade" className="hover:text-white">
             Privacidade
