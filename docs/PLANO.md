@@ -1,8 +1,8 @@
 # Vade — Plano Completo do Produto
 
 > Plataforma de gestão para escritórios de advocacia com IA nativa.
-> Meta comercial: ticket a partir de **R$ 2.000/mês** por escritório.
-> Documento de trabalho — versão 1.1 (nov/2026). O nome do produto é **Vade** (de _Vade Mecum_, "vai comigo");
+> Meta comercial: planos a partir de **R$ 297/mês** por escritório, com ganho no volume de clientes.
+> Documento de trabalho — versão 1.2 (nov/2026). O nome do produto é **Vade** (de _Vade Mecum_, "vai comigo");
 > nas primeiras versões deste plano ele aparecia como "AdvoHub". Falta confirmar a marca no INPI e o domínio.
 >
 > Apresentações: `Vade-Apresentacao.pdf` (completa, com o plano de execução) e
@@ -28,9 +28,9 @@ responde o cliente, cobra e agenda — sempre sob supervisão do advogado.
 
 ## 2. Público-alvo (ICP)
 
-| Segmento | Perfil | Por que paga R$ 2.000+ |
+| Segmento | Perfil | Por que assina |
 |---|---|---|
-| **Principal** | Escritórios de 2 a 15 advogados, faturamento de R$ 50 mil a R$ 500 mil/mês | Já sentem a dor de gestão e têm margem para investir |
+| **Principal** | Escritórios de 2 a 15 advogados, faturamento de R$ 30 mil a R$ 500 mil/mês | Já sentem a dor de gestão, e a mensalidade cabe no caixa |
 | Secundário | Advogado solo de alto volume (previdenciário, trabalhista, consumidor, família) | Muito lead via WhatsApp, muito processo, pouco tempo |
 | Expansão | Departamentos jurídicos e escritórios de 15–50 advogados | Plano Enterprise |
 
@@ -154,20 +154,24 @@ dados hospedados no Brasil, logs de acesso, política de retenção e exclusão.
 
 | | **Profissional** | **Escritório** | **Enterprise** |
 |---|---|---|---|
-| Mensalidade | **R$ 2.197/mês** | **R$ 3.497/mês** | a partir de **R$ 5.900/mês** |
+| Mensalidade | **R$ 297/mês** | **R$ 597/mês** | a partir de **R$ 1.497/mês** |
 | Usuários | até 3 | até 10 | ilimitado |
-| Processos monitorados | até 500 | até 2.000 | sob medida |
-| Atendente IA no WhatsApp | 1 número, 1.000 conversas/mês | 2 números, 3.000 conversas/mês | sob medida |
+| Processos acompanhados | até 200 | até 800 | sob medida |
+| Atendente IA no WhatsApp | 1 número, 300 conversas/mês | 2 números, 1.000 conversas/mês | sob medida |
 | Assistente IA do advogado | ✔ | ✔ | ✔ + modelos treinados no acervo |
 | Financeiro + cobrança automática | ✔ | ✔ + NFS-e, repasses | ✔ + multi-filial |
 | Portal do cliente | — | ✔ | ✔ |
 | Onboarding | remoto | migração de dados | gerente de conta dedicado |
 
-- **Taxa de implantação:** R$ 2.500 a R$ 6.000 (migração, configuração do WhatsApp, treinamento). Isenta no plano anual.
+- **Taxa de implantação:** a partir de R$ 497 (migração, configuração do WhatsApp, treinamento). Isenta no plano anual.
 - **Plano anual:** 2 meses grátis (pagamento à vista ou 12x).
-- **Excedentes:** pacotes de conversas IA e processos monitorados.
+- **Excedentes:** pacotes de conversas IA e de processos acompanhados.
 
-## 7. Por que vale R$ 2.000+ (ROI para o advogado)
+**Referência de mercado (nov/2026):** Astrea de R$ 249 a R$ 1.379 por mês, EasyJur de R$ 299 a R$ 799, ADVBOX a partir de R$ 220.
+Os preços acima ficam na faixa de entrada desses concorrentes. A versão 1.1 deste plano previa R$ 2.197, R$ 3.497 e R$ 5.900;
+o preço caiu para caber no caixa de escritórios pequenos, e a conta de custos (seção 8) foi refeita.
+
+## 7. Por que se paga (ROI para o advogado)
 
 | Ganho | Estimativa mensal (escritório de 3–5 advogados) |
 |---|---|
@@ -177,7 +181,7 @@ dados hospedados no Brasil, logs de acesso, política de retenção e exclusão.
 | Horas de advogado liberadas (20h × R$ 200/h) | R$ 4.000 |
 | **Total potencial** | **R$ 16.000 – R$ 21.000/mês** |
 
-Mensagem de venda: **"O Vade se paga com um contrato a mais por mês."** Um único prazo perdido pode custar mais que um ano de assinatura.
+Mensagem de venda: **"O Vade se paga com uma parcela recuperada por mês."** A mensalidade do plano Profissional custa menos que duas horas de trabalho de um advogado, e um único prazo perdido pode custar mais que anos de assinatura.
 
 > Os números acima são estimativas de referência para a apresentação comercial e devem ser validados com os escritórios piloto.
 
@@ -185,20 +189,25 @@ Mensagem de venda: **"O Vade se paga com um contrato a mais por mês."** Um úni
 
 | Item | Custo estimado/mês |
 |---|---|
-| IA (Claude) — atendimento, briefing, resumos, documentos, minutas | R$ 200 – R$ 600 |
-| WhatsApp Business Platform (mensagens de lembrete e cobrança) | R$ 80 – R$ 200 |
-| Monitoramento de processos/publicações | R$ 100 – R$ 300 |
-| Infraestrutura, storage, e-mail | R$ 40 – R$ 80 |
+| IA (Claude) — atendimento, briefing, resumos, documentos, minutas | R$ 40 – R$ 110 |
+| WhatsApp Business Platform (mensagens de lembrete e cobrança) | R$ 20 – R$ 60 |
+| Acompanhamento de processos e publicações | R$ 40 – R$ 110 |
+| Infraestrutura, armazenamento, e-mail | R$ 15 – R$ 30 |
 | Gateway/assinatura (repasse ao cliente quando possível) | variável |
-| **Total** | **R$ 420 – R$ 1.180** |
+| **Total** | **R$ 115 – R$ 310** |
 
-**Como chegamos ao custo de IA** (preços de tabela da Anthropic em nov/2026: Sonnet US$ 2 / US$ 10 e Haiku US$ 0,10 / US$ 0,50 por milhão de tokens de entrada/saída):
-- Atendimento: 1.000 conversas × ~8 trocas. Só com Sonnet daria ~US$ 80/mês; com ~70% das trocas no Haiku (triagem, perguntas simples) e cache de prompt, cai para ~US$ 25–30.
-- Assistente do advogado (briefings, resumo de ~400 publicações, ~60 documentos, ~40 minutas, perguntas sobre processos): ~US$ 30–35.
-- Total típico ≈ US$ 60 (≈ R$ 330); com uso intenso, até ~R$ 600.
+**Como chegamos ao custo de IA** (preços de tabela da Anthropic em nov/2026, por milhão de tokens de entrada/saída: Haiku 5.5 US$ 0,10 / US$ 0,50, Sonnet 5.5 US$ 2 / US$ 10 e Opus 5.5 US$ 4 / US$ 20; dólar a R$ 5,50):
+- Atendimento: 300 conversas × ~8 trocas ≈ 2.400 chamadas, com ~4 mil tokens de entrada e ~200 de saída cada. No Haiku isso custa cerca de US$ 1 por mês; no Sonnet, ~US$ 24; no Opus, ~US$ 48 (≈ R$ 265, quase a mensalidade inteira).
+- Assistente do advogado (resumo de ~150 publicações, briefing diário de 3 usuários, ~20 documentos, ~15 minutas, ~300 perguntas): ~US$ 11 no Sonnet, o dobro no Opus.
+- Total típico ≈ US$ 12 (≈ R$ 65), com o atendente no Haiku e o assistente no Sonnet; com uso intenso, até ~R$ 110.
 
-**Custo típico ≈ R$ 650/mês → margem bruta ≈ 70% no plano Profissional.** No uso mais intenso a margem cai para ~45%, por isso os limites por plano e os pacotes de excedente são obrigatórios.
-Meta: com 100 escritórios ativos ≈ R$ 250 mil de MRR (ticket médio de R$ 2.500).
+**O modelo de IA virou decisão de preço.** O aplicativo usa hoje o Opus 5.5 por padrão nas duas funções. A R$ 297, a conta só fecha com o atendente em um modelo mais barato (variável `ANTHROPIC_MODEL_ATENDIMENTO`). Antes de trocar, compare a qualidade das respostas em conversas reais: é uma escolha entre custo e qualidade do atendimento.
+
+**Custo típico ≈ R$ 170/mês → margem bruta ≈ 43% no plano Profissional.** No uso mais intenso o custo encosta na mensalidade, por isso os limites por plano (200 processos, 300 conversas) e os pacotes de excedente são obrigatórios. A margem ficou bem mais apertada que a da versão anterior (≈ 70%): o plano passa a depender de volume e de custo de venda baixo.
+
+No plano Escritório (R$ 597, 800 processos, 1.000 conversas, 10 usuários), a mesma conta dá de R$ 275 a R$ 630 por mês, com custo típico perto de R$ 475 (margem bruta ≈ 20%). O item que decide é o acompanhamento de processos: negocie preço por volume ou por OAB com o fornecedor antes de vender este plano, e ajuste os limites se a cotação vier acima do estimado.
+
+Meta: com 100 escritórios ativos ≈ R$ 45 mil de MRR (ticket médio em torno de R$ 450). Para chegar aos R$ 250 mil de MRR da versão anterior deste plano, passam a ser necessários cerca de 550 escritórios.
 
 > Todos os custos acima são estimativas para validar na Fase 0 com cotações reais dos fornecedores.
 
@@ -211,14 +220,14 @@ A maioria é forte em cadastro de processos, mas trata IA como acessório e o Wh
 1. **IA que age** (agente com ferramentas), não só um chat — ela agenda, cobra, responde e resume.
 2. **WhatsApp oficial como centro do atendimento**, com caixa de entrada da equipe.
 3. **Financeiro de verdade** (êxito, repasse, cobrança automática, NFS-e) — onde o sócio sente o dinheiro.
-4. **Onboarding feito por nós** (migração + configuração), justificando o ticket premium.
+4. **Onboarding guiado** (migração + configuração), cobrado à parte na implantação e isento no plano anual.
 5. Visual moderno e simples, pensado para quem não gosta de sistema.
 
 ## 10. Go-to-market
 
 1. **Pilotos (mês 2–4):** 5–10 escritórios com 50% de desconto por 3 meses em troca de feedback e case.
 2. **Conteúdo e autoridade:** Instagram/LinkedIn/YouTube sobre gestão e IA na advocacia; webinars mensais.
-3. **Vendas consultivas:** demo de 30 min + diagnóstico gratuito do escritório (quanto ele perde hoje), com implantação concluída em até 7 dias (meta).
+3. **Venda de baixo custo:** a demonstração pública do site (sem cadastro) faz a primeira apresentação; a conversa no WhatsApp fecha. Com a mensalidade mais baixa, demo de 30 minutos e diagnóstico do escritório ficam para o plano Escritório e o Enterprise. Implantação concluída em até 7 dias (meta).
 4. **Parcerias:** subseções da OAB, cursos jurídicos, contadores de escritórios, comunidades de advogados.
 5. **Indicação:** 1 mês grátis por escritório indicado que fechar.
 6. Tráfego pago focado em sócios de escritórios (Meta + Google) com lead para demo.
@@ -236,6 +245,7 @@ A maioria é forte em cadastro de processos, mas trata IA como acessório e o Wh
 | Dependência de provedores (WhatsApp, dados jurídicos) | Camada de integração desacoplada; 2º fornecedor homologado |
 | Ciclo de venda longo | Piloto com desconto, migração gratuita, demo com dados do próprio escritório |
 | Custo de IA crescer | Cache, modelos menores para tarefas simples, limites por plano |
+| Margem apertada com o preço mais baixo | Limites por plano, excedentes cobrados, contrato por volume com o fornecedor de dados processuais, venda sem reunião |
 
 ## 12. Próximos passos (próximas 2 semanas)
 
