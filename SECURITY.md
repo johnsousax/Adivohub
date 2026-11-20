@@ -91,3 +91,5 @@ if (!pedido.success) return erro(requisicao, 400, "Pedido inválido.");
 - Nenhuma variável nova com segredo no navegador (`NEXT_PUBLIC_` é público).
 - Mudou o que o site coleta ou com quem compartilha? Atualize `/privacidade` e a versão em `src/lib/marca.ts`.
 - Revise o checklist de `docs/SEGURANCA.md`.
+
+Depois de publicar, confira o endereço de fora: `node scripts/conferir-site.cjs https://vade-juridico.vercel.app`.

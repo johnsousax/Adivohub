@@ -94,13 +94,15 @@ Não se aplicam hoje, por não existirem no sistema: **Pagamentos**, **Uploads d
 - `.env*` fora do Git desde o início; `.env.example` só com nomes.
 - `AUTH_SECRET` cadastrado na Vercel como variável sensível, com valores diferentes em produção e pré-visualização. O de produção foi trocado nesta entrega.
 - `npm audit`: zero vulnerabilidades. Arquivo de travamento no Git.
-- Fluxo `Segurança` no GitHub em todo push: tipos, lint, testes, `npm audit`, regras do banco contra ataques simulados, busca de segredos (gitleaks) e análise de código (CodeQL). Dependabot configurado (passa a agir quando o código estiver no ramo principal).
+- Fluxo `Segurança` no GitHub em todo push: tipos, lint, testes, `npm audit`, regras do banco contra ataques simulados, busca de segredos (gitleaks) e análise de código (CodeQL). Dependabot configurado (passa a agir quando o código estiver no ramo principal). Na primeira execução, as quatro tarefas passaram. Se a análise de código apontar algo, o aviso aparece em _Security → Code scanning_ no GitHub; essa aba não pôde ser lida daqui, vale conferir.
 
 ### Infraestrutura
 
 - HTTPS obrigatório (Vercel). Funções em São Paulo.
 - Pré-visualizações protegidas por login da Vercel; só o endereço de produção é público.
-- Bloqueio na borda (`vercel.json`) de caminhos que só robôs de ataque pedem e de métodos HTTP que o site não usa.
+- Bloqueio na borda (`vercel.json`) de caminhos que só robôs de ataque pedem e de métodos HTTP que o site não usa. Conferido em produção: `/wp-admin`, `/.env`, `/.git/config` e semelhantes recebem 403 antes de chegar ao site.
+- A proteção automática da Vercel também agiu durante os testes: depois de algumas sondagens em sequência, ela passou a exigir verificação do computador que as fazia, antes de responder qualquer página.
+- Conferência externa depois de cada publicação: `node scripts/conferir-site.cjs <endereço>` abre o site em um navegador e confere 50 pontos (cabeçalhos, CSP, bloqueios, cookie, demonstração, preços e animações).
 
 ### Banco de dados (projeto, ainda não conectado)
 
@@ -145,6 +147,8 @@ Não se aplicam hoje, por não existirem no sistema: **Pagamentos**, **Uploads d
 | Injeção de instruções na IA nunca é 100% evitável | Baixo (a IA não tem ferramentas com efeito) | Manter a validação no servidor ao criar ferramentas |
 | Eventos repetidos do webhook são lembrados só em memória | Baixo (o processamento ainda não está ligado) | Tabela `private.webhook_events`, já no esquema |
 | Repositório público e textos legais sem revisão de advogado | A resolver | Itens 2 e 5 da seção anterior |
+| Esquema do banco testado em PostgreSQL local, ainda não em um projeto Supabase | A resolver ao conectar | Aplicar em um projeto novo e rodar o Security Advisor |
+| Preço mais baixo deixa a margem apertada; o atendente de IA no modelo padrão custaria quase a mensalidade inteira | Risco de negócio | Seção 8 de `docs/PLANO.md`: limites por plano, modelo do atendente e cotação do fornecedor de processos |
 | O Next.js anuncia que o modo de cache parcial será obrigatório na próxima versão maior; ele não combina com nonce | Futuro | Manter o Next 16 e rever a CSP antes de migrar |
 
 ## 6. Decisões registradas
@@ -156,6 +160,7 @@ Não se aplicam hoje, por não existirem no sistema: **Pagamentos**, **Uploads d
 - **Sem banner de cookies**, porque não há cookie além do necessário.
 - **CPF e CNPJ em tabela fora da API**, e não em coluna da tabela de clientes: assim o navegador nunca recebe o dado cifrado, e só o servidor consegue gravá-lo.
 - **Excluir cliente com caso ou contrato em aberto é recusado**, em vez de apagar tudo em cascata como a demonstração faz hoje: evita perda em massa por engano.
+- **A barra de comentários da Vercel fica bloqueada nas pré-visualizações**, porque a CSP não libera nenhum domínio de terceiros. Para usá-la, seria preciso liberar `vercel.live` só nesse ambiente.
 - **`SECURITY.md` escrito para este projeto**, e não o texto original do padrão, porque o repositório é público.
 - **Bot Protection não foi ligado em modo "challenge"**: poderia quebrar a prévia do link no WhatsApp, principal canal de venda.
 
