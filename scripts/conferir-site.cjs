@@ -125,8 +125,8 @@ const t = (nome, cond, det) => {
   await page.goto(BASE + "/", { waitUntil: "networkidle" });
   const texto = await page.evaluate(() => document.body.innerText);
   t(
-    "landing sem a secao de planos",
-    (await page.locator("#planos").count()) === 0 && !texto.includes("297") && !texto.includes("/mês"),
+    "planos e precos na landing",
+    (await page.locator("#planos").count()) === 1 && texto.includes("2.999") && texto.includes("4.497") && texto.includes("5.997"),
     "planos",
   );
   t(
@@ -148,7 +148,7 @@ const t = (nome, cond, det) => {
   );
   t("nenhum bloco fica invisivel", invisiveis === 0, invisiveis);
   const zaps = await page.evaluate(
-    () => Array.from(document.querySelectorAll("a")).filter((a) => a.href.includes("wa.me/5598970050096")).length,
+    () => Array.from(document.querySelectorAll("a")).filter((a) => a.href.includes("wa.me/5598983385000")).length,
   );
   t("whatsapp de vendas nos botoes", zaps >= 5, zaps);
 
@@ -161,7 +161,7 @@ const t = (nome, cond, det) => {
     t("botao da demonstracao abre o painel", new URL(page.url()).pathname.startsWith("/painel"), page.url());
     await page.waitForTimeout(1500);
     const painel = await page.evaluate(() => document.body.innerText);
-    t("painel mostra os dados da demonstracao", painel.includes("Dra. Ana") || painel.includes("Prazos"), painel.slice(0, 80));
+    t("painel mostra os dados da demonstracao", painel.includes("Dr. Gabriel") && painel.includes("Prazos"), painel.slice(0, 80));
     await page.goto(BASE + "/painel/financeiro", { waitUntil: "networkidle" });
     t("financeiro abre", (await page.evaluate(() => document.body.innerText)).includes("receber"), page.url());
   }

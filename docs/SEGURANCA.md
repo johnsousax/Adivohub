@@ -1,6 +1,6 @@
 # Relatório de segurança do JustixUp
 
-Atualizado em 20/11/2026. Retrato do que está no ar em `justixup.vercel.app` (o endereço antigo `vade-juridico.vercel.app` abre o mesmo site), auditado contra o padrão "Segurança Máxima" adotado pelo projeto. As regras para código novo estão em [`SECURITY.md`](../SECURITY.md).
+Atualizado em 20/11/2026. Retrato do que está no ar em `justixup.vercel.app` (o endereço antigo `vade-juridico.vercel.app` redireciona para ele), auditado contra o padrão "Segurança Máxima" adotado pelo projeto. As regras para código novo estão em [`SECURITY.md`](../SECURITY.md).
 
 Nenhum sistema é impossível de invadir. Este relatório diz com clareza o que protege hoje, o que ainda falta e de quem depende.
 

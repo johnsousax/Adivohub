@@ -195,7 +195,7 @@ select teste.afeta('Sócia cadastra cliente (o banco preenche o escritório)', $
 select teste.conta('O cliente novo ficou no escritório A, em nome dela', $$select 1 from public.clientes where nome = 'Novo cliente de A' and escritorio_id = '10000000-0000-0000-0000-00000000000a' and criado_por = '00000000-0000-0000-0000-0000000000a1'$$, 1);
 select teste.afeta('Sócia renomeia o escritório', $$update public.escritorios set nome = 'Escritório A Ltda'$$, 1);
 select teste.afeta('Sócia altera observações de um cliente', $$update public.clientes set observacoes = 'Outro segredo' where id = '20000000-0000-0000-0000-00000000000a'$$, 1);
-select teste.barra('Mudar o próprio plano sem pagar', $$update public.escritorios set plano = 'enterprise'$$, '42501');
+select teste.barra('Mudar o próprio plano sem pagar', $$update public.escritorios set plano = 'completo'$$, '42501');
 select teste.barra('Forjar quem criou o registro', $$update public.clientes set criado_por = '00000000-0000-0000-0000-0000000000a2' where nome = 'Novo cliente de A'$$, '42501');
 select teste.barra('Gravar o documento do cliente direto pela tabela', $$update public.clientes set documento_mascarado = '***.456.789-**' where id = '20000000-0000-0000-0000-00000000000a'$$, '42501');
 select teste.barra('Ler a tabela de documentos cifrados', 'select * from private.documentos_de_clientes', '42501');

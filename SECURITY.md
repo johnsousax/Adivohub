@@ -5,7 +5,7 @@ O retrato atual da segurança (o que está feito, o que falta e os riscos que so
 
 ## Encontrou uma falha?
 
-- **Não abra uma issue pública.** Avise em particular pelo WhatsApp de contato do projeto: https://wa.me/5598970050096
+- **Não abra uma issue pública.** Avise em particular pelo WhatsApp de contato do projeto: https://wa.me/5598983385000
 - Diga o que encontrou, como reproduzir e o impacto que você enxerga. Respondemos em até 3 dias úteis.
 - Pedimos que você não acesse dados de terceiros, não derrube o serviço e nos dê tempo de corrigir antes de divulgar.
 

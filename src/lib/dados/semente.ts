@@ -49,11 +49,11 @@ export function criarSemente(hoje: Date): DadosEscritorio {
   const hojeISO = paraISO(base);
 
   const usuarios: Usuario[] = [
-    { id: "usr-ana", nome: "Dra. Ana Almeida", email: "ana@almeidarocha.example", papel: "socio", oab: "OAB/MA 99.901" },
-    { id: "usr-pedro", nome: "Dr. Pedro Rocha", email: "pedro@almeidarocha.example", papel: "socio", oab: "OAB/MA 99.902" },
-    { id: "usr-julia", nome: "Dra. Júlia Santos", email: "julia@almeidarocha.example", papel: "advogado", oab: "OAB/MA 99.903" },
-    { id: "usr-marcos", nome: "Marcos Lima", email: "marcos@almeidarocha.example", papel: "estagiario" },
-    { id: "usr-carla", nome: "Carla Nunes", email: "financeiro@almeidarocha.example", papel: "financeiro" },
+    { id: "usr-gabriel", nome: "Dr. Gabriel Ogando", email: "gabriel@ogandorocha.example", papel: "socio", oab: "OAB/MA 99.901" },
+    { id: "usr-pedro", nome: "Dr. Pedro Rocha", email: "pedro@ogandorocha.example", papel: "socio", oab: "OAB/MA 99.902" },
+    { id: "usr-julia", nome: "Dra. Júlia Santos", email: "julia@ogandorocha.example", papel: "advogado", oab: "OAB/MA 99.903" },
+    { id: "usr-marcos", nome: "Marcos Lima", email: "marcos@ogandorocha.example", papel: "estagiario" },
+    { id: "usr-carla", nome: "Carla Nunes", email: "financeiro@ogandorocha.example", papel: "financeiro" },
   ];
 
   const clientes: Cliente[] = [
@@ -67,7 +67,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       cidade: "São Luís - MA",
       origem: "indicacao",
       status: "ativo",
-      responsavelId: "usr-ana",
+      responsavelId: "usr-gabriel",
       criadoEm: dia(-410),
     },
     {
@@ -106,7 +106,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       cidade: "São José de Ribamar - MA",
       origem: "instagram",
       status: "ativo",
-      responsavelId: "usr-ana",
+      responsavelId: "usr-gabriel",
       criadoEm: dia(-95),
     },
     {
@@ -158,7 +158,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       cidade: "Raposa - MA",
       origem: "whatsapp",
       status: "ativo",
-      responsavelId: "usr-ana",
+      responsavelId: "usr-gabriel",
       criadoEm: dia(-130),
     },
     {
@@ -211,7 +211,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       cidade: "São Luís - MA",
       origem: "google",
       status: "inativo",
-      responsavelId: "usr-ana",
+      responsavelId: "usr-gabriel",
       criadoEm: dia(-700),
     },
     {
@@ -256,7 +256,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       status: "lead",
       etapaFunil: "consulta",
       areaInteresse: "previdenciario",
-      responsavelId: "usr-ana",
+      responsavelId: "usr-gabriel",
       criadoEm: dia(-4),
       observacoes: "Pedido de aposentadoria negado pelo INSS.",
     },
@@ -288,7 +288,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       status: "lead",
       etapaFunil: "contrato",
       areaInteresse: "familia",
-      responsavelId: "usr-ana",
+      responsavelId: "usr-gabriel",
       criadoEm: dia(-12),
       observacoes: "Revisão de pensão alimentícia. Contrato enviado para assinatura.",
     },
@@ -322,7 +322,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       orgao: "7ª Vara do Juizado Especial Federal — São Luís",
       parteContraria: "INSS",
       fase: "recurso",
-      responsavelId: "usr-ana",
+      responsavelId: "usr-gabriel",
       valorCausa: 48000,
       criadoEm: dia(-400),
       descricao: "Benefício negado na via administrativa. Sentença procedente; o INSS recorreu.",
@@ -367,7 +367,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       orgao: "2ª Vara de Família de São Luís",
       parteContraria: "R. S. (ex-cônjuge)",
       fase: "instrucao",
-      responsavelId: "usr-ana",
+      responsavelId: "usr-gabriel",
       valorCausa: 30000,
       criadoEm: dia(-90),
       descricao: "Guarda compartilhada em discussão; alimentos provisórios fixados.",
@@ -427,7 +427,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       orgao: "9ª Vara do Juizado Especial Federal — São Luís",
       parteContraria: "INSS",
       fase: "instrucao",
-      responsavelId: "usr-ana",
+      responsavelId: "usr-gabriel",
       valorCausa: 34000,
       criadoEm: dia(-125),
       descricao: "Benefício cessado. Perícia judicial designada.",
@@ -501,7 +501,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       orgao: "5ª Vara do Juizado Especial Federal — São Luís",
       parteContraria: "INSS",
       fase: "encerrado",
-      responsavelId: "usr-ana",
+      responsavelId: "usr-gabriel",
       valorCausa: 88000,
       criadoEm: dia(-690),
       descricao: "Benefício implantado e atrasados pagos por RPV.",
@@ -696,7 +696,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       titulo: "Contrarrazões ao recurso inominado",
       dataFatal: forense(0),
       dataInterna: forense(-2),
-      responsavelId: "usr-ana",
+      responsavelId: "usr-gabriel",
       origem: "ia",
     },
     {
@@ -714,7 +714,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       titulo: "Juntar comprovantes de renda",
       dataFatal: forense(2),
       dataInterna: forense(0),
-      responsavelId: "usr-ana",
+      responsavelId: "usr-gabriel",
       origem: "manual",
     },
     {
@@ -723,7 +723,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       titulo: "Quesitos para a perícia",
       dataFatal: forense(3),
       dataInterna: forense(1),
-      responsavelId: "usr-ana",
+      responsavelId: "usr-gabriel",
       origem: "ia",
     },
     {
@@ -805,7 +805,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       fim: quando(util(0), "15:45"),
       local: "Online (vídeo)",
       clienteId: "cli-fernanda",
-      responsavelId: "usr-ana",
+      responsavelId: "usr-gabriel",
     },
     {
       id: "evt-3",
@@ -827,7 +827,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       local: "2ª Vara de Família de São Luís",
       casoId: "cas-souza",
       clienteId: "cli-anapaula",
-      responsavelId: "usr-ana",
+      responsavelId: "usr-gabriel",
     },
     {
       id: "evt-5",
@@ -838,7 +838,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       local: "Justiça Federal — sala de perícias",
       casoId: "cas-lima-inss",
       clienteId: "cli-roberto",
-      responsavelId: "usr-ana",
+      responsavelId: "usr-gabriel",
     },
     {
       id: "evt-6",
@@ -858,7 +858,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       inicio: quando(util(4), "10:00"),
       fim: quando(util(4), "11:00"),
       local: "Escritório",
-      responsavelId: "usr-ana",
+      responsavelId: "usr-gabriel",
     },
     {
       id: "evt-8",
@@ -890,7 +890,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       fim: quando(util(-1), "10:45"),
       local: "Escritório",
       clienteId: "cli-paulo",
-      responsavelId: "usr-ana",
+      responsavelId: "usr-gabriel",
     },
     {
       id: "evt-11",
@@ -1218,7 +1218,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
         mensagem("cliente", "Bom dia! Tem novidade do meu processo da aposentadoria?", hojeISO, "08:12"),
         mensagem(
           "ia",
-          "Bom dia, Maria! A senhora ganhou em primeira instância, e o INSS recorreu. Agora o processo está na Turma Recursal, que vai julgar o recurso. A Dra. Ana já está preparando a nossa resposta. Assim que houver decisão, eu aviso por aqui.",
+          "Bom dia, Maria! A senhora ganhou em primeira instância, e o INSS recorreu. Agora o processo está na Turma Recursal, que vai julgar o recurso. O Dr. Gabriel já está preparando a nossa resposta. Assim que houver decisão, eu aviso por aqui.",
           hojeISO,
           "08:12",
         ),
@@ -1294,7 +1294,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
   ];
 
   return {
-    escritorio: { nome: "Almeida & Rocha Advogados", cidade: "São Luís - MA", plano: "escritorio" },
+    escritorio: { nome: "Ogando & Rocha Advogados", cidade: "São Luís - MA", plano: "completo" },
     usuarios,
     clientes,
     casos,

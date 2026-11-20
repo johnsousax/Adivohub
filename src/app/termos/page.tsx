@@ -69,9 +69,9 @@ export default function PaginaTermos() {
 
       <Clausula titulo="5. Planos e contratação">
         <p>
-          Valores e recursos são informados pela nossa equipe no atendimento. A contratação é feita diretamente com a nossa equipe e
-          formalizada em contrato próprio, que define preço, prazo, suporte, proteção de dados e cancelamento. Em caso de diferença, vale o
-          contrato.
+          Os valores e os recursos de cada plano estão na página inicial e podem mudar. A contratação é feita diretamente com a nossa equipe
+          e formalizada em contrato próprio, que define preço, prazo, suporte, proteção de dados e cancelamento. Em caso de diferença, vale
+          o contrato.
         </p>
       </Clausula>
 

@@ -8,8 +8,8 @@ export const MARCA = {
   descricao: "Gestão jurídica com inteligência artificial: casos, prazos, agenda, honorários e atendimento 24h no WhatsApp em um só lugar.",
   /** Número de vendas: recebe os contatos da landing page. */
   whatsapp: {
-    e164: "5598970050096",
-    exibicao: "(98) 97005-0096",
+    e164: "5598983385000",
+    exibicao: "(98) 98338-5000",
   },
 } as const;
 
@@ -30,68 +30,104 @@ export const LEGAL = {
   vigenteDesde: "2026-11-20",
 } as const;
 
-export type IdPlano = "profissional" | "escritorio" | "enterprise";
+export type IdPlano = "essencial" | "crescimento" | "completo";
 
 export interface Plano {
   id: IdPlano;
   nome: string;
-  publico: string;
+  /** Uma linha sobre para quem é o plano. */
+  descricao: string;
+  /** Mensalidade em reais. */
   preco: number;
-  /** Texto pequeno acima do preço (ex.: "a partir de"). */
-  prefixoPreco?: string;
-  sufixoPreco: string;
   destaque: boolean;
+  /** Plano anterior cujos itens este inclui ("Tudo do Essencial"). */
+  inclui?: string;
   recursos: string[];
 }
 
+/**
+ * Planos da proposta comercial. A mensalidade é fixa e não há taxa de implantação.
+ * A verba de anúncios dos planos com tráfego pago é paga direto às plataformas.
+ */
 export const PLANOS: Plano[] = [
   {
-    id: "profissional",
-    nome: "Profissional",
-    publico: "Até 3 usuários",
-    preco: 297,
-    sufixoPreco: "/mês",
+    id: "essencial",
+    nome: "Essencial",
+    descricao: "O sistema completo para organizar o escritório.",
+    preco: 2999,
     destaque: false,
     recursos: [
-      "Até 200 processos acompanhados",
-      "Atendente IA: 300 conversas por mês",
-      "Assistente IA do advogado",
-      "Financeiro e régua de cobrança",
-      "Implantação remota",
+      `${MARCA.nome} completo e configurado`,
+      "Áreas: professor, bancário, previdenciário e trabalhista",
+      "Cadastro inicial de clientes e processos",
+      "Treinamento da equipe",
+      "Hospedagem, manutenção e atualizações",
+      "Suporte via WhatsApp",
     ],
   },
   {
-    id: "escritorio",
-    nome: "Escritório",
-    publico: "Até 10 usuários",
-    preco: 597,
-    sufixoPreco: "/mês",
+    id: "crescimento",
+    nome: "Crescimento",
+    descricao: "Sistema, presença digital e anúncios para atrair clientes.",
+    preco: 4497,
+    destaque: false,
+    inclui: "Essencial",
+    recursos: [
+      "Aplicativo do escritório",
+      "Site profissional com página para cada área",
+      "Tráfego pago no Meta e no Google",
+      "Relatório mensal de resultados",
+      "Anúncios dentro das normas da OAB",
+    ],
+  },
+  {
+    id: "completo",
+    nome: "Escritório Completo",
+    descricao: "Todo o marketing e a tecnologia nas mãos de uma agência.",
+    preco: 5997,
     destaque: true,
+    inclui: "Crescimento",
     recursos: [
-      "Até 800 processos acompanhados",
-      "2 números de WhatsApp, 1.000 conversas por mês",
-      "Portal do cliente (em breve)",
-      "NFS-e, repasses e DRE (em breve)",
-      "Migração de dados inclusa",
-    ],
-  },
-  {
-    id: "enterprise",
-    nome: "Enterprise",
-    publico: "Usuários ilimitados",
-    preco: 1497,
-    prefixoPreco: "a partir de",
-    sufixoPreco: "/mês",
-    destaque: false,
-    recursos: [
-      "Volumes sob medida",
-      "IA ajustada ao acervo do escritório",
-      "Multi-filial (em breve) e SLA",
-      "Gerente de conta dedicado",
-      "Integrações exclusivas",
+      "Gestão das redes sociais: posts, carrosséis e stories",
+      "Calendário de conteúdo mensal",
+      "Reunião mensal de estratégia",
+      "Relatório completo e suporte prioritário",
+      "Melhorias contínuas no sistema e no app",
     ],
   },
 ];
+
+/** Célula da tabela de comparação: incluído (true), não incluído (false) ou um texto. */
+export type CelulaComparacao = boolean | string;
+
+/** Itens da tabela "Compare os planos", na ordem Essencial, Crescimento, Escritório Completo. */
+export const COMPARACAO_PLANOS: Array<{ item: string; valores: [CelulaComparacao, CelulaComparacao, CelulaComparacao] }> = [
+  { item: "Sistema completo", valores: [true, true, true] },
+  { item: "Hospedagem, manutenção e atualizações", valores: [true, true, true] },
+  { item: "Treinamento e suporte", valores: [true, true, "Prioritário"] },
+  { item: "Aplicativo do escritório", valores: [false, true, true] },
+  { item: "Site profissional", valores: [false, true, true] },
+  { item: "Tráfego pago (Meta e Google)", valores: [false, true, true] },
+  { item: "Relatório de resultados", valores: [false, "Mensal", "Completo"] },
+  { item: "Gestão de redes sociais", valores: [false, false, true] },
+  { item: "Reunião mensal de estratégia", valores: [false, false, true] },
+  { item: "Melhorias contínuas no sistema", valores: [false, false, true] },
+];
+
+export const COMO_FUNCIONAM_OS_PLANOS = [
+  {
+    titulo: "Valor fixo todo mês",
+    texto: "Sem taxa de implantação. O primeiro pagamento já é a mensalidade, e ela segue igual nos meses seguintes.",
+  },
+  {
+    titulo: "Verba de anúncios",
+    texto: "Nos planos com tráfego pago, o investimento nos anúncios é pago direto às plataformas, à parte da mensalidade.",
+  },
+  {
+    titulo: "Dentro das regras da OAB",
+    texto: "Anúncios e conteúdos informativos, sem promessa de resultado, seguindo as normas de publicidade da advocacia.",
+  },
+] as const;
 
 export const URL_SITE =
   process.env.NEXT_PUBLIC_SITE_URL ||

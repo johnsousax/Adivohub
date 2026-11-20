@@ -6,6 +6,7 @@ import {
   KeyRound,
   LayoutDashboard,
   Lock,
+  Plus,
   Scale,
   ShieldCheck,
   Sparkles,
@@ -17,7 +18,9 @@ import {
 import Link from "next/link";
 import { Logo } from "@/components/marca/Logo";
 import { BotaoLink } from "@/components/ui/Botao";
-import { MARCA } from "@/lib/marca";
+import { cn } from "@/lib/cn";
+import { brl } from "@/lib/formatos";
+import { COMO_FUNCIONAM_OS_PLANOS, COMPARACAO_PLANOS, MARCA, PLANOS, type CelulaComparacao } from "@/lib/marca";
 import { linkWhatsApp, MENSAGENS_VENDA } from "@/lib/whatsapp";
 import { IconeWhatsApp, Secao, Sobretitulo, Telefone, TituloSecao } from "./Pecas";
 import { Revelar } from "./Revelar";
@@ -180,7 +183,7 @@ export function InteligenciaArtificial() {
                   hora: "07:00",
                   texto: (
                     <>
-                      Bom dia, Dra. Ana! Seu dia:
+                      Bom dia, Dr. Gabriel! Seu dia:
                       <br />
                       <br />
                       <strong>1 audiência</strong>: 10h, Ferreira (3ª Vara do Trabalho)
@@ -456,6 +459,181 @@ export function Duvidas() {
   );
 }
 
+/* --------------------------------- Planos --------------------------------- */
+
+function ValorDaComparacao({ valor, destaque }: { valor: CelulaComparacao; destaque: boolean }) {
+  if (valor === true) {
+    return (
+      <>
+        <Check className={cn("mx-auto size-[1.1rem]", destaque ? "text-ouro-500" : "text-tinta-2")} aria-hidden="true" />
+        <span className="sr-only">Incluído</span>
+      </>
+    );
+  }
+  if (valor === false) {
+    return (
+      <>
+        <span className="text-sutil" aria-hidden="true">
+          —
+        </span>
+        <span className="sr-only">Não incluído</span>
+      </>
+    );
+  }
+  return <span className={cn("font-semibold", destaque ? "text-ouro-600" : "text-tinta")}>{valor}</span>;
+}
+
+export function Planos() {
+  return (
+    <Secao id="planos" tom="cinza">
+      <Revelar efeito="foco" className="text-center">
+        <Sobretitulo>Planos</Sobretitulo>
+        <TituloSecao className="mx-auto">
+          Seu escritório organizado, visível e <span className="texto-ouro">captando clientes.</span>
+        </TituloSecao>
+        <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-mudo">
+          O {MARCA.nome} centraliza clientes, processos e atendimentos em um só lugar. Escolha o plano que combina com o momento do seu
+          escritório: do sistema sozinho até um time cuidando de todo o seu marketing.
+        </p>
+        <p className="mx-auto mt-6 inline-flex rounded-full bg-white px-4 py-2 text-sm text-tinta-2 shadow-cartao ring-1 ring-black/[0.05]">
+          Mensalidade fixa: o valor do 1º mês é o mesmo de todos os meses. Sem taxa de implantação.
+        </p>
+      </Revelar>
+
+      <ul className="mt-14 grid grid-cols-1 items-stretch gap-4 lg:grid-cols-3">
+        {PLANOS.map((plano, indice) => (
+          <Revelar como="li" key={plano.id} efeito="escala" atraso={indice * 120} className="flex">
+            <div
+              className={cn(
+                "relative flex w-full flex-col rounded-[1.9rem] p-8",
+                plano.destaque
+                  ? "contorno-vivo bg-noite text-white shadow-[0_40px_80px_-30px_rgb(0_0_0/0.5)]"
+                  : "cartao-vivo bg-white shadow-cartao ring-1 ring-black/[0.04]",
+              )}
+            >
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="text-xl font-semibold">{plano.nome}</h3>
+                {plano.destaque && (
+                  <span className="shrink-0 rounded-full bg-ouro-400/15 px-2.5 py-1 text-xs font-semibold whitespace-nowrap text-ouro-300">
+                    Mais completo
+                  </span>
+                )}
+              </div>
+              <p className={cn("mt-1.5 min-h-12 text-sm leading-relaxed", plano.destaque ? "text-white/55" : "text-mudo")}>
+                {plano.descricao}
+              </p>
+              <p className="mt-6 flex items-baseline gap-1">
+                <span className={cn("text-[2.7rem] leading-none font-bold tracking-[-0.045em]", plano.destaque && "texto-ouro")}>
+                  {brl(plano.preco, { centavos: false })}
+                </span>
+                <span className={cn("text-sm font-medium", plano.destaque ? "text-white/50" : "text-mudo")}>/mês</span>
+              </p>
+              <p className={cn("mt-2 text-sm", plano.destaque ? "text-white/45" : "text-sutil")}>mesmo valor desde o 1º mês</p>
+              <ul className={cn("mt-7 flex-1 space-y-3 border-t pt-7", plano.destaque ? "border-white/10" : "border-linha")}>
+                {plano.inclui && (
+                  <li className={cn("flex gap-3 text-[0.95rem] font-semibold", plano.destaque ? "text-white" : "text-tinta")}>
+                    <Plus className={cn("mt-1 size-4 shrink-0", plano.destaque ? "text-ouro-300" : "text-ouro-600")} aria-hidden="true" />
+                    Tudo do {plano.inclui}
+                  </li>
+                )}
+                {plano.recursos.map((recurso) => (
+                  <li
+                    key={recurso}
+                    className={cn("flex gap-3 text-[0.95rem] leading-relaxed", plano.destaque ? "text-white/80" : "text-tinta-2")}
+                  >
+                    <Check className={cn("mt-1 size-4 shrink-0", plano.destaque ? "text-ouro-300" : "text-ouro-600")} aria-hidden="true" />
+                    {recurso}
+                  </li>
+                ))}
+              </ul>
+              <BotaoLink
+                href={linkWhatsApp(MENSAGENS_VENDA.plano(plano.nome))}
+                variante={plano.destaque ? "ouro" : "primario"}
+                tamanho="g"
+                className="mt-8 w-full"
+              >
+                <IconeWhatsApp />
+                Contratar o {plano.nome}
+              </BotaoLink>
+            </div>
+          </Revelar>
+        ))}
+      </ul>
+
+      <Revelar className="mt-20">
+        <h3 className="text-[1.7rem] font-bold tracking-[-0.035em]">Compare os planos</h3>
+        <div className="relative mt-6 overflow-x-auto rounded-[1.6rem] bg-white shadow-cartao ring-1 ring-black/[0.04]">
+          <table className="w-full text-left text-[0.8rem] sm:text-[0.95rem]">
+            <caption className="sr-only">Itens incluídos em cada plano</caption>
+            <thead>
+              <tr className="border-b border-linha">
+                <th scope="col" className="px-3 py-4 font-semibold text-mudo sm:px-6">
+                  Itens
+                </th>
+                {PLANOS.map((plano) => (
+                  <th
+                    key={plano.id}
+                    scope="col"
+                    className={cn("px-2 py-4 text-center font-semibold sm:px-4", plano.destaque ? "text-ouro-600" : "text-tinta")}
+                  >
+                    {plano.nome}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {COMPARACAO_PLANOS.map((linha) => (
+                <tr key={linha.item} className="border-b border-linha last:border-0">
+                  <th scope="row" className="px-3 py-3.5 font-normal text-tinta-2 sm:px-6">
+                    {linha.item}
+                  </th>
+                  {linha.valores.map((valor, indice) => (
+                    <td key={PLANOS[indice].id} className="px-2 py-3.5 text-center sm:px-4">
+                      <ValorDaComparacao valor={valor} destaque={PLANOS[indice].destaque} />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr className="border-t border-linha-forte bg-fundo/60">
+                <th scope="row" className="px-3 py-4 font-semibold sm:px-6">
+                  Mensalidade
+                </th>
+                {PLANOS.map((plano) => (
+                  <td
+                    key={plano.id}
+                    className={cn(
+                      "px-2 py-4 text-center font-bold tracking-[-0.02em] whitespace-nowrap sm:px-4",
+                      plano.destaque ? "text-ouro-600" : "text-tinta",
+                    )}
+                  >
+                    {brl(plano.preco, { centavos: false })}
+                  </td>
+                ))}
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </Revelar>
+
+      <Revelar className="mt-16">
+        <h3 className="text-[1.7rem] font-bold tracking-[-0.035em]">Como funciona</h3>
+      </Revelar>
+      <ul className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+        {COMO_FUNCIONAM_OS_PLANOS.map((item, indice) => (
+          <Revelar como="li" key={item.titulo} atraso={indice * 100} className="flex">
+            <div className="cartao-vivo w-full rounded-[1.6rem] bg-white p-6 shadow-cartao ring-1 ring-black/[0.04]">
+              <h4 className="font-semibold">{item.titulo}</h4>
+              <p className="mt-2 text-[0.95rem] leading-relaxed text-mudo">{item.texto}</p>
+            </div>
+          </Revelar>
+        ))}
+      </ul>
+    </Secao>
+  );
+}
+
 /* ------------------------------ Chamada final ------------------------------ */
 
 export function ChamadaFinal() {
@@ -500,6 +678,9 @@ export function Rodape() {
         <nav aria-label="Rodapé" className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/65">
           <Link href="/#recursos" className="hover:text-white">
             Recursos
+          </Link>
+          <Link href="/#planos" className="hover:text-white">
+            Planos
           </Link>
           <Link href="/privacidade" className="hover:text-white">
             Privacidade

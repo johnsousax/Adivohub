@@ -101,7 +101,7 @@ export function iniciais(nome: string): string {
   return (primeira + ultima).toUpperCase();
 }
 
-/** (98) 97005-0096 */
+/** (98) 98338-5000 */
 export function telefone(valor: string): string {
   let d = valor.replace(/\D/g, "");
   if (d.length > 11 && d.startsWith("55")) d = d.slice(2);

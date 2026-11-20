@@ -43,6 +43,17 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  // O endereço antigo (do nome anterior, Vade) leva ao endereço com o nome atual, mantendo o caminho.
+  async redirects() {
+    return [
+      {
+        source: "/:caminho*",
+        has: [{ type: "host", value: "vade-juridico.vercel.app" }],
+        destination: "https://justixup.vercel.app/:caminho*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       { source: "/:path*", headers: cabecalhosDeSeguranca },

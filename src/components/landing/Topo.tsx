@@ -13,6 +13,7 @@ const LINKS = [
   { href: "#recursos", rotulo: "Recursos" },
   { href: "#ia", rotulo: "Inteligência artificial" },
   { href: "#duvidas", rotulo: "Dúvidas" },
+  { href: "#planos", rotulo: "Planos" },
 ];
 
 /** Atraso da animação de entrada, para os blocos do topo chegarem em sequência. */

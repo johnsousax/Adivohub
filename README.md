@@ -112,12 +112,12 @@ vercel.json             bloqueios na borda (sondagens de invasores)
 
 ## Deploy na Vercel
 
-O projeto `vade-juridico` na Vercel está ligado a este repositório. O site público é **https://justixup.vercel.app**. O endereço antigo, `vade-juridico.vercel.app`, continua abrindo o mesmo site.
+O projeto `vade-juridico` na Vercel está ligado a este repositório. O site público é **https://justixup.vercel.app**. O endereço antigo, `vade-juridico.vercel.app`, redireciona para ele (configurado em `next.config.ts`).
 
 - **Como a produção foi publicada:** a partir do branch de trabalho (`ccr-5a8e530d-0rzeun`), com um deploy de produção disparado à mão, porque o branch principal (`main`) ainda não tem o aplicativo.
 - **Depois que o trabalho for para o `main`:** cada push no `main` publica em produção sozinho. Os outros branches geram versões de pré-visualização.
 - **Região:** as funções rodam em São Paulo (`gru1`).
-- **Quem consegue abrir:** só `justixup.vercel.app`, `vade-juridico.vercel.app` (e um domínio próprio, quando houver) são abertos ao público. Os endereços longos de cada versão pedem login da Vercel; é a proteção padrão da conta.
+- **Quem consegue abrir:** só `justixup.vercel.app` (e um domínio próprio, quando houver) é aberto ao público. Os endereços longos de cada versão pedem login da Vercel; é a proteção padrão da conta.
 - **Bloqueios na borda:** `vercel.json` nega caminhos que só robôs de ataque pedem (`.php`, `.env`, `/wp-admin`...) e métodos HTTP que o site não usa.
 
 Variável já cadastrada no projeto: `AUTH_SECRET`, com um valor para produção e outro para pré-visualização.

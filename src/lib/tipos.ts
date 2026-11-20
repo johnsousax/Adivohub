@@ -231,7 +231,7 @@ export interface Conversa {
 export interface Escritorio {
   nome: string;
   cidade: string;
-  plano: "profissional" | "escritorio" | "enterprise";
+  plano: "essencial" | "crescimento" | "completo";
 }
 
 export interface DadosEscritorio {

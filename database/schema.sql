@@ -38,7 +38,7 @@ grant usage on schema audit to service_role;
 -- ---------------------------------------------------------------------------
 -- 2. Tipos
 -- ---------------------------------------------------------------------------
-create type public.plano             as enum ('profissional', 'escritorio', 'enterprise');
+create type public.plano             as enum ('essencial', 'crescimento', 'completo');
 create type public.papel             as enum ('socio', 'advogado', 'estagiario', 'financeiro');
 create type public.tipo_pessoa       as enum ('PF', 'PJ');
 create type public.origem_cliente    as enum ('indicacao', 'instagram', 'google', 'whatsapp', 'outro');
@@ -65,7 +65,7 @@ create table public.escritorios (
   nome           text not null check (char_length(trim(nome)) between 2 and 120),
   cidade         text check (char_length(cidade) <= 120),
   -- O plano é o que o escritório paga: só o servidor altera.
-  plano          public.plano not null default 'profissional',
+  plano          public.plano not null default 'essencial',
   criado_em      timestamptz not null default now(),
   atualizado_em  timestamptz not null default now(),
   excluido_em    timestamptz

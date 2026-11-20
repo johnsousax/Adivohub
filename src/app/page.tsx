@@ -4,6 +4,7 @@ import {
   Duvidas,
   InteligenciaArtificial,
   Lancamento,
+  Planos,
   Problema,
   Recursos,
   Rodape,
@@ -11,7 +12,7 @@ import {
   WhatsAppFlutuante,
 } from "@/components/landing/Secoes";
 import { Heroi, Navegacao } from "@/components/landing/Topo";
-import { MARCA, URL_SITE } from "@/lib/marca";
+import { MARCA, PLANOS, URL_SITE } from "@/lib/marca";
 
 export const metadata: Metadata = {
   title: { absolute: `${MARCA.nome} — gestão jurídica com inteligência artificial` },
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-/** Dados estruturados para buscadores: o produto. */
+/** Dados estruturados para buscadores: o produto e os planos. */
 const dadosEstruturados = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
@@ -29,6 +30,12 @@ const dadosEstruturados = {
   description: MARCA.descricao,
   url: URL_SITE,
   inLanguage: "pt-BR",
+  offers: PLANOS.map((plano) => ({
+    "@type": "Offer",
+    name: `Plano ${plano.nome}`,
+    price: plano.preco,
+    priceCurrency: "BRL",
+  })),
 };
 
 export default function PaginaInicial() {
@@ -43,6 +50,7 @@ export default function PaginaInicial() {
         <Seguranca />
         <Lancamento />
         <Duvidas />
+        <Planos />
         <ChamadaFinal />
       </main>
       <Rodape />

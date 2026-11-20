@@ -153,24 +153,29 @@ dados hospedados no Brasil, logs de acesso, política de retenção e exclusão.
 
 ## 6. Planos e preços
 
-| | **Profissional** | **Escritório** | **Enterprise** |
+Planos da proposta comercial atual. Mensalidade fixa: o valor do 1º mês é o mesmo de todos os meses, sem taxa de implantação.
+
+| | **Essencial** | **Crescimento** | **Escritório Completo** |
 |---|---|---|---|
-| Mensalidade | **R$ 297/mês** | **R$ 597/mês** | a partir de **R$ 1.497/mês** |
-| Usuários | até 3 | até 10 | ilimitado |
-| Processos acompanhados | até 200 | até 800 | sob medida |
-| Atendente IA no WhatsApp | 1 número, 300 conversas/mês | 2 números, 1.000 conversas/mês | sob medida |
-| Assistente IA do advogado | ✔ | ✔ | ✔ + modelos treinados no acervo |
-| Financeiro + cobrança automática | ✔ | ✔ + NFS-e, repasses | ✔ + multi-filial |
-| Portal do cliente | — | ✔ | ✔ |
-| Onboarding | remoto | migração de dados | gerente de conta dedicado |
+| Mensalidade | **R$ 2.999/mês** | **R$ 4.497/mês** | **R$ 5.997/mês** |
+| Para quem | O sistema completo para organizar o escritório | Sistema, presença digital e anúncios para atrair clientes | Todo o marketing e a tecnologia nas mãos de uma agência |
+| Sistema completo, configurado | ✔ | ✔ | ✔ |
+| Hospedagem, manutenção e atualizações | ✔ | ✔ | ✔ |
+| Treinamento e suporte | ✔ | ✔ | Prioritário |
+| Aplicativo do escritório | — | ✔ | ✔ |
+| Site profissional (página para cada área) | — | ✔ | ✔ |
+| Tráfego pago (Meta e Google) | — | ✔ | ✔ |
+| Relatório de resultados | — | Mensal | Completo |
+| Gestão de redes sociais e calendário de conteúdo | — | — | ✔ |
+| Reunião mensal de estratégia | — | — | ✔ |
+| Melhorias contínuas no sistema e no app | — | — | ✔ |
 
-- **Taxa de implantação:** a partir de R$ 497 (migração, configuração do WhatsApp, treinamento). Isenta no plano anual.
-- **Plano anual:** 2 meses grátis (pagamento à vista ou 12x).
-- **Excedentes:** pacotes de conversas IA e de processos acompanhados.
+- **Áreas configuradas no Essencial:** professor, bancário, previdenciário e trabalhista; cadastro inicial de clientes e processos.
+- **Verba de anúncios:** nos planos com tráfego pago, é paga direto às plataformas, à parte da mensalidade.
+- **OAB:** anúncios e conteúdos informativos, sem promessa de resultado, dentro das normas de publicidade da advocacia.
 
-**Referência de mercado (nov/2026):** Astrea de R$ 249 a R$ 1.379 por mês, EasyJur de R$ 299 a R$ 799, ADVBOX a partir de R$ 220.
-Os preços acima ficam na faixa de entrada desses concorrentes. A versão 1.1 deste plano previa R$ 2.197, R$ 3.497 e R$ 5.900;
-o preço caiu para caber no caixa de escritórios pequenos, e a conta de custos (seção 8) foi refeita.
+Histórico: a versão 1.1 deste plano previa R$ 2.197 a R$ 5.900 só pelo sistema; a 1.2, R$ 297 a R$ 1.497. Os planos atuais juntam o
+sistema a serviços de marketing, por isso a conta de custos da seção 8 (feita para R$ 297) precisa ser refeita com o custo da equipe.
 
 ## 7. Por que se paga (ROI para o advogado)
 
@@ -187,6 +192,9 @@ Mensagem de venda: **"O JustixUp se paga com uma parcela recuperada por mês."**
 > Os números acima são estimativas de referência para a apresentação comercial e devem ser validados com os escritórios piloto.
 
 ## 8. Custos e margem (por escritório, plano Profissional)
+
+> **Desatualizada:** esta conta foi feita para a tabela da versão 1.2 (R$ 297 a R$ 1.497, só o sistema). Com os planos atuais (seção 6),
+> refazer incluindo o custo das pessoas que cuidam de site, anúncios e redes sociais.
 
 | Item | Custo estimado/mês |
 |---|---|
