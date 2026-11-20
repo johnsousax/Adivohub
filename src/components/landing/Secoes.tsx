@@ -277,7 +277,8 @@ const PROTECOES: Array<{ icone: LucideIcon; titulo: string; texto: string }> = [
   {
     icone: Bot,
     titulo: "IA com rédea curta",
-    texto: "A IA só recebe os dados do próprio escritório, não executa nada sem confirmação e ignora instruções escondidas em mensagens.",
+    texto:
+      "A IA só recebe os dados do próprio escritório, só agenda em horários que o sistema ofereceu e trata mensagens de clientes como informação, nunca como ordem.",
   },
   {
     icone: ShieldCheck,
