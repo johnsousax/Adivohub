@@ -37,6 +37,12 @@ const t = (nome, cond, det) => {
   page.on("pageerror", (e) => errs.push("JS " + String(e).slice(0, 150)));
 
   const r0 = await page.goto(SHARE, { waitUntil: "networkidle" });
+  if (r0.status() === 403 && r0.headers()["x-vercel-mitigated"] === "challenge") {
+    console.log("A Vercel exigiu verificação deste endereço de teste antes de responder (proteção contra robôs).");
+    console.log("Espere alguns minutos ou rode de outra rede.");
+    await b.close();
+    process.exit(2);
+  }
   t("landing 200", r0.status() === 200, r0.status());
   const h = r0.headers();
   const csp = h["content-security-policy"] || "";
@@ -86,19 +92,6 @@ const t = (nome, cond, det) => {
   const st = await pedir("/.well-known/security.txt");
   t("security.txt", st.status() === 200 && (await st.text()).includes("Contact:"), st.status());
 
-  for (const c of ["/wp-admin", "/wp-login.php", "/.env", "/.git/config", "/phpmyadmin/", "/backup.sql", "/cgi-bin/test.cgi"]) {
-    const r = await pedir(c);
-    t(
-      "borda nega " + c,
-      r.status() === 403 && r.headers()["x-vercel-mitigated"] === "deny",
-      r.status() + " " + r.headers()["x-vercel-mitigated"],
-    );
-  }
-  for (const m of ["PUT", "DELETE", "PATCH"]) {
-    const r = await pedir("/api/auth/sessao", { method: m });
-    t("borda nega metodo " + m, r.status() === 403, r.status());
-  }
-
   const pn = await pedir("/painel");
   t(
     "painel sem sessao vai ao login",
@@ -106,38 +99,6 @@ const t = (nome, cond, det) => {
     pn.status() + " " + pn.headers()["location"],
   );
   const json = { "content-type": "application/json" };
-  const ia = await pedir("/api/ia/assistente", {
-    method: "POST",
-    headers: Object.assign({ origin: BASE }, json),
-    data: { pergunta: "oi" },
-  });
-  t("ia sem sessao 401", ia.status() === 401, ia.status());
-  const fora = await pedir("/api/auth/demo", {
-    method: "POST",
-    headers: Object.assign({ origin: "https://evil.example" }, json),
-    data: {},
-  });
-  t("post de outro site 403", fora.status() === 403, fora.status());
-  const lg = await pedir("/api/auth/login", {
-    method: "POST",
-    headers: Object.assign({ origin: BASE }, json),
-    data: { email: "ninguem@escritorio.example", senha: "senha errada de teste" },
-  });
-  const lgTexto = await lg.text();
-  t(
-    "login errado: 401 e mensagem neutra",
-    lg.status() === 401 && lgTexto.includes("inv") && !lgTexto.includes("stack"),
-    lg.status() + " " + lgTexto.slice(0, 90),
-  );
-  const extra = await pedir("/api/auth/login", {
-    method: "POST",
-    headers: Object.assign({ origin: BASE }, json),
-    data: { email: "a@b.example", senha: "x", papel: "equipe" },
-  });
-  t("campo extra recusado 400", extra.status() === 400, extra.status());
-  const wh = await pedir("/api/whatsapp/webhook", { method: "POST", headers: json, data: { entry: [] } });
-  t("webhook fechado sem assinatura", [401, 503].includes(wh.status()), wh.status());
-
   const demo = await pedir("/api/auth/demo", { method: "POST", headers: Object.assign({ origin: BASE }, json), data: {} });
   const cookie =
     (demo.headersArray().find((x) => x.name.toLowerCase() === "set-cookie" && x.value.includes("vade_sessao")) || {}).value || "";
@@ -191,14 +152,18 @@ const t = (nome, cond, det) => {
   t("whatsapp de vendas nos botoes", zaps >= 5, zaps);
 
   await page.goto(BASE + "/entrar", { waitUntil: "networkidle" });
-  await page.getByRole("button", { name: /demonstra/i }).click();
-  await page.waitForURL((u) => u.pathname.startsWith("/painel"), { timeout: 20000 }).catch(() => {});
-  t("botao da demonstracao abre o painel", new URL(page.url()).pathname.startsWith("/painel"), page.url());
-  await page.waitForTimeout(1500);
-  const painel = await page.evaluate(() => document.body.innerText);
-  t("painel mostra os dados da demonstracao", painel.includes("Dra. Ana") || painel.includes("Prazos"), painel.slice(0, 80));
-  await page.goto(BASE + "/painel/financeiro", { waitUntil: "networkidle" });
-  t("financeiro abre", (await page.evaluate(() => document.body.innerText)).includes("receber"), page.url());
+  const botao = page.getByRole("button", { name: /demonstra/i });
+  t("botao da demonstracao aparece", (await botao.count()) === 1, (await page.evaluate(() => document.body.innerText)).slice(0, 120));
+  if ((await botao.count()) === 1) {
+    await botao.click();
+    await page.waitForURL((u) => u.pathname.startsWith("/painel"), { timeout: 20000 }).catch(() => {});
+    t("botao da demonstracao abre o painel", new URL(page.url()).pathname.startsWith("/painel"), page.url());
+    await page.waitForTimeout(1500);
+    const painel = await page.evaluate(() => document.body.innerText);
+    t("painel mostra os dados da demonstracao", painel.includes("Dra. Ana") || painel.includes("Prazos"), painel.slice(0, 80));
+    await page.goto(BASE + "/painel/financeiro", { waitUntil: "networkidle" });
+    t("financeiro abre", (await page.evaluate(() => document.body.innerText)).includes("receber"), page.url());
+  }
 
   const cel = await b.newContext(devices["iPhone 13"]);
   if (SHARE !== BASE) await cel.addCookies((await ctx.cookies()).filter((c) => c.name.startsWith("_vercel")));
@@ -212,6 +177,54 @@ const t = (nome, cond, det) => {
 
   const graves = errs.filter((e) => !e.includes("401") && !e.includes("403"));
   t("console sem erros nem violacao de CSP", graves.length === 0, graves.join(" | "));
+
+  // Pedidos que o site deve recusar. Ficam no fim de propósito: depois de alguns deles, a Vercel
+  // passa a desconfiar do endereço de quem testa e exige uma verificação antes de responder.
+  await ctx.clearCookies({ name: "__Host-vade_sessao" });
+  const ia = await pedir("/api/ia/assistente", {
+    method: "POST",
+    headers: Object.assign({ origin: BASE }, json),
+    data: { pergunta: "oi" },
+  });
+  t("ia sem sessao 401", ia.status() === 401, ia.status());
+  const fora = await pedir("/api/auth/demo", {
+    method: "POST",
+    headers: Object.assign({ origin: "https://evil.example" }, json),
+    data: {},
+  });
+  t("post de outro site 403", fora.status() === 403, fora.status());
+  const lg = await pedir("/api/auth/login", {
+    method: "POST",
+    headers: Object.assign({ origin: BASE }, json),
+    data: { email: "ninguem@escritorio.example", senha: "senha errada de teste" },
+  });
+  const lgTexto = await lg.text();
+  t(
+    "login errado: 401 e mensagem neutra",
+    lg.status() === 401 && lgTexto.includes("inv") && !lgTexto.includes("stack"),
+    lg.status() + " " + lgTexto.slice(0, 90),
+  );
+  const extra = await pedir("/api/auth/login", {
+    method: "POST",
+    headers: Object.assign({ origin: BASE }, json),
+    data: { email: "a@b.example", senha: "x", papel: "equipe" },
+  });
+  t("campo extra recusado 400", extra.status() === 400, extra.status());
+  const wh = await pedir("/api/whatsapp/webhook", { method: "POST", headers: json, data: { entry: [] } });
+  t("webhook fechado sem assinatura", [401, 503].includes(wh.status()), wh.status());
+
+  for (const c of ["/wp-admin", "/wp-login.php", "/.env", "/.git/config", "/phpmyadmin/", "/backup.sql", "/cgi-bin/test.cgi"]) {
+    const r = await pedir(c);
+    t(
+      "borda nega " + c,
+      r.status() === 403 && r.headers()["x-vercel-mitigated"] === "deny",
+      r.status() + " " + r.headers()["x-vercel-mitigated"],
+    );
+  }
+  for (const m of ["PUT", "DELETE", "PATCH"]) {
+    const r = await pedir("/api/auth/sessao", { method: m });
+    t("borda nega metodo " + m, r.status() === 403, r.status());
+  }
   await b.close();
   console.log("PASSARAM " + ok.length + " de " + (ok.length + bad.length));
   if (bad.length) console.log("FALHAS:" + bad.map((x) => " # " + x).join(""));
@@ -219,5 +232,6 @@ const t = (nome, cond, det) => {
   process.exit(bad.length ? 1 : 0);
 })().catch((e) => {
   console.log("ERRO " + String((e && e.stack) || e).slice(0, 600));
+  console.log("Até o erro: " + ok.length + " passaram" + (bad.length ? "; FALHAS:" + bad.map((x) => " # " + x).join("") : ""));
   process.exit(1);
 });
