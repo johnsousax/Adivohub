@@ -37,16 +37,17 @@ Entre em `/entrar` e use o botão **Abrir a demonstração**. Não existe senha 
 
 Os dados da demonstração nascem com datas relativas ao dia de hoje. Depois da primeira alteração, eles ficam gravados no navegador e as datas deixam de acompanhar o calendário. Para voltar ao estado inicial, com as datas recalculadas, use **Configurações → Restaurar a demonstração**.
 
-| Comando             | O que faz                                                      |
-| ------------------- | -------------------------------------------------------------- |
-| `npm run dev`       | Servidor de desenvolvimento                                    |
-| `npm run build`     | Compilação de produção                                         |
-| `npm start`         | Sobe a versão compilada                                        |
-| `npm test`          | Testes automatizados (prazos, CNJ, financeiro, IA e segurança) |
-| `npm run lint`      | Verificação de código                                          |
-| `npm run typecheck` | Verificação de tipos                                           |
-| `npm run format`    | Formata o código                                               |
-| `npm run senha`     | Gera o hash da senha do acesso privado (`ACESSO_SENHA_HASH`)   |
+| Comando                                     | O que faz                                                                                    |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `npm run dev`                               | Servidor de desenvolvimento                                                                  |
+| `npm run build`                             | Compilação de produção                                                                       |
+| `npm start`                                 | Sobe a versão compilada                                                                      |
+| `npm test`                                  | Testes automatizados (prazos, CNJ, financeiro, IA e segurança)                               |
+| `npm run lint`                              | Verificação de código                                                                        |
+| `npm run typecheck`                         | Verificação de tipos                                                                         |
+| `npm run format`                            | Formata o código                                                                             |
+| `npm run senha`                             | Gera o hash da senha do acesso privado (`ACESSO_SENHA_HASH`)                                 |
+| `node scripts/conferir-site.cjs <endereço>` | Confere, de fora, a segurança e o funcionamento de um endereço publicado (requer Playwright) |
 
 ## Variáveis de ambiente
 
