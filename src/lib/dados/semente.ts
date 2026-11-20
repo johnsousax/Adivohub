@@ -20,6 +20,9 @@ const ORIGEM_FICTICIA = 9999;
  * de celulares do país (nenhum celular começa com 90); os e-mails usam o domínio
  * reservado ".example"; e os números de OAB estão acima da numeração já emitida.
  */
+/** Multiplica todos os valores em dinheiro da demonstração (causas, contratos e lançamentos). */
+const ESCALA_DOS_VALORES = 10;
+
 export function criarSemente(hoje: Date): DadosEscritorio {
   const base = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
 
@@ -274,7 +277,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       areaInteresse: "civel",
       responsavelId: "usr-pedro",
       criadoEm: dia(-9),
-      observacoes: "Quer assessoria mensal. Proposta de R$ 2.800/mês enviada.",
+      observacoes: "Quer assessoria mensal. Proposta de R$ 28.000/mês enviada.",
     },
     {
       id: "cli-paulo",
@@ -621,7 +624,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       data: dia(-14),
       tipo: "andamento",
       titulo: "Bloqueio parcial via SISBAJUD",
-      descricao: "Bloqueados R$ 68.400,00 em contas da executada. Alvará de levantamento expedido.",
+      descricao: "Bloqueados R$ 684.000,00 em contas da executada. Alvará de levantamento expedido.",
     },
     {
       id: "and-horizonte-2",
@@ -1119,7 +1122,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
     [-85, 21900, "Honorários de êxito — acordo Mercantil Norte (1ª parcela)", "cli-mercantil", "cas-mercantil"],
     [-55, 21900, "Honorários de êxito — acordo Mercantil Norte (2ª parcela)", "cli-mercantil", "cas-mercantil"],
     [-27, 18400, "Honorários de êxito — acordo Barros × Frigorífico (2ª parcela)", "cli-antonio", "cas-barros"],
-    // 30% dos R$ 68.400,00 bloqueados na execução (ver andamento do caso).
+    // 30% dos R$ 68.400,00 (× ESCALA_DOS_VALORES) bloqueados na execução (ver andamento do caso).
     [-1, 20520, "Honorários de êxito — levantamento Horizonte × Aço Norte", "cli-horizonte", "cas-horizonte-exec", "ctr-horizonte-exito"],
   ];
   for (const [deslocamento, valor, descricao, clienteId, casoId, contratoId] of exitos) {
@@ -1266,7 +1269,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       mensagens: [
         mensagem(
           "ia",
-          "Olá! Passando para lembrar que a parcela 5/8 dos honorários (R$ 1.000,00) venceu há alguns dias. Posso enviar o Pix para pagamento?",
+          "Olá! Passando para lembrar que a parcela 5/8 dos honorários (R$ 10.000,00) venceu há alguns dias. Posso enviar o Pix para pagamento?",
           dia(-3),
           "09:30",
         ),
@@ -1292,6 +1295,12 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       ],
     },
   ];
+
+  // Valores em dinheiro escritos acima em escala menor e multiplicados aqui, num ponto só.
+  // Textos que citam valores (proposta, bloqueio, lembrete de parcela) já estão na escala final.
+  for (const caso of casos) caso.valorCausa *= ESCALA_DOS_VALORES;
+  for (const contrato of contratos) contrato.valorTotal *= ESCALA_DOS_VALORES;
+  for (const lancamento of lancamentos) lancamento.valor *= ESCALA_DOS_VALORES;
 
   return {
     escritorio: { nome: "Ogando & Rocha Advogados", cidade: "São Luís - MA", plano: "completo" },

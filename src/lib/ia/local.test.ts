@@ -43,7 +43,7 @@ describe("assistente em modo demonstração", () => {
   it("responde sobre inadimplência com os valores do financeiro", () => {
     const resposta = responderAssistenteLocal("Quem está com parcela em atraso?", contexto);
     // O Intl usa espaço não separável entre "R$" e o número, então conferimos só o valor.
-    expect(resposta).toContain("3.000,00");
+    expect(resposta).toContain("30.000,00");
     expect(resposta).toContain("Padaria Pão Dourado ME");
     expect(resposta).toContain("Teresa Rocha");
   });

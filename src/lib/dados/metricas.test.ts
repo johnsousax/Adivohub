@@ -152,7 +152,7 @@ describe("dados de demonstração", () => {
     const resumo = resumoFinanceiro(dados.lancamentos, hoje);
     expect(resumo.recebidoMes).toBeGreaterThan(0);
     expect(resumo.parcelasEmAtraso).toBe(2);
-    expect(resumo.emAtraso).toBe(3000);
+    expect(resumo.emAtraso).toBe(30000);
     expect(serieMensal(dados.lancamentos, hoje).every((p) => p.recebido > 0)).toBe(true);
     expect(receitaPorArea(dados.lancamentos, dados.casos, hoje).length).toBeGreaterThan(2);
 
@@ -160,7 +160,7 @@ describe("dados de demonstração", () => {
     expect(briefing.audienciasHoje).toHaveLength(1);
     expect(briefing.prazosHoje).toHaveLength(1);
     expect(briefing.sugestoes).toHaveLength(3);
-    expect(briefing.recebidoOntem).toBe(20520);
+    expect(briefing.recebidoOntem).toBe(205200);
 
     // O mês em curso precisa fechar no azul, senão a demonstração conta a história errada.
     expect(resumo.resultadoMes).toBeGreaterThan(0);
