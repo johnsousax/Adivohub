@@ -1,0 +1,18 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "routes": [
+    {
+      "src": "/.*\\.(php|asp|aspx|jsp|cgi|env|sql|bak|ini)",
+      "mitigate": { "action": "deny" }
+    },
+    {
+      "src": "/(wp-admin|wp-login|wp-content|wp-includes|phpmyadmin|cgi-bin|\\.git|\\.aws|\\.ssh|\\.svn)(/.*)?",
+      "mitigate": { "action": "deny" }
+    },
+    {
+      "src": "/(.*)",
+      "methods": ["TRACE", "CONNECT", "PUT", "PATCH", "DELETE"],
+      "mitigate": { "action": "deny" }
+    }
+  ]
+}

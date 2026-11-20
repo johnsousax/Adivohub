@@ -2,28 +2,29 @@ import { z } from "zod";
 
 /**
  * Contratos das rotas de IA. Tudo tem tamanho máximo: o que chega do
- * navegador vira prompt, então nada entra sem limite.
+ * navegador vira prompt, então nada entra sem limite. Os objetos são estritos:
+ * um campo que não está no contrato faz o pedido inteiro ser recusado.
  */
 
 const texto = (maximo: number) => z.string().max(maximo);
 const dia = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const dataHora = z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/);
 
-const Cobranca = z.object({
+const Cobranca = z.strictObject({
   cliente: texto(120),
   descricao: texto(160),
   valor: z.number().finite(),
   vencimento: dia,
 });
 
-export const ContextoIA = z.object({
+export const ContextoIA = z.strictObject({
   hoje: dia,
   escritorio: texto(120),
   usuario: texto(120),
-  agenda: z.array(z.object({ inicio: dataHora, titulo: texto(160), tipo: texto(30), local: texto(120).optional() })).max(25),
+  agenda: z.array(z.strictObject({ inicio: dataHora, titulo: texto(160), tipo: texto(30), local: texto(120).optional() })).max(25),
   prazos: z
     .array(
-      z.object({
+      z.strictObject({
         titulo: texto(160),
         caso: texto(160),
         dataFatal: dia,
@@ -32,8 +33,8 @@ export const ContextoIA = z.object({
       }),
     )
     .max(25),
-  sugestoes: z.array(z.object({ caso: texto(160), titulo: texto(160), dataFatal: dia, resumo: texto(400) })).max(10),
-  financeiro: z.object({
+  sugestoes: z.array(z.strictObject({ caso: texto(160), titulo: texto(160), dataFatal: dia, resumo: texto(400) })).max(10),
+  financeiro: z.strictObject({
     recebidoMes: z.number().finite(),
     recebidoMesAnterior: z.number().finite(),
     aReceber30Dias: z.number().finite(),
@@ -45,7 +46,7 @@ export const ContextoIA = z.object({
   }),
   casos: z
     .array(
-      z.object({
+      z.strictObject({
         titulo: texto(160),
         cliente: texto(120),
         area: texto(40),
@@ -59,7 +60,7 @@ export const ContextoIA = z.object({
     .max(40),
   leads: z
     .array(
-      z.object({
+      z.strictObject({
         nome: texto(120),
         etapa: texto(40),
         area: texto(40).optional(),
@@ -67,20 +68,20 @@ export const ContextoIA = z.object({
       }),
     )
     .max(20),
-  conversasAguardando: z.array(z.object({ nome: texto(120), ultimaMensagem: texto(300) })).max(10),
+  conversasAguardando: z.array(z.strictObject({ nome: texto(120), ultimaMensagem: texto(300) })).max(10),
 });
 export type ContextoIA = z.infer<typeof ContextoIA>;
 
-export const PedidoAssistente = z.object({
+export const PedidoAssistente = z.strictObject({
   mensagens: z
-    .array(z.object({ papel: z.enum(["usuario", "assistente"]), texto: z.string().min(1).max(4000) }))
+    .array(z.strictObject({ papel: z.enum(["usuario", "assistente"]), texto: z.string().min(1).max(4000) }))
     .min(1)
     .max(30),
   contexto: ContextoIA,
 });
 export type PedidoAssistente = z.infer<typeof PedidoAssistente>;
 
-export const PedidoAtendimento = z.object({
+export const PedidoAtendimento = z.strictObject({
   escritorio: texto(120),
   advogado: texto(80),
   /** Horários livres que a IA pode oferecer para consulta. */
@@ -91,7 +92,7 @@ export const PedidoAtendimento = z.object({
       ehCliente: z.boolean(),
       casos: z
         .array(
-          z.object({
+          z.strictObject({
             titulo: texto(160),
             tipoAcao: texto(160),
             fase: texto(40),
@@ -102,14 +103,14 @@ export const PedidoAtendimento = z.object({
     })
     .optional(),
   mensagens: z
-    .array(z.object({ de: z.enum(["cliente", "ia", "equipe"]), texto: z.string().min(1).max(2000) }))
+    .array(z.strictObject({ de: z.enum(["cliente", "ia", "equipe"]), texto: z.string().min(1).max(2000) }))
     .min(1)
     .max(40),
 });
 export type PedidoAtendimento = z.infer<typeof PedidoAtendimento>;
 
 /** O que o atendente devolve: a mensagem e, se for o caso, uma ação no sistema. */
-export const RespostaAtendimento = z.object({
+export const RespostaAtendimento = z.strictObject({
   resposta: z.string(),
   acao: z.enum(["nenhuma", "agendar", "transferir"]),
   /** Preenchido só quando `acao` é "agendar": um dos horários oferecidos. */

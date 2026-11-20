@@ -1,0 +1,95 @@
+name: Segurança
+
+# Roda em todo push e pull request, e toda segunda-feira de manhã no ramo principal.
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "17 9 * * 1"
+
+# Menor privilégio: cada tarefa só lê o código, salvo quando precisa de mais.
+permissions:
+  contents: read
+
+concurrency:
+  group: seguranca-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    name: Tipos, lint, testes e dependências
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      # "ci" instala exatamente o que está no package-lock.json (nada de versão surpresa).
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      # Falha se alguma dependência tiver vulnerabilidade alta ou crítica.
+      - run: npm audit --audit-level=high
+
+  banco:
+    name: Regras do banco contra ataques simulados
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          # Banco descartável, que só existe durante esta tarefa.
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_DB: vade_teste
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      # Aplica database/schema.sql e tenta cada ataque. Qualquer um que passe derruba a tarefa.
+      - run: psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d vade_teste -f database/teste-isolamento.sql
+
+  segredos:
+    name: Procurar segredos no histórico
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  codeql:
+    name: Análise de código (CodeQL)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: javascript-typescript
+          queries: security-extended
+      - uses: github/codeql-action/analyze@v4
+        with:
+          category: /language:javascript-typescript

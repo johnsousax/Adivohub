@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { FormLogin } from "@/components/login/FormLogin";
 import { Logo } from "@/components/marca/Logo";
-import { credenciaisDemo } from "@/lib/auth/credenciais";
+import { demoPublica } from "@/lib/auth/credenciais";
 import { MARCA } from "@/lib/marca";
 
 export const metadata: Metadata = {
@@ -12,7 +12,6 @@ export const metadata: Metadata = {
 };
 
 export default function PaginaEntrar() {
-  const demo = credenciaisDemo();
   return (
     <main className="grid grid-cols-1 min-h-dvh lg:grid-cols-[1.05fr_1fr]">
       <section className="relative hidden overflow-hidden bg-noite p-12 text-white lg:flex lg:flex-col lg:justify-between">
@@ -43,7 +42,7 @@ export default function PaginaEntrar() {
           </Link>
           <h1 className="text-[1.9rem] leading-tight font-bold tracking-[-0.035em]">Entrar no painel</h1>
           <p className="mt-2 text-[0.95rem] text-mudo">Use seu e-mail e sua senha para acessar o escritório.</p>
-          <FormLogin demo={demo.publica ? { email: demo.email, senha: demo.senha } : null} />
+          <FormLogin demonstracao={demoPublica()} />
           <p className="mt-8 text-sm text-mudo">
             Ainda não é cliente?{" "}
             <Link href="/#planos" className="font-medium text-tinta underline-offset-4 hover:underline">

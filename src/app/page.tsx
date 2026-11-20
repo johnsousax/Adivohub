@@ -8,6 +8,7 @@ import {
   Problema,
   Recursos,
   Rodape,
+  Seguranca,
   WhatsAppFlutuante,
 } from "@/components/landing/Secoes";
 import { Heroi, Navegacao } from "@/components/landing/Topo";
@@ -46,6 +47,7 @@ export default function PaginaInicial() {
         <Problema />
         <Recursos />
         <InteligenciaArtificial />
+        <Seguranca />
         <Lancamento />
         <Planos />
         <Duvidas />

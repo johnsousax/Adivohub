@@ -18,6 +18,8 @@ export interface UsuarioSessao {
   id: string;
   nome: string;
   email: string;
+  /** "demo": demonstração pública; "equipe": acesso privado. Ausente enquanto a sessão não respondeu. */
+  papel?: "demo" | "equipe";
 }
 
 const ContextoSessao = createContext<UsuarioSessao | null>(null);

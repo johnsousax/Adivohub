@@ -1,0 +1,16 @@
+# Configuração da busca por segredos (gitleaks). Usa as regras padrão.
+title = "Vade"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Exceções conhecidas, cada uma com o motivo"
+paths = [
+  # Arquivo antigo, de outro projeto (site de ingressos), que já estava no repositório.
+  # Ele traz a chave "anon" de um projeto Supabase: é a chave pública, feita para ir ao navegador.
+  # Mesmo assim, a segurança daquele banco depende das regras de acesso (RLS) dele. Ver docs/SEGURANCA.md.
+  '''index \(1\)\.html''',
+  # O arquivo de travamento só tem endereços e somas de verificação de pacotes públicos.
+  '''package-lock\.json''',
+]

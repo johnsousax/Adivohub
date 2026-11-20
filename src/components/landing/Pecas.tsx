@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 /** Ícone do WhatsApp (traço simples, sem marca registrada colorida). */
@@ -109,9 +109,13 @@ export function Telefone({ nome, legenda, baloes, className }: { nome: string; l
           {baloes.map((balao, indice) => (
             <p
               key={indice}
+              // Cada balão chega depois do anterior quando o celular entra na tela (ver .balao em globals.css).
+              style={{ "--i": indice } as CSSProperties}
               className={cn(
-                "max-w-[86%] rounded-xl px-2.5 py-1.5 text-[0.78rem] leading-[1.45] text-[#e9edef]",
-                balao.de === "cliente" ? "self-end rounded-tr-[3px] bg-[#005c4b]" : "self-start rounded-tl-[3px] bg-[#202c33]",
+                "balao max-w-[86%] rounded-xl px-2.5 py-1.5 text-[0.78rem] leading-[1.45] text-[#e9edef]",
+                balao.de === "cliente"
+                  ? "origin-bottom-right self-end rounded-tr-[3px] bg-[#005c4b]"
+                  : "origin-bottom-left self-start rounded-tl-[3px] bg-[#202c33]",
               )}
             >
               {balao.texto}

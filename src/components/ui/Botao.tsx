@@ -12,7 +12,8 @@ const VARIANTES: Record<Variante, string> = {
   primario: "bg-tinta text-white hover:bg-black",
   secundario: "bg-white text-tinta ring-1 ring-inset ring-linha-forte hover:bg-fundo",
   fantasma: "text-tinta-2 hover:bg-black/5",
-  ouro: "fundo-ouro text-tinta shadow-[0_8px_30px_-8px_rgb(201_164_92/0.6)] hover:brightness-105",
+  // "reflexo": um brilho atravessa o botão quando o cursor passa (ver globals.css).
+  ouro: "fundo-ouro reflexo text-tinta shadow-[0_8px_30px_-8px_rgb(201_164_92/0.6)] hover:brightness-105",
   perigo: "bg-critico text-white hover:brightness-110",
   claro: "bg-white/10 text-white ring-1 ring-inset ring-white/20 hover:bg-white/15",
 };

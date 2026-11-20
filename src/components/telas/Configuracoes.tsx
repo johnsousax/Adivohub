@@ -162,7 +162,9 @@ export function TelaConfiguracoes() {
             >
               {integracoes?.ia.conectada
                 ? `Assistente em ${integracoes.ia.modeloAssistente} e atendente em ${integracoes.ia.modeloAtendimento}.`
-                : "Sem a chave da API, o assistente e o atendente respondem com regras locais. Para ligar, cadastre ANTHROPIC_API_KEY nas variáveis de ambiente do projeto na Vercel."}
+                : integracoes?.ia.reservadaAoAcessoPrivado
+                  ? "A chave da IA está cadastrada, mas a demonstração pública nunca a usa: aqui as respostas vêm de regras locais, sem custo. A IA paga responde só a quem entra pelo acesso privado."
+                  : "Sem a chave da API, o assistente e o atendente respondem com regras locais. Para ligar, cadastre ANTHROPIC_API_KEY nas variáveis de ambiente do projeto na Vercel e entre pelo acesso privado."}
             </Integracao>
             <Integracao icone={MessageCircle} nome="WhatsApp Business" conectada={integracoes ? integracoes.whatsapp.conectado : null}>
               Exige uma conta na WhatsApp Business Platform (Meta) com o número do escritório. O endereço que recebe as mensagens já existe;

@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { connection } from "next/server";
 import "@fontsource-variable/inter/opsz.css";
 import "./globals.css";
 import { MARCA, URL_SITE } from "@/lib/marca";
@@ -27,7 +28,11 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  // Toda página é renderizada a cada requisição: é o que permite à política de
+  // segurança (CSP) dar um código único aos scripts de cada resposta. Ver src/proxy.ts.
+  await connection();
+
   return (
     <html lang="pt-BR">
       <body className="min-h-dvh">{children}</body>

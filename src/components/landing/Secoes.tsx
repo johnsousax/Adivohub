@@ -1,8 +1,11 @@
 import {
   AlarmClock,
+  Bot,
   CalendarDays,
   Check,
+  KeyRound,
   LayoutDashboard,
+  Lock,
   Scale,
   ShieldCheck,
   Sparkles,
@@ -16,9 +19,10 @@ import { Logo } from "@/components/marca/Logo";
 import { BotaoLink } from "@/components/ui/Botao";
 import { cn } from "@/lib/cn";
 import { brl } from "@/lib/formatos";
-import { MARCA, PLANOS } from "@/lib/marca";
+import { IMPLANTACAO, MARCA, PLANOS } from "@/lib/marca";
 import { linkWhatsApp, MENSAGENS_VENDA } from "@/lib/whatsapp";
 import { IconeWhatsApp, Secao, Sobretitulo, Telefone, TituloSecao } from "./Pecas";
+import { Revelar } from "./Revelar";
 
 /* -------------------------------- Problema -------------------------------- */
 
@@ -40,21 +44,23 @@ const DORES = [
 export function Problema() {
   return (
     <Secao>
-      <Sobretitulo>O problema</Sobretitulo>
-      <TituloSecao>
-        O advogado é técnico, gestor, vendedor e cobrador. <span className="text-sutil">Ao mesmo tempo.</span>
-      </TituloSecao>
-      <p className="mt-6 max-w-2xl text-lg leading-relaxed text-mudo">
-        Planilha, agenda do celular, WhatsApp pessoal, pasta no Drive e extrato do banco. Ferramentas soltas, que não conversam entre si. O
-        escritório perde dinheiro em três pontos.
-      </p>
+      <Revelar efeito="foco">
+        <Sobretitulo>O problema</Sobretitulo>
+        <TituloSecao>
+          O advogado é técnico, gestor, vendedor e cobrador. <span className="text-sutil">Ao mesmo tempo.</span>
+        </TituloSecao>
+        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-mudo">
+          Planilha, agenda do celular, WhatsApp pessoal, pasta no Drive e extrato do banco. Ferramentas soltas, que não conversam entre si.
+          O escritório perde dinheiro em três pontos.
+        </p>
+      </Revelar>
       <ol className="mt-14 grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-12">
         {DORES.map((dor, indice) => (
-          <li key={dor.titulo} className="border-t border-linha-forte pt-6">
+          <Revelar como="li" key={dor.titulo} atraso={indice * 140} className="linha-viva border-t border-linha-forte pt-6">
             <p className="texto-ouro-escuro text-4xl font-light tracking-[-0.04em]">0{indice + 1}</p>
             <h3 className="mt-4 text-xl font-semibold">{dor.titulo}</h3>
             <p className="mt-2 leading-relaxed text-mudo">{dor.texto}</p>
-          </li>
+          </Revelar>
         ))}
       </ol>
     </Secao>
@@ -99,17 +105,21 @@ const RECURSOS: Array<{ icone: LucideIcon; titulo: string; texto: string }> = [
 export function Recursos() {
   return (
     <Secao id="recursos" tom="cinza">
-      <Sobretitulo>Recursos</Sobretitulo>
-      <TituloSecao>
-        Um só sistema para o escritório inteiro. <span className="text-sutil">Sem planilha paralela.</span>
-      </TituloSecao>
+      <Revelar efeito="foco">
+        <Sobretitulo>Recursos</Sobretitulo>
+        <TituloSecao>
+          Um só sistema para o escritório inteiro. <span className="text-sutil">Sem planilha paralela.</span>
+        </TituloSecao>
+      </Revelar>
       <ul className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {RECURSOS.map((recurso) => (
-          <li key={recurso.titulo} className="rounded-[1.75rem] bg-white p-7 shadow-cartao ring-1 ring-black/[0.04]">
-            <recurso.icone className="size-7 text-ouro-600" strokeWidth={1.5} aria-hidden="true" />
-            <h3 className="mt-6 text-lg font-semibold">{recurso.titulo}</h3>
-            <p className="mt-2 leading-relaxed text-mudo">{recurso.texto}</p>
-          </li>
+        {RECURSOS.map((recurso, indice) => (
+          <Revelar como="li" key={recurso.titulo} efeito="escala" atraso={(indice % 3) * 110}>
+            <div className="cartao-vivo h-full rounded-[1.75rem] bg-white p-7 shadow-cartao ring-1 ring-black/[0.04]">
+              <recurso.icone className="icone-vivo size-7 text-ouro-600" strokeWidth={1.5} aria-hidden="true" />
+              <h3 className="mt-6 text-lg font-semibold">{recurso.titulo}</h3>
+              <p className="mt-2 leading-relaxed text-mudo">{recurso.texto}</p>
+            </div>
+          </Revelar>
         ))}
       </ul>
     </Secao>
@@ -139,13 +149,15 @@ export function InteligenciaArtificial() {
         aria-hidden="true"
       />
       <div className="relative">
-        <Sobretitulo escuro>Inteligência artificial</Sobretitulo>
-        <TituloSecao>
-          Uma IA que trabalha junto. <span className="text-white/40">Não é só um chat.</span>
-        </TituloSecao>
+        <Revelar efeito="foco">
+          <Sobretitulo escuro>Inteligência artificial</Sobretitulo>
+          <TituloSecao>
+            Uma IA que trabalha junto. <span className="text-white/40">Não é só um chat.</span>
+          </TituloSecao>
+        </Revelar>
 
         <div className="mt-16 grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-20">
-          <div>
+          <Revelar>
             <p className="inline-flex items-center gap-2 text-sm font-semibold text-ouro-300">
               <Sparkles className="size-4" aria-hidden="true" />
               Para o advogado
@@ -159,8 +171,8 @@ export function InteligenciaArtificial() {
                 "Redige rascunhos de mensagens e minutas para você revisar.",
               ]}
             />
-          </div>
-          <div className="flex justify-center">
+          </Revelar>
+          <Revelar efeito="escala" atraso={120} className="flex justify-center">
             <Telefone
               nome="Vade IA"
               legenda="assistente do escritório"
@@ -191,11 +203,11 @@ export function InteligenciaArtificial() {
                 { de: "cliente", hora: "07:13", texto: "confirma" },
               ]}
             />
-          </div>
+          </Revelar>
         </div>
 
         <div className="mt-24 grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-20">
-          <div className="order-2 flex justify-center lg:order-1">
+          <Revelar efeito="escala" className="order-2 flex justify-center lg:order-1">
             <Telefone
               nome="Seu escritório"
               legenda="atendimento virtual"
@@ -217,8 +229,8 @@ export function InteligenciaArtificial() {
                 { de: "sistema", hora: "22:43", texto: "Agendado para amanhã às 16h. Eu lembro você 1 hora antes." },
               ]}
             />
-          </div>
-          <div className="order-1 lg:order-2">
+          </Revelar>
+          <Revelar atraso={120} className="order-1 lg:order-2">
             <p className="inline-flex items-center gap-2 text-sm font-semibold text-ouro-300">
               <UserRoundCheck className="size-4" aria-hidden="true" />
               Para os seus clientes
@@ -232,17 +244,79 @@ export function InteligenciaArtificial() {
                 "Sempre se identifica como atendimento virtual e não dá parecer jurídico.",
               ]}
             />
-          </div>
+          </Revelar>
         </div>
 
-        <div className="mt-20 flex flex-col gap-4 rounded-[1.75rem] bg-white/[0.05] p-7 ring-1 ring-white/10 sm:flex-row sm:items-center sm:gap-6">
+        <Revelar className="mt-20 flex flex-col gap-4 rounded-[1.75rem] bg-white/[0.05] p-7 ring-1 ring-white/10 sm:flex-row sm:items-center sm:gap-6">
           <ShieldCheck className="size-9 shrink-0 text-ouro-300" strokeWidth={1.4} aria-hidden="true" />
           <p className="text-[1.02rem] leading-relaxed text-white/75">
             <strong className="font-semibold text-white">A IA sugere. O advogado decide.</strong> Nenhum prazo entra na agenda sem a sua
             confirmação, e o atendente não faz captação ativa: só responde quem procurou o escritório, como pede a OAB.
           </p>
-        </div>
+        </Revelar>
       </div>
+    </Secao>
+  );
+}
+
+/* -------------------------------- Segurança ------------------------------- */
+
+const PROTECOES: Array<{ icone: LucideIcon; titulo: string; texto: string }> = [
+  {
+    icone: Lock,
+    titulo: "Conexão e navegador protegidos",
+    texto:
+      "Todo o tráfego é criptografado, e o site só executa o próprio código: um script injetado por terceiros é bloqueado pelo navegador.",
+  },
+  {
+    icone: KeyRound,
+    titulo: "Acesso com várias travas",
+    texto:
+      "Sessão que scripts não conseguem ler, limite de tentativas de login com espera crescente e recusa de chamadas vindas de outros sites.",
+  },
+  {
+    icone: Bot,
+    titulo: "IA com rédea curta",
+    texto: "A IA só recebe os dados do próprio escritório, não executa nada sem confirmação e ignora instruções escondidas em mensagens.",
+  },
+  {
+    icone: ShieldCheck,
+    titulo: "Privacidade e LGPD",
+    texto:
+      "Sem rastreadores nem anúncios. No banco de dados, ligado na implantação, cada escritório fica isolado dos demais e toda alteração deixa registro.",
+  },
+];
+
+export function Seguranca() {
+  return (
+    <Secao id="seguranca" tom="cinza">
+      <Revelar efeito="foco">
+        <Sobretitulo>Segurança</Sobretitulo>
+        <TituloSecao>
+          Sigilo profissional levado a sério. <span className="text-sutil">Em todas as camadas.</span>
+        </TituloSecao>
+        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-mudo">
+          O {MARCA.nome} é construído em camadas de defesa: se uma falhar, a seguinte segura. O que o site coleta, e o que não coleta, está
+          na nossa{" "}
+          <Link href="/privacidade" className="font-medium text-tinta underline underline-offset-4">
+            política de privacidade
+          </Link>
+          .
+        </p>
+      </Revelar>
+      <ul className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {PROTECOES.map((protecao, indice) => (
+          <Revelar como="li" key={protecao.titulo} efeito="escala" atraso={(indice % 2) * 110}>
+            <div className="cartao-vivo flex h-full gap-5 rounded-[1.75rem] bg-white p-7 shadow-cartao ring-1 ring-black/[0.04]">
+              <protecao.icone className="icone-vivo mt-0.5 size-7 shrink-0 text-ouro-600" strokeWidth={1.5} aria-hidden="true" />
+              <div>
+                <h3 className="text-lg font-semibold">{protecao.titulo}</h3>
+                <p className="mt-2 leading-relaxed text-mudo">{protecao.texto}</p>
+              </div>
+            </div>
+          </Revelar>
+        ))}
+      </ul>
     </Secao>
   );
 }
@@ -266,16 +340,18 @@ const NA_IMPLANTACAO = [
 export function Lancamento() {
   return (
     <Secao>
-      <Sobretitulo>Escritórios fundadores</Sobretitulo>
-      <TituloSecao>
-        Estamos abrindo as primeiras vagas. <span className="text-sutil">Com implantação feita por nós.</span>
-      </TituloSecao>
-      <p className="mt-6 max-w-2xl text-lg leading-relaxed text-mudo">
-        O {MARCA.nome} está em lançamento. Os primeiros escritórios entram com acompanhamento direto da nossa equipe e participam das
-        decisões do produto. Veja com transparência o que já funciona e o que é ligado junto com o seu escritório.
-      </p>
+      <Revelar efeito="foco">
+        <Sobretitulo>Escritórios fundadores</Sobretitulo>
+        <TituloSecao>
+          Estamos abrindo as primeiras vagas. <span className="text-sutil">Com implantação feita por nós.</span>
+        </TituloSecao>
+        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-mudo">
+          O {MARCA.nome} está em lançamento. Os primeiros escritórios entram com acompanhamento direto da nossa equipe e participam das
+          decisões do produto. Veja com transparência o que já funciona e o que é ligado junto com o seu escritório.
+        </p>
+      </Revelar>
       <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div className="rounded-[1.75rem] bg-fundo p-7 sm:p-8">
+        <Revelar efeito="escala" className="rounded-[1.75rem] bg-fundo p-7 sm:p-8">
           <h3 className="text-lg font-semibold">Pronto para usar hoje</h3>
           <p className="mt-1 text-sm text-mudo">Tudo isto está na demonstração aberta.</p>
           <ul className="mt-6 space-y-3">
@@ -286,8 +362,8 @@ export function Lancamento() {
               </li>
             ))}
           </ul>
-        </div>
-        <div className="rounded-[1.75rem] bg-noite-1 p-7 text-white sm:p-8">
+        </Revelar>
+        <Revelar efeito="escala" atraso={130} className="rounded-[1.75rem] bg-noite-1 p-7 text-white sm:p-8">
           <h3 className="text-lg font-semibold">Ligado na implantação do seu escritório</h3>
           <p className="mt-1 text-sm text-white/50">Depende de contas e dados do próprio escritório.</p>
           <ul className="mt-6 space-y-3">
@@ -298,7 +374,7 @@ export function Lancamento() {
               </li>
             ))}
           </ul>
-        </div>
+        </Revelar>
       </div>
     </Secao>
   );
@@ -309,64 +385,66 @@ export function Lancamento() {
 export function Planos() {
   return (
     <Secao id="planos" tom="cinza">
-      <div className="text-center">
+      <Revelar efeito="foco" className="text-center">
         <Sobretitulo>Planos</Sobretitulo>
-        <TituloSecao className="mx-auto">Investimento à altura do resultado.</TituloSecao>
+        <TituloSecao className="mx-auto">Planos que cabem no escritório.</TituloSecao>
         <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-mudo">
           Uma parcela esquecida ou um prazo perdido custam mais do que a mensalidade.
         </p>
-      </div>
+      </Revelar>
 
       <ul className="mt-14 grid grid-cols-1 items-start gap-4 lg:grid-cols-3">
-        {PLANOS.map((plano) => (
-          <li
-            key={plano.id}
-            className={cn(
-              "flex flex-col rounded-[1.9rem] p-8",
-              plano.destaque
-                ? "bg-noite text-white shadow-[0_40px_80px_-30px_rgb(0_0_0/0.5)] lg:-mt-4 lg:pb-12"
-                : "bg-white shadow-cartao ring-1 ring-black/[0.04]",
-            )}
-          >
-            <div className="flex items-center justify-between gap-3">
-              <h3 className="text-xl font-semibold">{plano.nome}</h3>
-              {plano.destaque && (
-                <span className="rounded-full bg-ouro-400/15 px-2.5 py-1 text-xs font-semibold text-ouro-300">Mais escolhido</span>
+        {PLANOS.map((plano, indice) => (
+          <Revelar como="li" key={plano.id} efeito="escala" atraso={indice * 120} className={cn("flex", plano.destaque && "lg:-mt-4")}>
+            <div
+              className={cn(
+                "flex w-full flex-col rounded-[1.9rem] p-8",
+                plano.destaque
+                  ? "contorno-vivo bg-noite text-white shadow-[0_40px_80px_-30px_rgb(0_0_0/0.5)] lg:pb-12"
+                  : "cartao-vivo bg-white shadow-cartao ring-1 ring-black/[0.04]",
               )}
-            </div>
-            <p className={cn("mt-1 text-sm", plano.destaque ? "text-white/50" : "text-mudo")}>{plano.publico}</p>
-            <p className="mt-6 flex items-baseline gap-1">
-              <span className={cn("text-[2.9rem] leading-none font-bold tracking-[-0.045em]", plano.destaque && "texto-ouro")}>
-                {brl(plano.preco, { centavos: false })}
-              </span>
-              <span className={cn("text-sm font-medium", plano.destaque ? "text-white/50" : "text-mudo")}>{plano.sufixoPreco}</span>
-            </p>
-            <ul className="mt-7 flex-1 space-y-3">
-              {plano.recursos.map((recurso) => (
-                <li
-                  key={recurso}
-                  className={cn("flex gap-3 text-[0.95rem] leading-relaxed", plano.destaque ? "text-white/80" : "text-tinta-2")}
-                >
-                  <Check className={cn("mt-1 size-4 shrink-0", plano.destaque ? "text-ouro-300" : "text-ouro-600")} aria-hidden="true" />
-                  {recurso}
-                </li>
-              ))}
-            </ul>
-            <BotaoLink
-              href={linkWhatsApp(MENSAGENS_VENDA.plano(plano.nome))}
-              variante={plano.destaque ? "ouro" : "primario"}
-              tamanho="g"
-              className="mt-8 w-full"
             >
-              <IconeWhatsApp />
-              Contratar o {plano.nome}
-            </BotaoLink>
-          </li>
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="text-xl font-semibold">{plano.nome}</h3>
+                {plano.destaque && (
+                  <span className="rounded-full bg-ouro-400/15 px-2.5 py-1 text-xs font-semibold text-ouro-300">Mais escolhido</span>
+                )}
+              </div>
+              <p className={cn("mt-1 text-sm", plano.destaque ? "text-white/50" : "text-mudo")}>{plano.publico}</p>
+              {/* Linha reservada em todos os cartões, para os preços ficarem alinhados. */}
+              <p className={cn("mt-5 h-5 text-sm", plano.destaque ? "text-white/50" : "text-mudo")}>{plano.prefixoPreco ?? ""}</p>
+              <p className="mt-1 flex items-baseline gap-1">
+                <span className={cn("text-[2.9rem] leading-none font-bold tracking-[-0.045em]", plano.destaque && "texto-ouro")}>
+                  {brl(plano.preco, { centavos: false })}
+                </span>
+                <span className={cn("text-sm font-medium", plano.destaque ? "text-white/50" : "text-mudo")}>{plano.sufixoPreco}</span>
+              </p>
+              <ul className="mt-7 flex-1 space-y-3">
+                {plano.recursos.map((recurso) => (
+                  <li
+                    key={recurso}
+                    className={cn("flex gap-3 text-[0.95rem] leading-relaxed", plano.destaque ? "text-white/80" : "text-tinta-2")}
+                  >
+                    <Check className={cn("mt-1 size-4 shrink-0", plano.destaque ? "text-ouro-300" : "text-ouro-600")} aria-hidden="true" />
+                    {recurso}
+                  </li>
+                ))}
+              </ul>
+              <BotaoLink
+                href={linkWhatsApp(MENSAGENS_VENDA.plano(plano.nome))}
+                variante={plano.destaque ? "ouro" : "primario"}
+                tamanho="g"
+                className="mt-8 w-full"
+              >
+                <IconeWhatsApp />
+                Contratar o {plano.nome}
+              </BotaoLink>
+            </div>
+          </Revelar>
         ))}
       </ul>
       <p className="mt-8 text-center text-sm text-mudo">
-        Implantação de {brl(2500, { centavos: false })} a {brl(6000, { centavos: false })}, isenta no plano anual · Plano anual com 2 meses
-        grátis
+        Implantação a partir de {brl(IMPLANTACAO.aPartirDe, { centavos: false })}, isenta no plano anual · Plano anual com 2 meses grátis
       </p>
     </Secao>
   );
@@ -396,14 +474,18 @@ const DUVIDAS = [
       "O atendente se identifica como atendimento virtual, não dá parecer nem promete resultado, não aborda ninguém por conta própria e passa a conversa para a equipe sempre que a pessoa pede ou o assunto exige. As mensagens são configuráveis, e a responsabilidade final pelo atendimento continua sendo do escritório.",
   },
   {
+    pergunta: "Os dados do escritório ficam seguros?",
+    resposta:
+      "O site só aceita conexão criptografada, bloqueia scripts de terceiros, limita tentativas de login e não usa rastreadores. A demonstração guarda os dados só no seu navegador, por isso não cadastre nela clientes reais. Na implantação, o banco de dados isola cada escritório dos demais e registra toda alteração.",
+  },
+  {
     pergunta: "O que já funciona e o que ainda depende da implantação?",
     resposta:
       "Painel, casos, prazos, agenda, financeiro, clientes e a IA já funcionam na demonstração. O número oficial de WhatsApp, a captura de publicações dos tribunais e a cobrança por Pix e boleto são ligados na implantação, porque dependem de contas do próprio escritório.",
   },
   {
     pergunta: "Quanto custa a implantação?",
-    resposta:
-      "De R$ 2.500 a R$ 6.000, conforme o tamanho do escritório e o volume de dados a migrar. No plano anual, a implantação é isenta.",
+    resposta: `A partir de ${brl(IMPLANTACAO.aPartirDe, { centavos: false })}, conforme o tamanho do escritório e o volume de dados a migrar. No plano anual, a implantação é isenta.`,
   },
 ];
 
@@ -411,7 +493,7 @@ export function Duvidas() {
   return (
     <Secao id="duvidas">
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
-        <div>
+        <Revelar efeito="foco">
           <Sobretitulo>Dúvidas</Sobretitulo>
           <TituloSecao className="text-[2rem] sm:text-[2.6rem]">Perguntas que os advogados fazem.</TituloSecao>
           <p className="mt-5 leading-relaxed text-mudo">
@@ -426,21 +508,24 @@ export function Duvidas() {
             </a>
             .
           </p>
-        </div>
-        <div className="divide-y divide-linha-forte border-y border-linha-forte">
+        </Revelar>
+        <Revelar atraso={120} className="divide-y divide-linha-forte border-y border-linha-forte">
           {DUVIDAS.map((duvida) => (
             <details key={duvida.pergunta} className="group py-5">
-              <summary className="flex list-none items-center justify-between gap-4 text-lg font-semibold [&::-webkit-details-marker]:hidden">
+              <summary className="flex list-none items-center justify-between gap-4 text-lg font-semibold transition-colors hover:text-ouro-700 [&::-webkit-details-marker]:hidden">
                 {duvida.pergunta}
-                <span className="relative size-5 shrink-0 text-mudo" aria-hidden="true">
+                <span
+                  className="relative size-5 shrink-0 text-mudo transition-transform duration-300 group-open:rotate-180"
+                  aria-hidden="true"
+                >
                   <span className="absolute top-1/2 left-0 h-0.5 w-5 -translate-y-1/2 rounded-full bg-current" />
-                  <span className="absolute top-0 left-1/2 h-5 w-0.5 -translate-x-1/2 rounded-full bg-current transition-transform group-open:rotate-90 group-open:opacity-0" />
+                  <span className="absolute top-0 left-1/2 h-5 w-0.5 -translate-x-1/2 rounded-full bg-current transition-[rotate,opacity] duration-300 group-open:rotate-90 group-open:opacity-0" />
                 </span>
               </summary>
-              <p className="mt-3 max-w-2xl leading-relaxed text-mudo">{duvida.resposta}</p>
+              <p className="resposta-viva mt-3 max-w-2xl leading-relaxed text-mudo">{duvida.resposta}</p>
             </details>
           ))}
-        </div>
+        </Revelar>
       </div>
     </Secao>
   );
@@ -452,10 +537,10 @@ export function ChamadaFinal() {
   return (
     <section className="relative overflow-hidden bg-noite px-5 py-24 text-center text-white sm:px-8 sm:py-32">
       <div
-        className="pointer-events-none absolute -bottom-[26rem] left-1/2 h-[40rem] w-[64rem] -translate-x-1/2 rounded-full bg-ouro-400/25 blur-[110px]"
+        className="luz-viva pointer-events-none absolute -bottom-[26rem] left-1/2 h-[40rem] w-[64rem] -translate-x-1/2 rounded-full bg-ouro-400/25 blur-[110px]"
         aria-hidden="true"
       />
-      <div className="relative mx-auto max-w-3xl">
+      <Revelar efeito="foco" className="relative mx-auto max-w-3xl">
         <h2 className="text-[2.4rem] leading-[1.04] font-bold tracking-[-0.045em] text-balance sm:text-[4rem]">
           Leve o {MARCA.nome} para o seu escritório. <span className="texto-ouro">{MARCA.slogan}</span>
         </h2>
@@ -472,7 +557,7 @@ export function ChamadaFinal() {
           </BotaoLink>
         </div>
         <p className="mt-6 text-sm text-white/45">WhatsApp {MARCA.whatsapp.exibicao}</p>
-      </div>
+      </Revelar>
     </section>
   );
 }
@@ -488,12 +573,18 @@ export function Rodape() {
           <p className="mt-2 text-sm text-white/45">Gestão jurídica com inteligência artificial.</p>
         </div>
         <nav aria-label="Rodapé" className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/65">
-          <a href="#recursos" className="hover:text-white">
+          <Link href="/#recursos" className="hover:text-white">
             Recursos
-          </a>
-          <a href="#planos" className="hover:text-white">
+          </Link>
+          <Link href="/#planos" className="hover:text-white">
             Planos
-          </a>
+          </Link>
+          <Link href="/privacidade" className="hover:text-white">
+            Privacidade
+          </Link>
+          <Link href="/termos" className="hover:text-white">
+            Termos de uso
+          </Link>
           <Link href="/entrar" className="hover:text-white">
             Entrar
           </Link>
@@ -514,7 +605,7 @@ export function WhatsAppFlutuante() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Falar com o Vade no WhatsApp"
-      className="fundo-ouro fixed right-4 bottom-4 z-40 flex h-14 items-center gap-2.5 rounded-full px-5 font-semibold text-tinta shadow-[0_18px_40px_-10px_rgb(0_0_0/0.55)] transition-transform hover:scale-[1.03] sm:right-6 sm:bottom-6"
+      className="flutuante-vivo fundo-ouro fixed right-4 bottom-4 z-40 flex h-14 items-center gap-2.5 rounded-full px-5 font-semibold text-tinta shadow-[0_18px_40px_-10px_rgb(0_0_0/0.55)] transition-[scale] duration-300 hover:scale-[1.04] sm:right-6 sm:bottom-6"
     >
       <IconeWhatsApp className="size-6" />
       <span className="hidden sm:inline">Falar no WhatsApp</span>

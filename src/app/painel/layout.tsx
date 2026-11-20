@@ -10,11 +10,8 @@ export const metadata: Metadata = {
 
 /**
  * O painel é renderizado só no navegador (os dados ainda vivem no localStorage),
- * então a navegação para ele mostra primeiro o esqueleto. Isto dispensa a
- * validação de "navegação instantânea" do Next para esta área.
+ * então a navegação para ele mostra primeiro o esqueleto.
  */
-export const instant = false;
-
 export default function LayoutPainel({ children }: LayoutProps<"/painel">) {
   return (
     <Suspense fallback={<EsqueletoPainel />}>

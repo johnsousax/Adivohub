@@ -189,7 +189,7 @@ function MenuLateral({ pathname, aoFechar }: { pathname: string; aoFechar?: () =
       <div className="shrink-0 space-y-3 border-t border-white/[0.08] p-3">
         <Link href="/painel/configuracoes" className="block rounded-xl bg-white/[0.05] px-3 py-2.5 transition-colors hover:bg-white/[0.08]">
           <p className="text-[0.6875rem] font-medium text-ouro-300">Modo demonstração</p>
-          <p className="mt-0.5 text-xs leading-snug text-white/55">Os dados ficam só neste navegador.</p>
+          <p className="mt-0.5 text-xs leading-snug text-white/55">Os dados ficam só neste navegador. Não cadastre clientes reais.</p>
         </Link>
         <div className="flex items-center gap-3 px-1">
           <Avatar nome={usuario.nome} sobreEscuro />

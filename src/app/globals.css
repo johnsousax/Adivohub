@@ -178,9 +178,406 @@
     white-space: nowrap;
   }
 
+  /* Textos longos (política de privacidade e termos de uso) */
+  .texto-legal h2 {
+    margin-top: 2.75rem;
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .texto-legal p {
+    margin-top: 1rem;
+    line-height: 1.75;
+    color: var(--color-tinta-2);
+  }
+  .texto-legal ul {
+    margin-top: 1rem;
+    padding-left: 1.25rem;
+    list-style: disc;
+    color: var(--color-tinta-2);
+  }
+  .texto-legal li {
+    margin-top: 0.5rem;
+    line-height: 1.7;
+  }
+  .texto-legal li::marker {
+    color: var(--color-ouro-500);
+  }
+  .texto-legal a {
+    font-weight: 500;
+    color: var(--color-tinta);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .texto-legal strong {
+    font-weight: 600;
+    color: var(--color-tinta);
+  }
+
   /* Barra de rolagem discreta em áreas internas */
   .rolagem-fina {
     scrollbar-width: thin;
     scrollbar-color: var(--color-linha-forte) transparent;
+  }
+
+  /* ---------------------------------------------------------------------- */
+  /* Animações da landing page                                              */
+  /*                                                                        */
+  /* Regras: só opacidade e transformação (leves para o aparelho); o        */
+  /* conteúdo nunca depende de JavaScript para aparecer; e tudo é           */
+  /* desligado para quem pede menos movimento no sistema (fim do arquivo).  */
+  /* ---------------------------------------------------------------------- */
+
+  /* Entrada do topo: roda sozinha quando a página abre, em sequência (--atraso). */
+  .entrada {
+    animation: entrada 0.9s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    animation-delay: var(--atraso, 0ms);
+  }
+  .entrada-janela {
+    animation: entrada-janela 1.3s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    animation-delay: var(--atraso, 0ms);
+  }
+
+  /* Brilho que atravessa o texto dourado uma vez, na entrada. */
+  .texto-ouro-vivo {
+    background-image: linear-gradient(115deg, #f4e2b6 0%, #d9b774 28%, #b28a45 46%, #fff3d0 54%, #d9b774 66%, #e6cc91 100%);
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: brilho-do-ouro 2.6s cubic-bezier(0.4, 0, 0.2, 1) 0.5s both;
+  }
+
+  /* Luz dourada que respira devagar atrás da tela do produto. */
+  .luz-viva {
+    animation: respirar 9s ease-in-out infinite alternate;
+  }
+
+  /*
+   * Revelar ao rolar. O componente Revelar marca como "oculto" só o que está
+   * abaixo da tela depois que o JavaScript carregou; sem JavaScript, nada é
+   * escondido. Ao entrar na tela, o elemento passa a "visivel".
+   */
+  [data-revelar="oculto"] {
+    opacity: 0;
+    transform: translateY(28px);
+    will-change: opacity, transform;
+  }
+  [data-revelar="oculto"][data-efeito="escala"] {
+    transform: translateY(36px) scale(0.96);
+  }
+  [data-revelar="oculto"][data-efeito="foco"] {
+    transform: translateY(18px);
+    filter: blur(10px);
+  }
+  [data-revelar="visivel"] {
+    transition:
+      opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--atraso, 0ms),
+      transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--atraso, 0ms),
+      filter 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--atraso, 0ms);
+  }
+
+  /* Conversa do WhatsApp: os balões chegam um a um quando o celular aparece. */
+  [data-revelar="oculto"] .balao {
+    opacity: 0;
+  }
+  [data-revelar="visivel"] .balao {
+    animation: balao 0.55s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    animation-delay: calc(0.35s + var(--i, 0) * 0.5s);
+  }
+
+  /* Linha dourada que se desenha acima de cada item numerado. */
+  .linha-viva {
+    position: relative;
+  }
+  .linha-viva::before {
+    content: "";
+    position: absolute;
+    inset: -1px auto auto 0;
+    height: 2px;
+    width: 100%;
+    transform-origin: left;
+    background-image: linear-gradient(90deg, #c9a45c, #e6cc91 60%, transparent);
+  }
+  [data-revelar="oculto"].linha-viva::before {
+    transform: scaleX(0);
+  }
+  [data-revelar="visivel"].linha-viva::before {
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--atraso, 0ms) + 0.15s);
+  }
+
+  /* Cartões que sobem um pouco e ganham sombra quando o cursor passa. */
+  .cartao-vivo {
+    transition:
+      transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .cartao-vivo .icone-vivo {
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @media (hover: hover) {
+    .cartao-vivo:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 30px 60px -28px rgb(0 0 0 / 0.28);
+    }
+    .cartao-vivo:hover .icone-vivo {
+      transform: scale(1.12) rotate(-4deg);
+    }
+  }
+
+  /* Botão dourado: um reflexo atravessa o botão quando o cursor passa. */
+  .reflexo {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .reflexo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.55) 50%, transparent 65%);
+    transform: translateX(-120%);
+  }
+  @media (hover: hover) {
+    .reflexo:hover::after {
+      transform: translateX(120%);
+      transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  }
+
+  /* Seta que avança um pouco no botão. */
+  .seta-viva {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @media (hover: hover) {
+    a:hover > .seta-viva,
+    button:hover > .seta-viva {
+      transform: translateX(4px);
+    }
+  }
+
+  /* Sublinhado que cresce nos links do menu. */
+  .link-vivo {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 1px;
+    transition:
+      background-size 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      color 0.2s;
+  }
+  @media (hover: hover) {
+    .link-vivo:hover {
+      background-size: 100% 1px;
+    }
+  }
+
+  /* Plano em destaque: contorno dourado que gira devagar. */
+  .contorno-vivo {
+    position: relative;
+    isolation: isolate;
+  }
+  .contorno-vivo::before {
+    content: "";
+    position: absolute;
+    inset: -1.5px;
+    z-index: -1;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: conic-gradient(from var(--angulo, 0deg), transparent 0 55%, #c9a45c 72%, #f4e2b6 80%, #c9a45c 88%, transparent 100%);
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box exclude,
+      linear-gradient(#000 0 0);
+    animation: girar 7s linear infinite;
+  }
+
+  /* Botão flutuante do WhatsApp: chega depois de um instante e pulsa de leve. */
+  .flutuante-vivo {
+    animation: chegar 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.4s backwards;
+  }
+  .flutuante-vivo::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: #d9b774;
+    animation: pulso 3.2s ease-out 2.6s infinite;
+  }
+
+  /* Perguntas frequentes: a resposta desliza ao abrir. */
+  details[open] > .resposta-viva {
+    animation: abrir-resposta 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+/* A interpolação do ângulo precisa do tipo declarado. */
+@property --angulo {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes entrada {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+@keyframes entrada-janela {
+  from {
+    opacity: 0;
+    transform: translateY(70px) scale(0.955);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes brilho-do-ouro {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0% 0;
+  }
+}
+/* Só transform: a centralização do elemento vem da propriedade translate (Tailwind) e continua valendo. */
+@keyframes respirar {
+  from {
+    opacity: 0.7;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-3%) scale(1.07);
+  }
+}
+@keyframes abrir-resposta {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes balao {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes girar {
+  to {
+    --angulo: 360deg;
+  }
+}
+@keyframes chegar {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes pulso {
+  0% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.16, 1.55);
+  }
+}
+
+/* Efeitos ligados à rolagem: só onde o navegador oferece; nos outros, a página fica parada e completa. */
+@supports (animation-timeline: view()) {
+  /* A tela do produto começa levemente inclinada e se apruma conforme a página rola. */
+  .aprumar {
+    animation: aprumar linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 42%;
+  }
+  @keyframes aprumar {
+    from {
+      transform: perspective(1500px) rotateX(13deg) scale(0.95);
+    }
+    to {
+      transform: perspective(1500px) rotateX(0deg) scale(1);
+    }
+  }
+
+  /* Linha fina no topo que acompanha o avanço da leitura. */
+  .progresso-leitura {
+    transform-origin: left;
+    animation: progredir linear both;
+    animation-timeline: scroll(root);
+  }
+  @keyframes progredir {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+}
+@supports not (animation-timeline: view()) {
+  .progresso-leitura {
+    display: none;
+  }
+}
+
+/* Menos movimento: quem pede isso no sistema vê a página parada e completa. */
+@media (prefers-reduced-motion: reduce) {
+  .aprumar,
+  .progresso-leitura,
+  .luz-viva,
+  .contorno-vivo::before,
+  .flutuante-vivo::before,
+  .texto-ouro-vivo {
+    animation: none !important;
+  }
+  .progresso-leitura {
+    display: none;
+  }
+  [data-revelar],
+  [data-revelar] .balao {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}
+
+@media print {
+  [data-revelar],
+  [data-revelar] .balao,
+  .entrada,
+  .entrada-janela {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    animation: none !important;
   }
 }

@@ -13,6 +13,23 @@ export const MARCA = {
   },
 } as const;
 
+/**
+ * Dados legais mostrados na política de privacidade e nos termos de uso.
+ * PREENCHA antes de vender: a LGPD pede a identificação de quem responde pelos dados.
+ * Campos vazios simplesmente não aparecem nas páginas.
+ */
+export const LEGAL = {
+  /** Razão social (ou nome completo) de quem responde pelo Vade. */
+  responsavel: "",
+  /** CNPJ ou CPF do responsável, já formatado. */
+  documento: "",
+  /** E-mail do canal de privacidade. Sem ele, o canal é o WhatsApp de vendas. */
+  emailPrivacidade: "",
+  /** Mude a versão e a data sempre que alterar o texto dos documentos. */
+  versao: "1.0",
+  vigenteDesde: "2026-11-20",
+} as const;
+
 export type IdPlano = "profissional" | "escritorio" | "enterprise";
 
 export interface Plano {
@@ -20,6 +37,8 @@ export interface Plano {
   nome: string;
   publico: string;
   preco: number;
+  /** Texto pequeno acima do preço (ex.: "a partir de"). */
+  prefixoPreco?: string;
   sufixoPreco: string;
   destaque: boolean;
   recursos: string[];
@@ -30,12 +49,12 @@ export const PLANOS: Plano[] = [
     id: "profissional",
     nome: "Profissional",
     publico: "Até 3 usuários",
-    preco: 2197,
+    preco: 297,
     sufixoPreco: "/mês",
     destaque: false,
     recursos: [
-      "Até 500 processos acompanhados",
-      "Atendente IA: 1.000 conversas por mês",
+      "Até 200 processos acompanhados",
+      "Atendente IA: 300 conversas por mês",
       "Assistente IA do advogado",
       "Financeiro e régua de cobrança",
       "Implantação remota",
@@ -45,12 +64,12 @@ export const PLANOS: Plano[] = [
     id: "escritorio",
     nome: "Escritório",
     publico: "Até 10 usuários",
-    preco: 3497,
+    preco: 597,
     sufixoPreco: "/mês",
     destaque: true,
     recursos: [
-      "Até 2.000 processos acompanhados",
-      "2 números de WhatsApp, 3.000 conversas por mês",
+      "Até 800 processos acompanhados",
+      "2 números de WhatsApp, 1.000 conversas por mês",
       "Portal do cliente (em breve)",
       "NFS-e, repasses e DRE (em breve)",
       "Migração de dados inclusa",
@@ -60,8 +79,9 @@ export const PLANOS: Plano[] = [
     id: "enterprise",
     nome: "Enterprise",
     publico: "Usuários ilimitados",
-    preco: 5900,
-    sufixoPreco: "+/mês",
+    preco: 1497,
+    prefixoPreco: "a partir de",
+    sufixoPreco: "/mês",
     destaque: false,
     recursos: [
       "Volumes sob medida",
@@ -72,6 +92,11 @@ export const PLANOS: Plano[] = [
     ],
   },
 ];
+
+/** Taxa única de implantação (configuração, migração e treinamento). Isenta no plano anual. */
+export const IMPLANTACAO = {
+  aPartirDe: 497,
+} as const;
 
 export const URL_SITE =
   process.env.NEXT_PUBLIC_SITE_URL ||

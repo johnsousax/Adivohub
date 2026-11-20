@@ -1,9 +1,15 @@
 import type { NextRequest } from "next/server";
-import { configIA } from "@/lib/ia/config";
+import { configIA, iaPagaLiberada } from "@/lib/ia/config";
 import { exigirSessao } from "@/lib/servidor/respostas";
 
 export interface EstadoIntegracoes {
-  ia: { conectada: boolean; modeloAssistente: string; modeloAtendimento: string };
+  ia: {
+    conectada: boolean;
+    /** Verdadeiro quando há chave cadastrada, mas esta sessão é da demonstração pública, que nunca usa a IA paga. */
+    reservadaAoAcessoPrivado: boolean;
+    modeloAssistente: string;
+    modeloAtendimento: string;
+  };
   whatsapp: { conectado: boolean };
   pagamentos: { conectado: boolean };
   tribunais: { conectado: boolean };
@@ -16,8 +22,14 @@ export async function GET(requisicao: NextRequest) {
   if (sessao instanceof Response) return sessao;
 
   const ia = configIA();
+  const liberada = iaPagaLiberada(sessao.papel);
   const estado: EstadoIntegracoes = {
-    ia: { conectada: ia.ativa, modeloAssistente: ia.modeloAssistente, modeloAtendimento: ia.modeloAtendimento },
+    ia: {
+      conectada: liberada,
+      reservadaAoAcessoPrivado: ia.ativa && !liberada,
+      modeloAssistente: ia.modeloAssistente,
+      modeloAtendimento: ia.modeloAtendimento,
+    },
     whatsapp: { conectado: Boolean(process.env.WHATSAPP_VERIFY_TOKEN && process.env.WHATSAPP_APP_SECRET) },
     pagamentos: { conectado: false },
     tribunais: { conectado: false },
