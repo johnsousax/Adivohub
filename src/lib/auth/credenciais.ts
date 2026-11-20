@@ -7,7 +7,8 @@ import { createHash, timingSafeEqual } from "node:crypto";
  */
 export function credenciaisDemo() {
   return {
-    email: (process.env.DEMO_EMAIL || "demo@vade.app").toLowerCase(),
+    // ".example" é um domínio reservado: o endereço serve só como identificação de login.
+    email: (process.env.DEMO_EMAIL || "demo@vade.example").toLowerCase(),
     senha: process.env.DEMO_SENHA || "vade2026",
     /** Se a tela de login pode mostrar e preencher o acesso de demonstração. */
     publica: process.env.DEMO_PUBLICA !== "false",

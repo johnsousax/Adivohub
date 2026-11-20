@@ -75,7 +75,8 @@ export function TelaAtendimento() {
 
   function iniciarTeste() {
     const nome = CONTATOS_DE_TESTE[conversas.length % CONTATOS_DE_TESTE.length];
-    const fone = `9898${String(1000000 + conversas.length * 7919).slice(-7)}`;
+    // Faixa (98) 90000-XXXX: fora da numeração de celulares, então o teste nunca cai em alguém real.
+    const fone = `9890000${String(100 + conversas.length).padStart(4, "0")}`;
     const lead = adicionarCliente({
       tipo: "PF",
       nome,

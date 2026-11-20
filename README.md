@@ -30,7 +30,7 @@ cp .env.example .env.local   # e preencha AUTH_SECRET (openssl rand -base64 32)
 npm run dev                  # http://localhost:3000
 ```
 
-Entre em `/entrar` e use o botão **Abrir a demonstração** (ou `demo@vade.app` / `vade2026`).
+Entre em `/entrar` e use o botão **Abrir a demonstração** (ou `demo@vade.example` / `vade2026`).
 
 Os dados da demonstração nascem com datas relativas ao dia de hoje. Depois da primeira alteração, eles ficam gravados no navegador e as datas deixam de acompanhar o calendário. Para voltar ao estado inicial, com as datas recalculadas, use **Configurações → Restaurar a demonstração**.
 

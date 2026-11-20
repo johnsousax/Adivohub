@@ -119,6 +119,15 @@ describe("dados de demonstração", () => {
 
     const ids = [...dados.lancamentos.map((l) => l.id), ...dados.prazos.map((p) => p.id), ...dados.eventos.map((e) => e.id)];
     expect(new Set(ids).size).toBe(ids.length);
+
+    // Nada da demonstração pode apontar para uma pessoa ou um processo de verdade.
+    for (const cliente of dados.clientes) {
+      expect(cliente.telefone).toMatch(/^9890000\d{4}$/);
+      if (cliente.email) expect(cliente.email.endsWith(".example")).toBe(true);
+    }
+    for (const conversa of dados.conversas) expect(conversa.telefone).toMatch(/^9890000\d{4}$/);
+    for (const usuario of dados.usuarios) expect(usuario.email.endsWith(".example")).toBe(true);
+    for (const caso of dados.casos) if (caso.numeroCNJ) expect(caso.numeroCNJ.endsWith(".9999")).toBe(true);
   });
 
   it.each([new Date(2026, 11, 14), new Date(2026, 11, 22), new Date(2026, 11, 28), new Date(2027, 0, 4), new Date(2027, 0, 20)])(
