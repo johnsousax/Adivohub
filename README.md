@@ -32,6 +32,8 @@ npm run dev                  # http://localhost:3000
 
 Entre em `/entrar` e use o botão **Abrir a demonstração** (ou `demo@vade.app` / `vade2026`).
 
+Os dados da demonstração nascem com datas relativas ao dia de hoje. Depois da primeira alteração, eles ficam gravados no navegador e as datas deixam de acompanhar o calendário. Para voltar ao estado inicial, com as datas recalculadas, use **Configurações → Restaurar a demonstração**.
+
 | Comando             | O que faz                                           |
 | ------------------- | --------------------------------------------------- |
 | `npm run dev`       | Servidor de desenvolvimento                         |
@@ -91,9 +93,16 @@ docs/                   plano do produto e apresentações
 
 ## Deploy na Vercel
 
-O projeto `vade-juridico` está ligado a este repositório. Cada push gera uma versão de pré-visualização; a produção acompanha o branch principal.
+O projeto `vade-juridico` na Vercel está ligado a este repositório. O site público é **https://vade-juridico.vercel.app**.
 
-Variáveis a cadastrar no projeto: `AUTH_SECRET` (obrigatória) e, quando for ligar a IA, `ANTHROPIC_API_KEY`.
+- **Como a produção foi publicada:** a partir do branch de trabalho (`ccr-5a8e530d-0rzeun`), com um deploy de produção disparado à mão, porque o branch principal (`main`) ainda não tem o aplicativo.
+- **Depois que o trabalho for para o `main`:** cada push no `main` publica em produção sozinho. Os outros branches geram versões de pré-visualização.
+- **Região:** as funções rodam em São Paulo (`gru1`).
+- **Quem consegue abrir:** só `vade-juridico.vercel.app` (e um domínio próprio, quando houver) é aberto ao público. Os endereços longos de cada versão pedem login da Vercel; é a proteção padrão da conta.
+
+Variável já cadastrada no projeto: `AUTH_SECRET`. Para ligar a IA de verdade, cadastre `ANTHROPIC_API_KEY` (leia antes o aviso sobre a conta de demonstração, mais acima).
+
+Para usar um domínio próprio, adicione-o em _Settings → Domains_ do projeto. No deploy seguinte, os links de compartilhamento e o sitemap passam a usar o domínio novo sozinhos; `NEXT_PUBLIC_SITE_URL` só é necessária para forçar um endereço específico.
 
 ## Próximos passos
 

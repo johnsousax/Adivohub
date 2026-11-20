@@ -66,6 +66,11 @@ export function feriados(ano: number): Map<string, string> {
   return mapa;
 }
 
+/** Nome do feriado que cai no dia informado, se houver. */
+export function feriadoEm(data: Date): string | undefined {
+  return feriados(data.getFullYear()).get(paraISO(data));
+}
+
 /** Recesso forense: 20 de dezembro a 20 de janeiro, inclusive. */
 export function emRecessoForense(data: Date): boolean {
   const mes = data.getMonth() + 1;
@@ -75,7 +80,7 @@ export function emRecessoForense(data: Date): boolean {
 
 export function ehDiaUtil(data: Date, opcoes: { recesso?: boolean } = {}): boolean {
   if (isWeekend(data)) return false;
-  if (feriados(data.getFullYear()).has(paraISO(data))) return false;
+  if (feriadoEm(data)) return false;
   if (opcoes.recesso && emRecessoForense(data)) return false;
   return true;
 }

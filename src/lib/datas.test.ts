@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ehDiaUtil, emRecessoForense, feriados, paraISO, pascoa, proximoDiaUtil, somarDiasUteis, sugerirPrazo } from "./datas";
+import { ehDiaUtil, emRecessoForense, feriadoEm, feriados, paraISO, pascoa, proximoDiaUtil, somarDiasUteis, sugerirPrazo } from "./datas";
 
 const data = (iso: string) => new Date(`${iso}T00:00:00`);
 
@@ -15,6 +15,13 @@ describe("feriados", () => {
     expect(mapa.get("2026-04-03")).toBe("Sexta-feira Santa");
     expect(mapa.get("2026-02-17")).toBe("Carnaval");
     expect(mapa.get("2026-06-04")).toBe("Corpus Christi");
+  });
+
+  it("diz qual feriado cai em um dia", () => {
+    expect(feriadoEm(data("2026-11-20"))).toBe("Consciência Negra");
+    expect(feriadoEm(data("2026-12-25"))).toBe("Natal");
+    expect(feriadoEm(data("2026-11-19"))).toBeUndefined();
+    expect(feriadoEm(data("2026-11-21"))).toBeUndefined(); // sábado comum não é feriado
   });
 });
 

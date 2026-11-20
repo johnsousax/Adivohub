@@ -23,6 +23,7 @@ import {
   serieMensal,
   sugestoesPendentes,
 } from "@/lib/dados/metricas";
+import { emRecessoForense, feriadoEm } from "@/lib/datas";
 import { brl, dataLonga, dataSemana, hora, mesAno, mesCurto, milhares, percentual, plural } from "@/lib/formatos";
 import { AREAS, ETAPAS_FUNIL, TIPOS_EVENTO } from "@/lib/tipos";
 import { linkCompartilharWhatsApp } from "@/lib/whatsapp";
@@ -67,12 +68,33 @@ export function TelaVisaoGeral() {
 
   const primeiroNome = sessao.nome.split(" ").slice(0, 2).join(" ");
   const { proximoEvento, proximoPrazo } = briefing;
+
+  // Feriado e recesso mudam a contagem dos prazos: o resumo avisa logo no começo.
+  const feriadoHoje = feriadoEm(hoje);
+  const recessoHoje = emRecessoForense(hoje);
+  const avisoDoDia = recessoHoje
+    ? `${feriadoHoje ? `Feriado (${feriadoHoje}) e recesso forense` : "Recesso forense"}: prazos processuais suspensos até 20/01`
+    : feriadoHoje
+      ? `Hoje é feriado (${feriadoHoje}): o dia não conta nos prazos em dias úteis`
+      : undefined;
+  const seloDoDia = feriadoHoje ? `Feriado: ${feriadoHoje}` : recessoHoje ? "Recesso forense" : undefined;
+
+  const audienciasHoje = briefing.audienciasHoje.length;
+  const outrosHoje = briefing.compromissosHoje.length;
+  const agendaDeHoje =
+    audienciasHoje && outrosHoje
+      ? `${plural(audienciasHoje, "audiência", "audiências")} e ${plural(outrosHoje, "outro compromisso", "outros compromissos")} hoje`
+      : audienciasHoje
+        ? `${plural(audienciasHoje, "audiência", "audiências")} hoje`
+        : outrosHoje
+          ? `${plural(outrosHoje, "compromisso", "compromissos")} hoje`
+          : proximoEvento
+            ? `Agenda livre hoje. Próximo: ${proximoEvento.titulo}, ${dataSemana(proximoEvento.inicio)} às ${hora(proximoEvento.inicio)}`
+            : "Agenda livre hoje";
+
   const linhasBriefing = [
-    briefing.audienciasHoje.length || briefing.compromissosHoje.length
-      ? `${plural(briefing.audienciasHoje.length, "audiência", "audiências")} e ${plural(briefing.compromissosHoje.length, "outro compromisso", "outros compromissos")} hoje`
-      : proximoEvento
-        ? `Agenda livre hoje. Próximo: ${proximoEvento.titulo}, ${dataSemana(proximoEvento.inicio)} às ${hora(proximoEvento.inicio)}`
-        : "Agenda livre hoje",
+    ...(avisoDoDia ? [avisoDoDia] : []),
+    agendaDeHoje,
     briefing.prazosHoje.length
       ? `${plural(briefing.prazosHoje.length, "prazo vence", "prazos vencem")} hoje${briefing.prazosAtrasados.length ? ` e ${plural(briefing.prazosAtrasados.length, "está atrasado", "estão atrasados")}` : ""}`
       : `${briefing.prazosAtrasados.length ? `${plural(briefing.prazosAtrasados.length, "prazo atrasado", "prazos atrasados")}. ` : "Nenhum prazo vence hoje. "}${
@@ -89,7 +111,12 @@ export function TelaVisaoGeral() {
     <>
       <CabecalhoPagina
         titulo={`${saudacao()}, ${primeiroNome}`}
-        descricao={<span className="first-letter:uppercase">{dataLonga(hoje)}</span>}
+        descricao={
+          <>
+            <span className="inline-block first-letter:uppercase">{dataLonga(hoje)}</span>
+            {seloDoDia && <span className="text-ouro-700"> · {seloDoDia}</span>}
+          </>
+        }
         acoes={
           <>
             <Botao variante="secundario" onClick={formPrazo.abrir}>

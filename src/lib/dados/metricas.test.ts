@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { validarCNJ } from "../cnj";
+import { emRecessoForense } from "../datas";
 import type { Lancamento, Prazo } from "../tipos";
 import { grupoDoPrazo, montarBriefing, receitaPorArea, resumoFinanceiro, serieMensal, situacao } from "./metricas";
 import { criarSemente } from "./semente";
@@ -119,6 +120,23 @@ describe("dados de demonstração", () => {
     const ids = [...dados.lancamentos.map((l) => l.id), ...dados.prazos.map((p) => p.id), ...dados.eventos.map((e) => e.id)];
     expect(new Set(ids).size).toBe(ids.length);
   });
+
+  it.each([new Date(2026, 11, 14), new Date(2026, 11, 22), new Date(2026, 11, 28), new Date(2027, 0, 4), new Date(2027, 0, 20)])(
+    "não marca audiência nem prazo processual dentro do recesso forense (%s)",
+    (dia) => {
+      const dados = criarSemente(dia);
+      const noRecesso = (iso: string) => emRecessoForense(new Date(`${iso.slice(0, 10)}T00:00:00`));
+      const consultivos = new Set(dados.casos.filter((c) => !c.numeroCNJ).map((c) => c.id));
+
+      const audiencias = dados.eventos.filter((e) => e.tipo === "audiencia");
+      expect(audiencias.length).toBeGreaterThan(0);
+      for (const audiencia of audiencias) expect(noRecesso(audiencia.inicio)).toBe(false);
+
+      const processuais = dados.prazos.filter((p) => !consultivos.has(p.casoId));
+      expect(processuais.length).toBeGreaterThan(0);
+      for (const prazo of processuais) expect(noRecesso(prazo.dataFatal)).toBe(false);
+    },
+  );
 
   it("tem movimento para o painel", () => {
     const dados = criarSemente(hoje);

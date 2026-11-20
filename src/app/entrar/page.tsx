@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Suspense } from "react";
 import { FormLogin } from "@/components/login/FormLogin";
 import { Logo } from "@/components/marca/Logo";
 import { credenciaisDemo } from "@/lib/auth/credenciais";
@@ -44,9 +43,7 @@ export default function PaginaEntrar() {
           </Link>
           <h1 className="text-[1.9rem] leading-tight font-bold tracking-[-0.035em]">Entrar no painel</h1>
           <p className="mt-2 text-[0.95rem] text-mudo">Use seu e-mail e sua senha para acessar o escritório.</p>
-          <Suspense fallback={<div className="mt-8 h-64 animate-pulse rounded-3xl bg-fundo" />}>
-            <FormLogin demo={demo.publica ? { email: demo.email, senha: demo.senha } : null} />
-          </Suspense>
+          <FormLogin demo={demo.publica ? { email: demo.email, senha: demo.senha } : null} />
           <p className="mt-8 text-sm text-mudo">
             Ainda não é cliente?{" "}
             <Link href="/#planos" className="font-medium text-tinta underline-offset-4 hover:underline">

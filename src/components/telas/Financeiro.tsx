@@ -113,7 +113,7 @@ export function TelaFinanceiro() {
     <>
       <CabecalhoPagina
         titulo="Financeiro"
-        descricao={<span className="first-letter:uppercase">{mesAno(hoje)}</span>}
+        descricao={<span className="inline-block first-letter:uppercase">{mesAno(hoje)}</span>}
         acoes={
           <>
             <Botao variante="secundario" onClick={formDespesa.abrir}>

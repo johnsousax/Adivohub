@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowRight, LoaderCircle } from "lucide-react";
-import { useSearchParams } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { Botao } from "@/components/ui/Botao";
 import { Entrada } from "@/components/ui/Campos";
@@ -12,7 +11,6 @@ function destinoSeguro(valor: string | null): string {
 }
 
 export function FormLogin({ demo }: { demo: { email: string; senha: string } | null }) {
-  const parametros = useSearchParams();
   const [email, definirEmail] = useState("");
   const [senha, definirSenha] = useState("");
   const [erro, definirErro] = useState<string>();
@@ -28,8 +26,10 @@ export function FormLogin({ demo }: { demo: { email: string; senha: string } | n
         body: JSON.stringify(credenciais),
       });
       if (resposta.ok) {
-        // Navegação completa: o proxy precisa ver o cookie novo.
-        window.location.assign(destinoSeguro(parametros.get("de")));
+        // Navegação completa: o proxy precisa ver o cookie novo. O destino (?de=) é lido
+        // só aqui, no clique, para o formulário já vir pronto no HTML da página.
+        const destino = new URLSearchParams(window.location.search).get("de");
+        window.location.assign(destinoSeguro(destino));
         return;
       }
       const corpo = (await resposta.json().catch(() => null)) as { erro?: string } | null;

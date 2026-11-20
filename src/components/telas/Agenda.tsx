@@ -14,7 +14,7 @@ import { Filtro } from "@/components/ui/Campos";
 import { useDialogo } from "@/components/ui/Modal";
 import { cn } from "@/lib/cn";
 import { useLoja } from "@/lib/dados/loja";
-import { feriados, paraISO } from "@/lib/datas";
+import { feriadoEm, paraISO } from "@/lib/datas";
 import { dataLonga, hora, plural } from "@/lib/formatos";
 import { TIPOS_EVENTO } from "@/lib/tipos";
 
@@ -67,7 +67,7 @@ export function TelaAgenda() {
   const hojeISO = paraISO(hoje);
   const doDia = porDia.get(selecionado) ?? { eventos: [], prazos: [] };
   const dataSelecionada = parseISO(selecionado);
-  const feriado = feriados(dataSelecionada.getFullYear()).get(selecionado);
+  const feriado = feriadoEm(dataSelecionada);
 
   function irPara(data: Date) {
     definirMes(startOfMonth(data));
@@ -139,13 +139,14 @@ export function TelaAgenda() {
               const ehHoje = iso === hojeISO;
               const ativo = iso === selecionado;
               const total = (itens?.eventos.length ?? 0) + (itens?.prazos.length ?? 0);
+              const feriadoDoDia = feriadoEm(dia);
               return (
                 <button
                   key={iso}
                   type="button"
                   onClick={() => definirSelecionado(iso)}
                   aria-pressed={ativo}
-                  aria-label={`${dataLonga(dia)}${total ? `, ${plural(total, "item", "itens")}` : ""}`}
+                  aria-label={`${dataLonga(dia)}${feriadoDoDia ? `, feriado: ${feriadoDoDia}` : ""}${total ? `, ${plural(total, "item", "itens")}` : ""}`}
                   className={cn(
                     "flex min-h-[4.25rem] flex-col gap-1 bg-white p-1.5 text-left transition-colors hover:bg-fundo focus-visible:z-10 sm:min-h-[6.5rem] sm:p-2",
                     !doMes && "bg-fundo/60",
@@ -162,6 +163,7 @@ export function TelaAgenda() {
                   </span>
                   {/* Telas largas: títulos. Celular: só marcadores. */}
                   <span className="hidden min-w-0 flex-col gap-0.5 sm:flex">
+                    {feriadoDoDia && <span className="truncate px-1.5 text-[0.6875rem] leading-tight text-mudo">{feriadoDoDia}</span>}
                     {itens?.eventos.slice(0, 2).map((evento) => (
                       <span
                         key={evento.id}
