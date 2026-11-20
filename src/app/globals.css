@@ -1,0 +1,186 @@
+@import "tailwindcss";
+
+/*
+ * Sistema visual do Vade: preto, branco e cinzas, com dourado só para destaque.
+ * Todas as cores do app saem destes tokens.
+ */
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Texto e superfícies (claro) */
+  --color-tinta: #1d1d1f;
+  --color-tinta-2: #424245;
+  --color-mudo: #6e6e73;
+  --color-sutil: #86868b;
+  --color-fundo: #f5f5f7;
+  --color-linha: #e8e8ed;
+  --color-linha-forte: #d2d2d7;
+
+  /* Superfícies escuras (menu lateral, landing) */
+  --color-noite: #000000;
+  --color-noite-1: #0b0b0c;
+  --color-noite-2: #161617;
+  --color-noite-3: #2a2a2c;
+  --color-nevoa: #a1a1a6;
+
+  /* Dourado */
+  --color-ouro-50: #fbf6ea;
+  --color-ouro-100: #f5ead0;
+  --color-ouro-200: #ead5a6;
+  --color-ouro-300: #ddbe7c;
+  --color-ouro-400: #c9a45c;
+  --color-ouro-500: #b8893a;
+  --color-ouro-600: #9a7536;
+  --color-ouro-700: #7c5d2a;
+  --color-ouro-800: #5e4720;
+
+  /* Estados: sempre acompanhados de ícone ou texto, nunca só a cor */
+  --color-ok: #1b7f45;
+  --color-ok-fundo: #e7f5ec;
+  --color-alerta: #a85a06;
+  --color-alerta-fundo: #fdf1df;
+  --color-critico: #c0302a;
+  --color-critico-fundo: #fcebea;
+  --color-info: #2a64b8;
+  --color-info-fundo: #eaf1fb;
+
+  /* Gráficos: destaque validado para leitura sobre branco; contexto em cinza */
+  --color-grafico: #b8893a;
+  --color-grafico-contexto: #c7c7cc;
+
+  --radius-cartao: 1.25rem;
+  --shadow-cartao: 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-flutuante: 0 24px 60px -18px rgb(0 0 0 / 0.28), 0 0 0 1px rgb(0 0 0 / 0.06);
+
+  --animate-surgir: surgir 0.18s ease-out;
+  @keyframes surgir {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--color-fundo);
+    color: var(--color-tinta);
+    font-family: var(--font-sans);
+    font-optical-sizing: auto;
+    letter-spacing: -0.011em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.028em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ouro-500);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  ::selection {
+    background: var(--color-ouro-200);
+    color: var(--color-tinta);
+  }
+
+  dialog::backdrop {
+    background: rgb(0 0 0 / 0.42);
+    backdrop-filter: blur(6px);
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary {
+    cursor: pointer;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Texto em dourado metálico: só para títulos e números grandes. */
+  .texto-ouro {
+    background-image: linear-gradient(115deg, #f4e2b6 0%, #d9b774 38%, #b28a45 70%, #e6cc91 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .texto-ouro-escuro {
+    background-image: linear-gradient(115deg, #c9a45c 0%, #a8833f 55%, #7c5d2a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .fundo-ouro {
+    background-image: linear-gradient(115deg, #f1dca9 0%, #d9b774 45%, #c09a55 100%);
+  }
+
+  /* Tabelas do painel */
+  .tabela {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+  .tabela th {
+    padding: 0.625rem 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-mudo);
+    white-space: nowrap;
+    border-bottom: 1px solid var(--color-linha);
+  }
+  /* Âncora para textos só de leitor de tela: sem isto eles "vazam" da área rolável no celular. */
+  .tabela th,
+  .tabela td {
+    position: relative;
+  }
+  .tabela td {
+    padding: 0.8rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--color-linha);
+  }
+  .tabela tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .tabela tbody tr {
+    transition: background-color 0.12s;
+  }
+  .tabela tbody tr:hover {
+    background: rgb(245 245 247 / 0.7);
+  }
+  .tabela .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* Barra de rolagem discreta em áreas internas */
+  .rolagem-fina {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-linha-forte) transparent;
+  }
+}

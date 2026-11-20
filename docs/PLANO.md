@@ -1,12 +1,16 @@
-# AdvoHub — Plano Completo do Produto
+# Vade — Plano Completo do Produto
 
 > Plataforma de gestão para escritórios de advocacia com IA nativa.
 > Meta comercial: ticket a partir de **R$ 2.000/mês** por escritório.
-> Documento de trabalho — versão 1.0 (nov/2026). "AdvoHub" é nome provisório.
+> Documento de trabalho — versão 1.1 (nov/2026). O nome do produto é **Vade** (de _Vade Mecum_, "vai comigo");
+> nas primeiras versões deste plano ele aparecia como "AdvoHub". Falta confirmar a marca no INPI e o domínio.
 >
-> Apresentações: `AdvoHub-Apresentacao.pdf` (completa, com o plano de execução) e
-> `AdvoHub-Apresentacao-Clientes.pdf` (versão para mostrar a escritórios, sem custos, margens e estratégia interna).
+> Apresentações: `Vade-Apresentacao.pdf` (completa, com o plano de execução) e
+> `Vade-Apresentacao-Clientes.pdf` (versão para mostrar a escritórios, sem custos, margens e estratégia interna).
 > Fonte editável dos slides: `apresentacao/slides.html`.
+>
+> O aplicativo já existe em modo demonstração (ver `README.md` na raiz): painel, casos, prazos, agenda, clientes,
+> financeiro e IA funcionam com dados locais; banco de dados e integrações externas ainda não estão conectados.
 
 ---
 
@@ -17,7 +21,7 @@ Ele usa 5 a 8 ferramentas soltas (planilha de honorários, agenda do Google, Wha
 pasta no Drive, sistema de publicações, banco) e perde dinheiro em três pontos: **prazo perdido**,
 **honorário não cobrado** e **cliente/lead sem resposta**.
 
-O AdvoHub junta tudo em um só lugar e coloca uma IA que **trabalha junto**: ela avisa, resume,
+O Vade junta tudo em um só lugar e coloca uma IA que **trabalha junto**: ela avisa, resume,
 responde o cliente, cobra e agenda — sempre sob supervisão do advogado.
 
 **Promessa central:** "Seu escritório organizado, seus prazos sob controle e seus clientes atendidos 24h — sem contratar mais ninguém."
@@ -173,7 +177,7 @@ dados hospedados no Brasil, logs de acesso, política de retenção e exclusão.
 | Horas de advogado liberadas (20h × R$ 200/h) | R$ 4.000 |
 | **Total potencial** | **R$ 16.000 – R$ 21.000/mês** |
 
-Mensagem de venda: **"O AdvoHub se paga com um contrato a mais por mês."** Um único prazo perdido pode custar mais que um ano de assinatura.
+Mensagem de venda: **"O Vade se paga com um contrato a mais por mês."** Um único prazo perdido pode custar mais que um ano de assinatura.
 
 > Os números acima são estimativas de referência para a apresentação comercial e devem ser validados com os escritórios piloto.
 
@@ -203,7 +207,7 @@ Meta: com 100 escritórios ativos ≈ R$ 250 mil de MRR (ticket médio de R$ 2.5
 Mercado tem players consolidados (Astrea/Aurum, Projuris, ADVBOX, Legal One, EasyJur, CPJ).
 A maioria é forte em cadastro de processos, mas trata IA como acessório e o WhatsApp como canal externo.
 
-**Diferenciais do AdvoHub:**
+**Diferenciais do Vade:**
 1. **IA que age** (agente com ferramentas), não só um chat — ela agenda, cobra, responde e resume.
 2. **WhatsApp oficial como centro do atendimento**, com caixa de entrada da equipe.
 3. **Financeiro de verdade** (êxito, repasse, cobrança automática, NFS-e) — onde o sócio sente o dinheiro.
