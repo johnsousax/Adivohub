@@ -42,8 +42,11 @@ create type public.plano             as enum ('essencial', 'crescimento', 'compl
 create type public.papel             as enum ('socio', 'advogado', 'estagiario', 'financeiro');
 create type public.tipo_pessoa       as enum ('PF', 'PJ');
 create type public.origem_cliente    as enum ('indicacao', 'instagram', 'google', 'whatsapp', 'outro');
-create type public.status_cliente    as enum ('lead', 'ativo', 'inativo');
+create type public.status_cliente    as enum ('lead', 'ativo', 'inativo', 'perdido');
 create type public.etapa_funil       as enum ('novo', 'consulta', 'proposta', 'contrato');
+create type public.temperatura_contato as enum ('quente', 'morno', 'frio');
+create type public.motivo_perda      as enum ('preco', 'concorrente', 'sem_viabilidade', 'sem_resposta', 'desistiu', 'outro');
+create type public.tipo_interacao    as enum ('ligacao', 'whatsapp', 'reuniao', 'email', 'nota', 'etapa');
 create type public.area_direito      as enum ('previdenciario', 'trabalhista', 'familia', 'consumidor', 'civel');
 create type public.fase_caso         as enum ('inicial', 'instrucao', 'sentenca', 'recurso', 'execucao', 'encerrado');
 create type public.tipo_andamento    as enum ('publicacao', 'andamento', 'nota');
@@ -186,15 +189,32 @@ create table public.clientes (
   area_interesse       public.area_direito,
   responsavel_id       uuid,
   observacoes          text check (char_length(observacoes) <= 4000),
+  -- CRM: honorários estimados, temperatura e o próximo passo combinado com o contato.
+  valor_estimado_centavos bigint check (valor_estimado_centavos >= 0),
+  temperatura          public.temperatura_contato,
+  proximo_passo        text check (char_length(trim(proximo_passo)) between 1 and 200),
+  proximo_passo_em     date,
+  motivo_perda         public.motivo_perda,
+  -- Datas do funil, preenchidas pelo banco (gatilho clientes_crm), nunca pelo navegador.
+  etapa_desde          date,
+  convertido_em        date,
+  perdido_em           date,
   criado_por           uuid default auth.uid(),
   criado_em            timestamptz not null default now(),
   atualizado_em        timestamptz not null default now(),
   excluido_em          timestamptz,
   unique (escritorio_id, id),
   foreign key (escritorio_id, responsavel_id) references public.usuarios (escritorio_id, id) on delete set null (responsavel_id),
-  -- Etapa do funil só faz sentido para quem ainda não contratou.
-  constraint etapa_so_para_lead check (status = 'lead' or etapa_funil is null)
+  -- Etapa do funil só faz sentido para quem negocia; o perdido guarda a etapa em que parou.
+  constraint etapa_so_para_contato check (status in ('lead', 'perdido') or etapa_funil is null),
+  -- Próximo passo tem descrição e data, e só existe enquanto o contato negocia.
+  constraint proximo_passo_completo check ((proximo_passo is null) = (proximo_passo_em is null)),
+  constraint proximo_passo_so_para_lead check (status = 'lead' or proximo_passo is null),
+  -- Perdido sempre com motivo e data; quem não está perdido não carrega nenhum dos dois.
+  constraint perda_com_motivo check ((status = 'perdido') = (motivo_perda is not null and perdido_em is not null)),
+  constraint perda_sem_motivo check (status = 'perdido' or (motivo_perda is null and perdido_em is null))
 );
+create index clientes_retornos_idx on public.clientes (escritorio_id, proximo_passo_em) where status = 'lead' and excluido_em is null;
 create index clientes_escritorio_idx on public.clientes (escritorio_id, status) where excluido_em is null;
 
 -- CPF e CNPJ: cifrados pela aplicação (AES-256-GCM, chave fora do banco) e
@@ -212,6 +232,105 @@ create table private.documentos_de_clientes (
 create index documentos_indice_idx on private.documentos_de_clientes (escritorio_id, documento_indice);
 revoke all on private.documentos_de_clientes from public, anon, authenticated;
 grant select, insert, update, delete on private.documentos_de_clientes to service_role;
+
+-- Datas do funil: o banco anota quando o contato muda de etapa, vira cliente ou é perdido,
+-- e limpa o que deixa de valer (o próximo passo de quem fechou, o motivo de quem reabriu).
+create function private.ajustar_crm() returns trigger
+language plpgsql set search_path = ''
+as $$
+begin
+  if tg_op = 'INSERT' then
+    if new.status = 'lead' then new.etapa_desde := coalesce(new.etapa_desde, current_date); end if;
+    if new.status = 'perdido' then new.perdido_em := coalesce(new.perdido_em, current_date); end if;
+    return new;
+  end if;
+
+  if new.status is distinct from old.status then
+    if new.status in ('ativo', 'inativo') then
+      if old.status in ('lead', 'perdido') then new.convertido_em := current_date; end if;
+      new.etapa_funil := null;
+    end if;
+    if new.status = 'perdido' then new.perdido_em := current_date; end if;
+    if old.status = 'perdido' then
+      new.perdido_em := null;
+      new.motivo_perda := null;
+    end if;
+    if new.status <> 'lead' then
+      new.proximo_passo := null;
+      new.proximo_passo_em := null;
+    elsif new.etapa_funil is null then
+      new.etapa_funil := 'novo';
+    end if;
+  end if;
+
+  if new.etapa_funil is distinct from old.etapa_funil then
+    new.etapa_desde := case when new.etapa_funil is null then null else current_date end;
+  end if;
+  return new;
+end;
+$$;
+create trigger clientes_crm before insert or update on public.clientes
+  for each row execute function private.ajustar_crm();
+
+-- Histórico de contatos do CRM: ligações, mensagens, reuniões e anotações.
+-- Só cresce: ninguém edita um contato registrado (exclusão lógica pela função).
+-- Os marcos (mudança de etapa, virou cliente, perdido) só o banco grava.
+create table public.interacoes (
+  id             uuid primary key default gen_random_uuid(),
+  escritorio_id  uuid not null default private.escritorio_atual() references public.escritorios (id) on delete cascade,
+  cliente_id     uuid not null,
+  tipo           public.tipo_interacao not null,
+  resumo         text not null check (char_length(trim(resumo)) between 1 and 2000),
+  em             timestamptz not null default now(),
+  usuario_id     uuid default auth.uid(),
+  por_ia         boolean not null default false,
+  criado_em      timestamptz not null default now(),
+  excluido_em    timestamptz,
+  unique (escritorio_id, id),
+  foreign key (escritorio_id, cliente_id) references public.clientes (escritorio_id, id) on delete cascade,
+  foreign key (escritorio_id, usuario_id) references public.usuarios (escritorio_id, id) on delete set null (usuario_id)
+);
+create index interacoes_cliente_idx on public.interacoes (escritorio_id, cliente_id, em desc) where excluido_em is null;
+
+-- Marco automático no histórico. Roda com privilégio elevado só para gravar o tipo
+-- "etapa", que a equipe não consegue gravar direto; o texto vem só de valores fixos.
+create function private.registrar_marco_crm() returns trigger
+language plpgsql security definer set search_path = ''
+as $$
+declare
+  v_resumo text;
+begin
+  if new.status is distinct from old.status then
+    v_resumo := case
+      when new.status in ('ativo', 'inativo') and old.status in ('lead', 'perdido') then 'Virou cliente.'
+      when new.status = 'perdido' then 'Contato perdido: ' || case new.motivo_perda
+        when 'preco' then 'achou os honorários altos'
+        when 'concorrente' then 'fechou com outro escritório'
+        when 'sem_viabilidade' then 'caso sem viabilidade jurídica'
+        when 'sem_resposta' then 'parou de responder'
+        when 'desistiu' then 'desistiu de entrar com a ação'
+        else 'outro motivo'
+      end || '.'
+      when new.status = 'lead' and old.status = 'perdido' then 'Negociação reaberta.'
+    end;
+  elsif new.status = 'lead' and new.etapa_funil is distinct from old.etapa_funil then
+    v_resumo := 'Passou para "' || case new.etapa_funil
+      when 'novo' then 'Novo contato'
+      when 'consulta' then 'Consulta agendada'
+      when 'proposta' then 'Proposta enviada'
+      when 'contrato' then 'Contrato em assinatura'
+    end || '".';
+  end if;
+
+  if v_resumo is not null then
+    insert into public.interacoes (escritorio_id, cliente_id, tipo, resumo, usuario_id)
+    values (new.escritorio_id, new.id, 'etapa', v_resumo, (select auth.uid()));
+  end if;
+  return null;
+end;
+$$;
+create trigger clientes_marco_crm after update on public.clientes
+  for each row execute function private.registrar_marco_crm();
 
 create table public.casos (
   id                    uuid primary key default gen_random_uuid(),
@@ -442,8 +561,9 @@ as $$
 declare
   -- Texto livre sobre o cliente e sobre o caso é sigilo profissional: não vai para o registro.
   v_sigilosos constant text[] := case tg_table_name
-    when 'clientes' then array['observacoes', 'documento_mascarado']
-    when 'casos'    then array['descricao']
+    when 'clientes'   then array['observacoes', 'documento_mascarado', 'proximo_passo']
+    when 'casos'      then array['descricao']
+    when 'interacoes' then array['resumo']
     else array[]::text[]
   end;
   v_antes  jsonb;
@@ -502,6 +622,9 @@ begin
     execute format('create trigger %I after insert or update or delete on public.%I for each row execute function private.auditar()', v_tabela || '_auditoria', v_tabela);
   end loop;
 end $$;
+-- O histórico do CRM não é editado (não tem data de atualização), mas entra na auditoria, sem o texto.
+create trigger interacoes_auditoria after insert or update or delete on public.interacoes
+  for each row execute function private.auditar();
 
 -- ---------------------------------------------------------------------------
 -- 9. Webhooks: cada evento é processado uma única vez
@@ -630,6 +753,7 @@ declare
 begin
   v_papeis := case p_tabela
     when 'clientes'    then array['socio', 'advogado']::public.papel[]
+    when 'interacoes'  then array['socio', 'advogado']::public.papel[]
     when 'casos'       then array['socio', 'advogado']::public.papel[]
     when 'andamentos'  then array['socio', 'advogado']::public.papel[]
     when 'prazos'      then array['socio', 'advogado']::public.papel[]
@@ -699,6 +823,9 @@ $$;
 --  estagiario  | só lê           | lê e edita         | lê e edita | nada        | lê e edita | só lê
 --  financeiro  | só lê           | nada               | só lê      | lê e edita  | nada       | só lê
 --
+--  Histórico do CRM (interacoes): sócio, advogado e estagiário leem e registram contatos;
+--  financeiro não vê. Ninguém edita um registro; marcos de etapa só o banco grava.
+--
 --  Excluir (lógico) é pela função excluir_registro, com regra própria por tabela.
 --  Criar escritório e usuário, e mudar o plano, é só pelo servidor (chave de serviço).
 -- ---------------------------------------------------------------------------
@@ -713,6 +840,7 @@ alter table public.contratos   enable row level security;
 alter table public.lancamentos enable row level security;
 alter table public.conversas   enable row level security;
 alter table public.mensagens   enable row level security;
+alter table public.interacoes  enable row level security;
 
 -- Escritório: a equipe vê o seu; só sócio edita.
 create policy escritorios_ver on public.escritorios for select to authenticated
@@ -736,6 +864,26 @@ create policy clientes_criar on public.clientes for insert to authenticated
 create policy clientes_editar on public.clientes for update to authenticated
   using (escritorio_id = (select private.escritorio_atual()) and excluido_em is null and (select private.tem_papel('{socio,advogado}')))
   with check (escritorio_id = (select private.escritorio_atual()) and (select private.tem_papel('{socio,advogado}')));
+
+-- Histórico do CRM: quem atende vê e registra; financeiro não participa. A equipe só
+-- registra em nome próprio, nunca como IA nem como marco, e nunca no futuro.
+create policy interacoes_ver on public.interacoes for select to authenticated
+  using (
+    escritorio_id = (select private.escritorio_atual())
+    and excluido_em is null
+    and (select private.tem_papel('{socio,advogado,estagiario}'))
+    and exists (select 1 from public.clientes c where c.id = interacoes.cliente_id and c.excluido_em is null)
+  );
+create policy interacoes_criar on public.interacoes for insert to authenticated
+  with check (
+    escritorio_id = (select private.escritorio_atual())
+    and (select private.tem_papel('{socio,advogado,estagiario}'))
+    and tipo <> 'etapa'
+    and not por_ia
+    and usuario_id = (select auth.uid())
+    and em <= now() + interval '5 minutes'
+    and exists (select 1 from public.clientes c where c.id = interacoes.cliente_id and c.excluido_em is null)
+  );
 
 -- Casos
 create policy casos_ver on public.casos for select to authenticated
@@ -823,20 +971,24 @@ create policy mensagens_criar on public.mensagens for insert to authenticated
 -- ---------------------------------------------------------------------------
 revoke all on
   public.escritorios, public.usuarios, public.clientes, public.casos, public.andamentos, public.prazos,
-  public.eventos, public.contratos, public.lancamentos, public.conversas, public.mensagens
+  public.eventos, public.contratos, public.lancamentos, public.conversas, public.mensagens, public.interacoes
 from public, anon, authenticated;
 
 grant select on
   public.escritorios, public.usuarios, public.clientes, public.casos, public.andamentos, public.prazos,
-  public.eventos, public.contratos, public.lancamentos, public.conversas, public.mensagens
+  public.eventos, public.contratos, public.lancamentos, public.conversas, public.mensagens, public.interacoes
 to authenticated;
 
 grant update (nome, cidade) on public.escritorios to authenticated;
 grant update (nome, oab, papel, ativo) on public.usuarios to authenticated;
 
-grant insert (tipo, nome, email, telefone, cidade, origem, status, etapa_funil, area_interesse, responsavel_id, observacoes),
-      update (tipo, nome, email, telefone, cidade, origem, status, etapa_funil, area_interesse, responsavel_id, observacoes)
+grant insert (tipo, nome, email, telefone, cidade, origem, status, etapa_funil, area_interesse, responsavel_id, observacoes,
+              valor_estimado_centavos, temperatura, proximo_passo, proximo_passo_em, motivo_perda),
+      update (tipo, nome, email, telefone, cidade, origem, status, etapa_funil, area_interesse, responsavel_id, observacoes,
+              valor_estimado_centavos, temperatura, proximo_passo, proximo_passo_em, motivo_perda)
   on public.clientes to authenticated;
+
+grant insert (cliente_id, tipo, resumo, em) on public.interacoes to authenticated;
 
 grant insert (cliente_id, titulo, numero_cnj, area, tipo_acao, orgao, parte_contraria, fase, responsavel_id, valor_causa_centavos, descricao),
       update (cliente_id, titulo, numero_cnj, area, tipo_acao, orgao, parte_contraria, fase, responsavel_id, valor_causa_centavos, descricao)
@@ -871,7 +1023,7 @@ grant insert (conversa_id, de, texto) on public.mensagens to authenticated;
 -- O servidor (chave de serviço) passa por cima do RLS, mas precisa das permissões de tabela.
 grant all on
   public.escritorios, public.usuarios, public.clientes, public.casos, public.andamentos, public.prazos,
-  public.eventos, public.contratos, public.lancamentos, public.conversas, public.mensagens
+  public.eventos, public.contratos, public.lancamentos, public.conversas, public.mensagens, public.interacoes
 to service_role;
 
 -- Funções: nenhuma fica aberta por padrão. Primeiro fecha tudo, depois abre uma a uma.

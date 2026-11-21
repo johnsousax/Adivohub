@@ -22,7 +22,7 @@ const SUGESTOES = [
   "Quais prazos vencem esta semana?",
   "Quem está com parcela em atraso?",
   "Como está o caso Ferreira?",
-  "Como está o funil de novos clientes?",
+  "Quem do CRM eu preciso chamar hoje?",
   "Quais publicações estão aguardando confirmação?",
 ];
 

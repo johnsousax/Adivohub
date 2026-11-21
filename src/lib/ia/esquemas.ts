@@ -10,6 +10,8 @@ const texto = (maximo: number) => z.string().max(maximo);
 const dia = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const dataHora = z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/);
 
+const contagem = z.number().int().nonnegative().max(1_000_000);
+
 const Cobranca = z.strictObject({
   cliente: texto(120),
   descricao: texto(160),
@@ -44,6 +46,19 @@ export const ContextoIA = z.strictObject({
     atrasados: z.array(Cobranca).max(20),
     proximos: z.array(Cobranca).max(15),
   }),
+  /** Totais reais: as listas abaixo são só uma amostra com limite de tamanho. */
+  totais: z.strictObject({ casosAtivos: contagem, clientesAtivos: contagem }),
+  crm: z.strictObject({
+    emAberto: contagem,
+    emNegociacao: z.number().finite(),
+    quentes: contagem,
+    retornosAtrasados: contagem,
+    retornosHoje: contagem,
+    ganhos: contagem,
+    perdidos: contagem,
+    taxaConversao: z.number().min(0).max(1).nullable(),
+    cicloMedioDias: z.number().int().nonnegative().max(10_000).nullable(),
+  }),
   casos: z
     .array(
       z.strictObject({
@@ -65,6 +80,10 @@ export const ContextoIA = z.strictObject({
         etapa: texto(40),
         area: texto(40).optional(),
         observacoes: texto(300).optional(),
+        valorEstimado: z.number().finite().optional(),
+        temperatura: texto(20).optional(),
+        proximoPasso: texto(200).optional(),
+        proximoPassoEm: dia.optional(),
       }),
     )
     .max(20),

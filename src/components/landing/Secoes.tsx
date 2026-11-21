@@ -1,8 +1,13 @@
 import {
   AlarmClock,
+  BarChart3,
   Bot,
+  CalendarClock,
   CalendarDays,
   Check,
+  Flame,
+  Handshake,
+  History,
   KeyRound,
   LayoutDashboard,
   Lock,
@@ -11,7 +16,6 @@ import {
   ShieldCheck,
   Sparkles,
   UserRoundCheck,
-  Users,
   Wallet,
   type LucideIcon,
 } from "lucide-react";
@@ -22,7 +26,7 @@ import { cn } from "@/lib/cn";
 import { brl } from "@/lib/formatos";
 import { COMO_FUNCIONAM_OS_PLANOS, COMPARACAO_PLANOS, MARCA, PLANOS, type CelulaComparacao } from "@/lib/marca";
 import { linkWhatsApp, MENSAGENS_VENDA } from "@/lib/whatsapp";
-import { IconeWhatsApp, Secao, Sobretitulo, Telefone, TituloSecao } from "./Pecas";
+import { IconeWhatsApp, Janela, Secao, Sobretitulo, Telefone, TituloSecao } from "./Pecas";
 import { Revelar } from "./Revelar";
 
 /* -------------------------------- Problema -------------------------------- */
@@ -92,9 +96,9 @@ const RECURSOS: Array<{ icone: LucideIcon; titulo: string; texto: string }> = [
     texto: "Contratos de honorários, parcelas, êxito, despesas e inadimplência. A cobrança sai pelo WhatsApp com um clique.",
   },
   {
-    icone: Users,
-    titulo: "Clientes e captação",
-    texto: "Cadastro completo e funil de novos clientes, do primeiro contato ao contrato assinado.",
+    icone: Handshake,
+    titulo: "CRM jurídico",
+    texto: "Funil de novos clientes com honorários estimados, retornos com data, histórico de contatos e taxa de conversão.",
   },
   {
     icone: LayoutDashboard,
@@ -123,6 +127,171 @@ export function Recursos() {
           </Revelar>
         ))}
       </ul>
+    </Secao>
+  );
+}
+
+/* ----------------------------------- CRM ---------------------------------- */
+
+const VANTAGENS_CRM: Array<{ icone: LucideIcon; titulo: string; texto: string }> = [
+  {
+    icone: Handshake,
+    titulo: "Funil por etapa",
+    texto: "Novo contato, consulta agendada, proposta enviada e contrato em assinatura, com o valor em jogo em cada etapa.",
+  },
+  {
+    icone: CalendarClock,
+    titulo: "Retorno com data",
+    texto: "Cada contato tem o próximo passo combinado. O sistema separa os atrasados, os de hoje e os da semana.",
+  },
+  {
+    icone: History,
+    titulo: "Histórico de cada pessoa",
+    texto: "Ligações, mensagens, reuniões e anotações em uma linha do tempo. Quem atende sabe o que já foi conversado.",
+  },
+  {
+    icone: BarChart3,
+    titulo: "Números da captação",
+    texto: "Taxa de conversão, tempo até fechar, a origem que mais traz clientes e por que os contatos não fecham.",
+  },
+];
+
+interface CartaoCRM {
+  nome: string;
+  area: string;
+  valor: number;
+  passo: string;
+  quando: "Hoje" | "Atrasado" | string;
+  quente?: boolean;
+}
+
+const COLUNAS_CRM: Array<{ titulo: string; total: number; cartoes: CartaoCRM[]; soNoComputador?: boolean }> = [
+  {
+    titulo: "Consulta agendada",
+    total: 84000,
+    cartoes: [
+      { nome: "Camila R.", area: "Trabalhista", valor: 18000, passo: "Consulta online às 16h", quando: "Hoje", quente: true },
+      { nome: "Rafael M.", area: "Previdenciário", valor: 12000, passo: "Confirmar documentos", quando: "Amanhã" },
+    ],
+  },
+  {
+    titulo: "Proposta enviada",
+    total: 336000,
+    cartoes: [
+      { nome: "Clínica Alfa", area: "Empresarial", valor: 240000, passo: "Ligar sobre a proposta", quando: "Atrasado", quente: true },
+      { nome: "Paulo S.", area: "Cível", valor: 45000, passo: "Enviar minuta do contrato", quando: "Sex." },
+    ],
+  },
+  {
+    titulo: "Contrato em assinatura",
+    total: 96000,
+    soNoComputador: true,
+    cartoes: [{ nome: "Transportes Beta", area: "Tributário", valor: 96000, passo: "Cobrar a assinatura", quando: "Hoje" }],
+  },
+];
+
+function brlCurto(valor: number): string {
+  return valor >= 1000 ? `R$ ${Math.round(valor / 1000).toLocaleString("pt-BR")} mil` : brl(valor, { centavos: false });
+}
+
+/** Ilustração do quadro do CRM, com dados fictícios. */
+function QuadroCRM() {
+  return (
+    <Janela titulo={`${MARCA.nome} — CRM`}>
+      <div className="p-4 sm:p-5">
+        <dl className="grid grid-cols-3 gap-2 sm:gap-3">
+          {[
+            { rotulo: "Em negociação", valor: "R$ 516 mil" },
+            { rotulo: "Conversão (90 dias)", valor: "38%" },
+            { rotulo: "Retornos hoje", valor: "3" },
+          ].map((kpi) => (
+            <div key={kpi.rotulo} className="rounded-xl bg-white/[0.05] px-3 py-2.5 ring-1 ring-white/[0.06]">
+              <dt className="truncate text-[0.68rem] text-white/50 sm:text-xs">{kpi.rotulo}</dt>
+              <dd className="mt-0.5 text-sm font-semibold text-white tabular-nums sm:text-lg">{kpi.valor}</dd>
+            </div>
+          ))}
+        </dl>
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:mt-4 sm:grid-cols-3 sm:gap-3">
+          {COLUNAS_CRM.map((coluna) => (
+            <div
+              key={coluna.titulo}
+              className={cn("min-w-0 rounded-xl bg-white/[0.03] p-2 sm:p-2.5", coluna.soNoComputador && "hidden sm:block")}
+            >
+              <p className="truncate px-1 text-[0.7rem] font-semibold text-white/80 sm:text-xs">{coluna.titulo}</p>
+              <p className="px-1 text-[0.68rem] text-ouro-300 tabular-nums">{brlCurto(coluna.total)}</p>
+              <ul className="mt-2 space-y-2">
+                {coluna.cartoes.map((cartao) => (
+                  <li key={cartao.nome} className="rounded-lg bg-noite-3 p-2 ring-1 ring-white/[0.07] sm:p-2.5">
+                    <div className="flex items-center justify-between gap-1">
+                      <p className="truncate text-xs font-medium text-white">{cartao.nome}</p>
+                      {cartao.quente && <Flame className="size-3 shrink-0 text-ouro-300" aria-label="Quente" />}
+                    </div>
+                    <p className="truncate text-[0.68rem] text-white/45">
+                      {cartao.area} · {brlCurto(cartao.valor)}
+                    </p>
+                    <p className="mt-1.5 truncate text-[0.68rem] text-white/70">{cartao.passo}</p>
+                    <p
+                      className={cn(
+                        "mt-1 inline-block rounded-full px-1.5 py-px text-[0.62rem] font-medium",
+                        cartao.quando === "Atrasado"
+                          ? "bg-[#ff5f57]/15 text-[#ff8a84]"
+                          : cartao.quando === "Hoje"
+                            ? "bg-ouro-400/15 text-ouro-300"
+                            : "bg-white/[0.06] text-white/55",
+                      )}
+                    >
+                      {cartao.quando}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    </Janela>
+  );
+}
+
+export function CRMJuridico() {
+  return (
+    <Secao id="crm">
+      <Revelar efeito="foco">
+        <Sobretitulo>CRM jurídico</Sobretitulo>
+        <TituloSecao>
+          Do primeiro contato ao contrato assinado. <span className="text-sutil">Nenhum cliente esquecido.</span>
+        </TituloSecao>
+        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-mudo">
+          Quem procura o escritório entra no funil com área, honorários estimados e o próximo passo com data. Você sabe quem chamar hoje,
+          quanto está em negociação e por que os contatos não fecham.
+        </p>
+      </Revelar>
+
+      <div className="mt-14 grid grid-cols-1 items-center gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
+        <Revelar efeito="escala">
+          <QuadroCRM />
+          <p className="mt-3 text-center text-xs text-sutil">Ilustração com dados fictícios.</p>
+        </Revelar>
+        <ul className="space-y-7">
+          {VANTAGENS_CRM.map((vantagem, indice) => (
+            <Revelar como="li" key={vantagem.titulo} atraso={indice * 110} className="flex gap-4">
+              <vantagem.icone className="icone-vivo mt-0.5 size-6 shrink-0 text-ouro-600" strokeWidth={1.5} aria-hidden="true" />
+              <div>
+                <h3 className="text-lg font-semibold">{vantagem.titulo}</h3>
+                <p className="mt-1 leading-relaxed text-mudo">{vantagem.texto}</p>
+              </div>
+            </Revelar>
+          ))}
+        </ul>
+      </div>
+
+      <Revelar className="mt-14 flex flex-col gap-4 rounded-[1.75rem] bg-fundo p-7 sm:flex-row sm:items-center sm:gap-6">
+        <Bot className="size-9 shrink-0 text-ouro-600" strokeWidth={1.4} aria-hidden="true" />
+        <p className="text-[1.02rem] leading-relaxed text-tinta-2">
+          <strong className="font-semibold text-tinta">Ligado ao atendente de IA.</strong> Quem agenda consulta pelo WhatsApp já entra no
+          funil com o próximo passo marcado e a conversa registrada no histórico.
+        </p>
+      </Revelar>
     </Secao>
   );
 }
@@ -329,7 +498,7 @@ const PRONTO = [
   "Visão geral com o resumo do dia",
   "Casos, prazos e agenda",
   "Financeiro: contratos, cobranças e despesas",
-  "Clientes e funil de captação",
+  "CRM jurídico: funil, retornos e indicadores",
   "Assistente e atendente de IA",
 ];
 const NA_IMPLANTACAO = [
@@ -394,6 +563,10 @@ const DUVIDAS = [
     pergunta: "Posso conhecer antes de contratar?",
     resposta:
       "Sim. A demonstração é aberta e não pede cadastro: você entra em um escritório fictício e usa o sistema à vontade. O que você fizer lá fica só no seu navegador.",
+  },
+  {
+    pergunta: "Como o meu escritório recebe o acesso?",
+    resposta: `Não há cadastro aberto no site. Depois da contratação, a nossa equipe cria o acesso do escritório e de cada pessoa da equipe na implantação. Para contratar, chame no WhatsApp ${MARCA.whatsapp.exibicao}.`,
   },
   {
     pergunta: "A IA substitui o advogado?",
@@ -679,6 +852,9 @@ export function Rodape() {
           <Link href="/#recursos" className="hover:text-white">
             Recursos
           </Link>
+          <Link href="/#crm" className="hover:text-white">
+            CRM
+          </Link>
           <Link href="/#planos" className="hover:text-white">
             Planos
           </Link>
@@ -689,7 +865,7 @@ export function Rodape() {
             Termos de uso
           </Link>
           <Link href="/entrar" className="hover:text-white">
-            Entrar
+            Demonstração
           </Link>
           <a href={linkWhatsApp(MENSAGENS_VENDA.geral)} target="_blank" rel="noopener noreferrer" className="hover:text-white">
             WhatsApp {MARCA.whatsapp.exibicao}

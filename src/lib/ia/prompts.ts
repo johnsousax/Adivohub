@@ -50,11 +50,15 @@ ${lista(f.atrasados, (c) => `${c.cliente} — ${c.descricao}: ${brl(c.valor)}, v
 Próximos recebimentos:
 ${lista(f.proximos, (c) => `${dataSemana(c.vencimento)} — ${c.cliente}: ${brl(c.valor)} (${c.descricao})`, "Nenhum.")}
 
-## Casos ativos
+## Casos ativos (${ctx.totais.casosAtivos} no total, ${ctx.totais.clientesAtivos} clientes ativos; abaixo, até ${ctx.casos.length} deles)
 ${lista(ctx.casos, (c) => `${c.titulo} | cliente: ${c.cliente} | ${c.area}, fase ${c.fase} | ${c.tipoAcao} | responsável: ${c.responsavel}${c.numero ? ` | nº ${c.numero}` : ""}${c.ultimoAndamento ? ` | último andamento: ${c.ultimoAndamento}` : ""}`, "Nenhum caso ativo.")}
 
-## Funil de novos clientes
-${lista(ctx.leads, (l) => `${l.nome} — ${l.etapa}${l.area ? ` | ${l.area}` : ""}${l.observacoes ? ` | ${l.observacoes}` : ""}`, "Nenhum contato no funil.")}
+## CRM (contatos que ainda não contrataram)
+- Em negociação: ${ctx.crm.emAberto} contatos, ${brl(ctx.crm.emNegociacao)} em honorários estimados (${ctx.crm.quentes} quentes)
+- Retornos: ${ctx.crm.retornosHoje} para hoje, ${ctx.crm.retornosAtrasados} atrasados
+- Últimos 90 dias: ${ctx.crm.ganhos} fechados, ${ctx.crm.perdidos} perdidos${ctx.crm.taxaConversao !== null ? `, conversão de ${percentual(ctx.crm.taxaConversao)}` : ""}${ctx.crm.cicloMedioDias !== null ? `, ${ctx.crm.cicloMedioDias} dias em média até fechar` : ""}
+Contatos (retorno mais próximo primeiro):
+${lista(ctx.leads, (l) => `${l.nome} — ${l.etapa}${l.area ? ` | ${l.area}` : ""}${l.temperatura ? ` | ${l.temperatura}` : ""}${l.valorEstimado ? ` | ${brl(l.valorEstimado)}` : ""}${l.proximoPasso ? ` | próximo passo: ${l.proximoPasso}${l.proximoPassoEm ? ` em ${dataSemana(l.proximoPassoEm)}${l.proximoPassoEm < ctx.hoje ? " [ATRASADO]" : ""}` : ""}` : " | sem próximo passo"}${l.observacoes ? ` | ${l.observacoes}` : ""}`, "Nenhum contato em negociação.")}
 
 ## Conversas de WhatsApp esperando a equipe
 ${lista(ctx.conversasAguardando, (c) => `${c.nome}: "${c.ultimaMensagem}"`, "Nenhuma.")}

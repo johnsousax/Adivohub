@@ -302,7 +302,76 @@ reset request.jwt.claim.sub;
 reset role;
 
 \echo
-\echo 12. Servidor (chave de serviço): webhook uma única vez, documento cifrado e com registro
+\echo 12. CRM: funil e histórico de contatos
+insert into public.clientes (id, escritorio_id, nome, status, etapa_funil) values
+  ('20000000-0000-0000-0000-0000000000a3', '10000000-0000-0000-0000-00000000000a', 'Lead de A', 'lead', 'novo'),
+  ('20000000-0000-0000-0000-0000000000a4', '10000000-0000-0000-0000-00000000000a', 'Lead para excluir', 'lead', 'consulta'),
+  ('20000000-0000-0000-0000-0000000000b3', '10000000-0000-0000-0000-00000000000b', 'Lead de B', 'lead', 'novo');
+insert into public.interacoes (escritorio_id, cliente_id, tipo, resumo) values
+  ('10000000-0000-0000-0000-00000000000b', '20000000-0000-0000-0000-0000000000b3', 'ligacao', 'Conversa sigilosa de B');
+set role authenticated;
+
+set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000a2';
+select teste.afeta('Advogado avança o contato no funil', $$update public.clientes set etapa_funil = 'proposta' where id = '20000000-0000-0000-0000-0000000000a3'$$, 1);
+select teste.conta('O banco anota a data da etapa e grava o marco em nome dele', $$select 1 from public.clientes c join public.interacoes i on i.cliente_id = c.id where c.id = '20000000-0000-0000-0000-0000000000a3' and c.etapa_desde = current_date and i.tipo = 'etapa' and i.resumo = 'Passou para "Proposta enviada".' and i.usuario_id = '00000000-0000-0000-0000-0000000000a2'$$, 1);
+select teste.afeta('Advogado combina o próximo passo, com honorários estimados', $$update public.clientes set proximo_passo = 'Ligar para negociar', proximo_passo_em = current_date + 2, valor_estimado_centavos = 1500000, temperatura = 'quente' where id = '20000000-0000-0000-0000-0000000000a3'$$, 1);
+select teste.barra('Próximo passo sem data', $$update public.clientes set proximo_passo_em = null where id = '20000000-0000-0000-0000-0000000000a3'$$, '23514');
+select teste.barra('Honorários estimados negativos', $$update public.clientes set valor_estimado_centavos = -1 where id = '20000000-0000-0000-0000-0000000000a3'$$, '23514');
+select teste.barra('Próximo passo em quem já é cliente', $$update public.clientes set proximo_passo = 'Vender mais', proximo_passo_em = current_date where id = '20000000-0000-0000-0000-00000000000a'$$, '23514');
+select teste.afeta('Advogado registra uma ligação', $$insert into public.interacoes (cliente_id, tipo, resumo) values ('20000000-0000-0000-0000-0000000000a3', 'ligacao', 'Cliente pediu desconto nos honorários')$$, 1);
+select teste.conta('O registro fica em nome dele e não como IA', $$select 1 from public.interacoes where resumo = 'Cliente pediu desconto nos honorários' and usuario_id = '00000000-0000-0000-0000-0000000000a2' and not por_ia$$, 1);
+select teste.barra('Forjar marco de etapa no histórico', $$insert into public.interacoes (cliente_id, tipo, resumo) values ('20000000-0000-0000-0000-0000000000a3', 'etapa', 'Virou cliente.')$$, '42501');
+select teste.barra('Registrar contato como se fosse a IA', $$insert into public.interacoes (cliente_id, tipo, resumo, por_ia) values ('20000000-0000-0000-0000-0000000000a3', 'whatsapp', 'Falso', true)$$, '42501');
+select teste.barra('Registrar contato em nome da sócia', $$insert into public.interacoes (cliente_id, tipo, resumo, usuario_id) values ('20000000-0000-0000-0000-0000000000a3', 'nota', 'Falso', '00000000-0000-0000-0000-0000000000a1')$$, '42501');
+select teste.barra('Registrar contato com data no futuro', $$insert into public.interacoes (cliente_id, tipo, resumo, em) values ('20000000-0000-0000-0000-0000000000a3', 'reuniao', 'Ainda vai acontecer', now() + interval '1 day')$$, '42501');
+select teste.barra('Registrar contato em lead do escritório B', $$insert into public.interacoes (cliente_id, tipo, resumo) values ('20000000-0000-0000-0000-0000000000b3', 'nota', 'Enxerto')$$, '42501');
+select teste.barra('Plantar contato no histórico do escritório B', $$insert into public.interacoes (escritorio_id, cliente_id, tipo, resumo) values ('10000000-0000-0000-0000-00000000000b', '20000000-0000-0000-0000-0000000000b3', 'nota', 'Enxerto')$$, '42501');
+select teste.barra('Editar um contato já registrado', $$update public.interacoes set resumo = 'Outra versão'$$, '42501');
+select teste.barra('Apagar o histórico', 'delete from public.interacoes', '42501');
+select teste.barra('Forjar a data de conversão', $$update public.clientes set convertido_em = current_date - 30 where id = '20000000-0000-0000-0000-0000000000a3'$$, '42501');
+select teste.barra('Forjar a data de entrada na etapa', $$update public.clientes set etapa_desde = current_date - 30 where id = '20000000-0000-0000-0000-0000000000a3'$$, '42501');
+select teste.barra('Marcar como perdido sem dizer o motivo', $$update public.clientes set status = 'perdido' where id = '20000000-0000-0000-0000-0000000000a3'$$, '23514');
+select teste.barra('Motivo de perda em quem ainda negocia', $$update public.clientes set motivo_perda = 'preco' where id = '20000000-0000-0000-0000-0000000000a3'$$, '23514');
+select teste.afeta('Advogado marca o contato como perdido, com motivo', $$update public.clientes set status = 'perdido', motivo_perda = 'concorrente' where id = '20000000-0000-0000-0000-0000000000a3'$$, 1);
+select teste.conta('O banco anota a data da perda, limpa o próximo passo e grava o marco', $$select 1 from public.clientes c where c.id = '20000000-0000-0000-0000-0000000000a3' and c.perdido_em = current_date and c.proximo_passo is null and c.etapa_funil = 'proposta' and exists (select 1 from public.interacoes i where i.cliente_id = c.id and i.resumo = 'Contato perdido: fechou com outro escritório.')$$, 1);
+select teste.afeta('Advogado reabre a negociação', $$update public.clientes set status = 'lead' where id = '20000000-0000-0000-0000-0000000000a3'$$, 1);
+select teste.conta('Reabrir limpa o motivo e a data da perda', $$select 1 from public.clientes c where c.id = '20000000-0000-0000-0000-0000000000a3' and c.motivo_perda is null and c.perdido_em is null and exists (select 1 from public.interacoes i where i.cliente_id = c.id and i.resumo = 'Negociação reaberta.')$$, 1);
+select teste.afeta('Contato vira cliente', $$update public.clientes set status = 'ativo' where id = '20000000-0000-0000-0000-0000000000a3'$$, 1);
+select teste.conta('O banco anota a conversão e tira o contato do funil', $$select 1 from public.clientes c where c.id = '20000000-0000-0000-0000-0000000000a3' and c.convertido_em = current_date and c.etapa_funil is null and c.etapa_desde is null and exists (select 1 from public.interacoes i where i.cliente_id = c.id and i.resumo = 'Virou cliente.')$$, 1);
+select teste.conta('Advogado não vê o histórico do escritório B', $$select 1 from public.interacoes where resumo like '%de B%' or escritorio_id = '10000000-0000-0000-0000-00000000000b'$$, 0);
+
+set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000a3';
+select teste.afeta('Estagiário registra um contato', $$insert into public.interacoes (cliente_id, tipo, resumo) values ('20000000-0000-0000-0000-0000000000a4', 'whatsapp', 'Mandou os documentos')$$, 1);
+select teste.afeta('e mais um, para o teste de exclusão do contato', $$insert into public.interacoes (cliente_id, tipo, resumo) values ('20000000-0000-0000-0000-0000000000a4', 'ligacao', 'Pediu retorno amanhã')$$, 1);
+select teste.afeta('Estagiário mudando a etapa do contato não surte efeito', $$update public.clientes set etapa_funil = 'contrato' where id = '20000000-0000-0000-0000-0000000000a4'$$, 0);
+select teste.barra('Estagiário excluindo contato do histórico', $$select public.excluir_registro('interacoes', (select id from public.interacoes where resumo = 'Mandou os documentos'))$$, '42501');
+
+set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000a4';
+select teste.conta('Financeiro não vê o histórico do CRM', 'select 1 from public.interacoes', 0);
+select teste.barra('Financeiro registrando contato', $$insert into public.interacoes (cliente_id, tipo, resumo) values ('20000000-0000-0000-0000-0000000000a4', 'nota', 'Cobrar')$$, '42501');
+
+set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000a5';
+select teste.conta('Ex-funcionário não vê o histórico do CRM', 'select 1 from public.interacoes', 0);
+
+set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000b1';
+select teste.conta('Sócio de B vê só o histórico de B', 'select 1 from public.interacoes', 1);
+select teste.barra('Sócio de B registrando contato em lead de A', $$insert into public.interacoes (cliente_id, tipo, resumo) values ('20000000-0000-0000-0000-0000000000a4', 'nota', 'Enxerto')$$, '42501');
+select teste.afeta('Sócio de B movendo lead de A não surte efeito', $$update public.clientes set etapa_funil = 'contrato' where id = '20000000-0000-0000-0000-0000000000a4'$$, 0);
+
+set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000a2';
+select teste.afeta('Advogado exclui um contato do histórico (exclusão lógica)', $$select public.excluir_registro('interacoes', (select id from public.interacoes where resumo = 'Mandou os documentos'))$$, 1);
+select teste.conta('e ele some do histórico', $$select 1 from public.interacoes where resumo = 'Mandou os documentos'$$, 0);
+select teste.conta('Antes de excluir o contato, o histórico dele aparece', $$select 1 from public.interacoes where cliente_id = '20000000-0000-0000-0000-0000000000a4'$$, 1);
+select teste.afeta('Advogado exclui um contato do CRM', $$select public.excluir_registro('clientes', '20000000-0000-0000-0000-0000000000a4')$$, 1);
+select teste.conta('O histórico de quem foi excluído some junto', $$select 1 from public.interacoes where cliente_id = '20000000-0000-0000-0000-0000000000a4'$$, 0);
+
+reset request.jwt.claim.sub;
+reset role;
+select teste.conta('O texto do histórico e o próximo passo não vão para a auditoria', $$select 1 from audit.logs where coalesce(antes::text, '') || coalesce(depois::text, '') ~ '(desconto nos honorários|Conversa sigilosa|Mandou os documentos|Pediu retorno|Ligar para negociar)'$$, 0);
+select teste.conta('mas o registro de cada contato fica, sem o texto', $$select 1 from audit.logs where tabela = 'public.interacoes' and acao = 'INSERT' and depois ->> 'resumo' = '[omitido]'$$, 8);
+
+\echo
+\echo 13. Servidor (chave de serviço): webhook uma única vez, documento cifrado e com registro
 set role service_role;
 select teste.conta('Evento de webhook novo é aceito', $$select 1 where public.registrar_evento_webhook('whatsapp', 'wamid.1')$$, 1);
 select teste.conta('O mesmo evento, repetido, é recusado', $$select 1 where public.registrar_evento_webhook('whatsapp', 'wamid.1')$$, 0);
@@ -327,7 +396,7 @@ select teste.barra('Evento de auditoria com nome fora do padrão', $$select publ
 reset role;
 
 \echo
-\echo 13. Auditoria: imutável até para o administrador, e sem conteúdo sigiloso
+\echo 14. Auditoria: imutável até para o administrador, e sem conteúdo sigiloso
 select teste.barra('Administrador editando a auditoria', $$update audit.logs set acao = 'ADULTERADO'$$, '42501');
 select teste.barra('Administrador apagando a auditoria', 'delete from audit.logs', '42501');
 select teste.barra('Administrador esvaziando a auditoria', 'truncate audit.logs', '42501');
@@ -341,7 +410,7 @@ select teste.conta('Exclusão fica registrada com o autor', $$select 1 from audi
 select teste.conta('Mensagens de conversa não entram na auditoria', $$select 1 from audit.logs where tabela = 'public.mensagens'$$, 0);
 
 \echo
-\echo 14. Rotinas do servidor: encerrar escritório, apagar usuário, apagar de verdade
+\echo 15. Rotinas do servidor: encerrar escritório, apagar usuário, apagar de verdade
 update public.escritorios set excluido_em = now() where id = '10000000-0000-0000-0000-00000000000b';
 set role authenticated;
 set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000b1';
@@ -355,11 +424,11 @@ select teste.afeta('Apagar o login de um usuário funciona', $$delete from auth.
 select teste.conta('O caso dele continua lá, só sem responsável', $$select 1 from public.casos where id = '30000000-0000-0000-0000-00000000000a' and responsavel_id is null$$, 1);
 select teste.barra('Apagar de verdade um cliente que tem casos', $$delete from public.clientes where id = '20000000-0000-0000-0000-00000000000a'$$, '23503');
 select teste.afeta('Apagar o escritório B inteiro', $$delete from public.escritorios where id = '10000000-0000-0000-0000-00000000000b'$$, 1);
-select teste.conta('leva todos os dados de B', $$select 1 from public.clientes where escritorio_id = '10000000-0000-0000-0000-00000000000b' union all select 1 from public.mensagens where escritorio_id = '10000000-0000-0000-0000-00000000000b' union all select 1 from public.usuarios where escritorio_id = '10000000-0000-0000-0000-00000000000b'$$, 0);
-select teste.conta('e não toca nos dados de A', $$select 1 from public.clientes where escritorio_id = '10000000-0000-0000-0000-00000000000a'$$, 2);
+select teste.conta('leva todos os dados de B', $$select 1 from public.clientes where escritorio_id = '10000000-0000-0000-0000-00000000000b' union all select 1 from public.mensagens where escritorio_id = '10000000-0000-0000-0000-00000000000b' union all select 1 from public.usuarios where escritorio_id = '10000000-0000-0000-0000-00000000000b' union all select 1 from public.interacoes where escritorio_id = '10000000-0000-0000-0000-00000000000b'$$, 0);
+select teste.conta('e não toca nos dados de A', $$select 1 from public.clientes where escritorio_id = '10000000-0000-0000-0000-00000000000a'$$, 4);
 
 \echo
-\echo 15. Integridade dos dados (regras das tabelas)
+\echo 16. Integridade dos dados (regras das tabelas)
 select teste.barra('Número CNJ fora do formato', $$insert into public.casos (escritorio_id, cliente_id, titulo, numero_cnj, area, tipo_acao) values ('10000000-0000-0000-0000-00000000000a', '20000000-0000-0000-0000-00000000000a', 'CNJ torto', '123', 'civel', 'Teste')$$, '23514');
 select teste.barra('Mesmo processo duas vezes no escritório', $$insert into public.casos (escritorio_id, cliente_id, titulo, numero_cnj, area, tipo_acao) values ('10000000-0000-0000-0000-00000000000a', '20000000-0000-0000-0000-00000000000a', 'Duplicado', '1004521-84.2025.4.01.9999', 'civel', 'Teste')$$, '23505');
 select teste.barra('Data interna depois da data fatal', $$insert into public.prazos (escritorio_id, caso_id, titulo, data_fatal, data_interna) values ('10000000-0000-0000-0000-00000000000a', '30000000-0000-0000-0000-00000000000a', 'Invertido', '2026-12-10', '2026-12-15')$$, '23514');
@@ -372,14 +441,15 @@ select teste.barra('Papel que não existe', $$update public.usuarios set papel =
 select teste.barra('Texto maior que o limite', $$insert into public.clientes (escritorio_id, nome, observacoes) values ('10000000-0000-0000-0000-00000000000a', 'Texto longo', repeat('x', 4001))$$, '23514');
 
 \echo
-\echo 16. Conferência geral do banco
+\echo 17. Conferência geral do banco
 select teste.conta('Todas as tabelas da API com RLS ligado', $$select 1 from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'r' and not c.relrowsecurity$$, 0);
 select teste.conta('Todas as tabelas da API têm policy', $$select 1 from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'r' and not exists (select 1 from pg_policy p where p.polrelid = c.oid)$$, 0);
 select teste.conta('Toda policy vale só para usuário logado', $$select 1 from pg_policies where schemaname = 'public' and roles <> '{authenticated}'$$, 0);
+select teste.conta('Toda policy confere o escritório de quem pede', $$select 1 from pg_policies where schemaname = 'public' and ((qual is not null and qual not like '%escritorio_atual()%') or (with_check is not null and with_check not like '%escritorio_atual()%'))$$, 0);
 select teste.conta('Nenhuma policy de exclusão (DELETE)', $$select 1 from pg_policies where schemaname = 'public' and cmd in ('DELETE', 'ALL')$$, 0);
 select teste.conta('Visitante sem nenhuma permissão em tabela', $$select 1 from information_schema.role_table_grants where grantee in ('anon', 'PUBLIC') and table_schema in ('public', 'private', 'audit') union all select 1 from information_schema.column_privileges where grantee in ('anon', 'PUBLIC') and table_schema in ('public', 'private', 'audit')$$, 0);
 select teste.conta('Usuário logado sem DELETE nem TRUNCATE em tabela alguma', $$select 1 from information_schema.role_table_grants where grantee = 'authenticated' and privilege_type in ('DELETE', 'TRUNCATE', 'REFERENCES', 'TRIGGER')$$, 0);
-select teste.conta('Usuário logado não envia escritório, autor, datas de controle, exclusão nem plano', $$select 1 from information_schema.column_privileges where grantee = 'authenticated' and table_schema = 'public' and privilege_type in ('INSERT', 'UPDATE') and column_name in ('id', 'escritorio_id', 'criado_por', 'criado_em', 'atualizado_em', 'excluido_em', 'enviada_em', 'criado_por_ia', 'plano', 'documento_mascarado', 'resumo_ia', 'id_externo')$$, 0);
+select teste.conta('Usuário logado não envia escritório, autor, datas de controle, exclusão nem plano', $$select 1 from information_schema.column_privileges where grantee = 'authenticated' and table_schema = 'public' and privilege_type in ('INSERT', 'UPDATE') and column_name in ('id', 'escritorio_id', 'criado_por', 'criado_em', 'atualizado_em', 'excluido_em', 'enviada_em', 'criado_por_ia', 'plano', 'documento_mascarado', 'resumo_ia', 'id_externo', 'usuario_id', 'por_ia', 'etapa_desde', 'convertido_em', 'perdido_em')$$, 0);
 select teste.conta('Usuário logado sem acesso às tabelas internas', $$select 1 from information_schema.role_table_grants where grantee = 'authenticated' and table_schema in ('private', 'audit')$$, 0);
 select teste.conta('Nenhuma função interna aberta ao visitante', $$select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'private' and has_function_privilege('anon', p.oid, 'execute')$$, 0);
 select teste.conta('Nenhuma função da API aberta ao visitante', $$select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and has_function_privilege('anon', p.oid, 'execute')$$, 0);

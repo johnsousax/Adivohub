@@ -47,6 +47,33 @@ export const ETAPAS_FUNIL: Record<EtapaFunil, string> = {
 
 export const ORDEM_FUNIL: EtapaFunil[] = ["novo", "consulta", "proposta", "contrato"];
 
+/** Quão perto o contato está de fechar, na avaliação do advogado. */
+export type Temperatura = "quente" | "morno" | "frio";
+
+export const TEMPERATURAS: Record<Temperatura, string> = {
+  quente: "Quente",
+  morno: "Morno",
+  frio: "Frio",
+};
+
+export type MotivoPerda = "preco" | "concorrente" | "sem_viabilidade" | "sem_resposta" | "desistiu" | "outro";
+
+export const MOTIVOS_PERDA: Record<MotivoPerda, string> = {
+  preco: "Achou os honorários altos",
+  concorrente: "Fechou com outro escritório",
+  sem_viabilidade: "Caso sem viabilidade jurídica",
+  sem_resposta: "Parou de responder",
+  desistiu: "Desistiu de entrar com a ação",
+  outro: "Outro motivo",
+};
+
+/** Próximo passo combinado com o contato (o "follow-up"). */
+export interface ProximoPasso {
+  descricao: string;
+  /** Dia combinado (AAAA-MM-DD). */
+  data: string;
+}
+
 export interface Cliente {
   id: Id;
   tipo: "PF" | "PJ";
@@ -56,13 +83,50 @@ export interface Cliente {
   telefone: string;
   cidade: string;
   origem: OrigemCliente;
-  /** `lead` ainda está no funil; `ativo` já contratou. */
-  status: "lead" | "ativo" | "inativo";
+  /** `lead` ainda está no funil; `ativo` já contratou; `perdido` saiu do funil sem contratar. */
+  status: "lead" | "ativo" | "inativo" | "perdido";
   etapaFunil?: EtapaFunil;
   areaInteresse?: AreaDireito;
   responsavelId: Id;
   criadoEm: string;
   observacoes?: string;
+
+  /* CRM: só faz sentido enquanto é contato, mas fica guardado depois para os indicadores. */
+  /** Honorários estimados se o contato fechar (reais). */
+  valorEstimado?: number;
+  temperatura?: Temperatura;
+  proximoPasso?: ProximoPasso;
+  /** Dia em que entrou na etapa atual do funil. */
+  etapaDesde?: string;
+  /** Dia em que virou cliente. */
+  convertidoEm?: string;
+  /** Dia em que foi marcado como perdido, e por quê. */
+  perdidoEm?: string;
+  motivoPerda?: MotivoPerda;
+}
+
+export type TipoInteracao = "ligacao" | "whatsapp" | "reuniao" | "email" | "nota" | "etapa";
+
+export const TIPOS_INTERACAO: Record<TipoInteracao, string> = {
+  ligacao: "Ligação",
+  whatsapp: "WhatsApp",
+  reuniao: "Reunião",
+  email: "E-mail",
+  nota: "Anotação",
+  etapa: "Mudança de etapa",
+};
+
+/** Um contato com o cliente ou o contato (ligação, conversa, reunião), ou um marco do funil. */
+export interface Interacao {
+  id: Id;
+  clienteId: Id;
+  tipo: TipoInteracao;
+  resumo: string;
+  /** Data e hora (ISO). */
+  em: string;
+  usuarioId: Id;
+  /** Registrada pelo atendente virtual. */
+  porIA?: boolean;
 }
 
 export type FaseCaso = "inicial" | "instrucao" | "sentenca" | "recurso" | "execucao" | "encerrado";
@@ -245,6 +309,7 @@ export interface DadosEscritorio {
   contratos: Contrato[];
   lancamentos: Lancamento[];
   conversas: Conversa[];
+  interacoes: Interacao[];
   /** Dia em que a demonstração foi gerada (AAAA-MM-DD). */
   geradoEm: string;
 }

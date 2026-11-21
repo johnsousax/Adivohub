@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import {
   ChamadaFinal,
+  CRMJuridico,
   Duvidas,
   InteligenciaArtificial,
   Lancamento,
@@ -46,6 +47,7 @@ export default function PaginaInicial() {
         <Heroi />
         <Problema />
         <Recursos />
+        <CRMJuridico />
         <InteligenciaArtificial />
         <Seguranca />
         <Lancamento />

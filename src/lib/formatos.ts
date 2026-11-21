@@ -113,3 +113,12 @@ export function telefone(valor: string): string {
 export function plural(qtd: number, singular: string, pluralForma: string): string {
   return `${inteiro(qtd)} ${qtd === 1 ? singular : pluralForma}`;
 }
+
+/** "1.234,56", "15.000" ou "1234.56" → número. Ponto em grupos de três dígitos é milhar, como se escreve no Brasil. */
+export function lerValor(texto: string): number {
+  const limpo = texto.replace(/[^\d,.-]/g, "");
+  const soMilhar = /^-?\d{1,3}(\.\d{3})+$/.test(limpo);
+  const normalizado = limpo.includes(",") || soMilhar ? limpo.replace(/\./g, "").replace(",", ".") : limpo;
+  const numero = Number(normalizado);
+  return Number.isFinite(numero) ? numero : 0;
+}

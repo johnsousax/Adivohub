@@ -15,9 +15,13 @@ import type {
   Evento,
   FormaPagamento,
   Id,
+  Interacao,
   Lancamento,
+  MotivoPerda,
   Prazo,
+  ProximoPasso,
 } from "../tipos";
+import { ETAPAS_FUNIL, MOTIVOS_PERDA } from "../tipos";
 import { criarSemente } from "./semente";
 
 /**
@@ -29,7 +33,7 @@ import { criarSemente } from "./semente";
  * nenhuma tela precisa mudar.
  */
 
-const CHAVE = "justixup:dados:v3";
+const CHAVE = "justixup:dados:v4";
 
 type NovoRegistro<T> = Omit<T, "id">;
 
@@ -39,6 +43,13 @@ export interface Acoes {
   removerCliente(id: Id): void;
   moverLead(id: Id, etapa: EtapaFunil): void;
   converterLead(id: Id): void;
+
+  /* CRM */
+  registrarInteracao(dados: NovoRegistro<Interacao>): void;
+  /** Marca (ou, com `undefined`, apaga) o próximo passo combinado com o contato. */
+  definirProximoPasso(id: Id, passo: ProximoPasso | undefined): void;
+  marcarPerdido(id: Id, motivo: MotivoPerda, detalhe?: string): void;
+  reabrirContato(id: Id): void;
 
   adicionarCaso(dados: NovoRegistro<Caso>): Caso;
   atualizarCaso(id: Id, parcial: Partial<Caso>): void;
@@ -94,6 +105,7 @@ const CAMPOS_DE_DADOS: Array<keyof DadosEscritorio> = [
   "contratos",
   "lancamentos",
   "conversas",
+  "interacoes",
   "geradoEm",
 ];
 
@@ -121,176 +133,225 @@ function salvar(estado: EstadoLoja) {
 }
 
 function criarLoja(): StoreApi<EstadoLoja> {
-  const loja = createStore<EstadoLoja>()((set, get) => ({
-    ...carregar(),
+  const loja = createStore<EstadoLoja>()((set, get) => {
+    /** Marco automático no histórico do contato (mudança de etapa, fechamento, perda). */
+    const marco = (clienteId: Id, usuarioId: Id, resumo: string) =>
+      get().registrarInteracao({ clienteId, usuarioId, tipo: "etapa", resumo, em: agoraLocal() });
 
-    adicionarCliente(dados) {
-      const cliente: Cliente = { ...dados, id: novoId("cli") };
-      set((s) => ({ clientes: [cliente, ...s.clientes] }));
-      return cliente;
-    },
-    atualizarCliente(id, parcial) {
-      set((s) => ({ clientes: s.clientes.map((c) => (c.id === id ? { ...c, ...parcial } : c)) }));
-    },
-    removerCliente(id) {
-      set((s) => {
-        const casosDoCliente = new Set(s.casos.filter((c) => c.clienteId === id).map((c) => c.id));
-        return {
-          clientes: s.clientes.filter((c) => c.id !== id),
-          casos: s.casos.filter((c) => c.clienteId !== id),
-          andamentos: s.andamentos.filter((a) => !casosDoCliente.has(a.casoId)),
-          prazos: s.prazos.filter((p) => !casosDoCliente.has(p.casoId)),
-          eventos: s.eventos.filter((e) => e.clienteId !== id),
-          contratos: s.contratos.filter((c) => c.clienteId !== id),
-          lancamentos: s.lancamentos.filter((l) => l.clienteId !== id),
-          conversas: s.conversas.map((c) => (c.clienteId === id ? { ...c, clienteId: undefined } : c)),
-        };
-      });
-    },
-    moverLead(id, etapa) {
-      get().atualizarCliente(id, { etapaFunil: etapa });
-    },
-    converterLead(id) {
-      get().atualizarCliente(id, { status: "ativo", etapaFunil: undefined });
-    },
+    return {
+      ...carregar(),
 
-    adicionarCaso(dados) {
-      const caso: Caso = { ...dados, id: novoId("cas") };
-      set((s) => ({ casos: [caso, ...s.casos] }));
-      return caso;
-    },
-    atualizarCaso(id, parcial) {
-      set((s) => ({ casos: s.casos.map((c) => (c.id === id ? { ...c, ...parcial } : c)) }));
-    },
-    removerCaso(id) {
-      set((s) => ({
-        casos: s.casos.filter((c) => c.id !== id),
-        andamentos: s.andamentos.filter((a) => a.casoId !== id),
-        prazos: s.prazos.filter((p) => p.casoId !== id),
-        eventos: s.eventos.map((e) => (e.casoId === id ? { ...e, casoId: undefined } : e)),
-        lancamentos: s.lancamentos.map((l) => (l.casoId === id ? { ...l, casoId: undefined } : l)),
-      }));
-    },
+      adicionarCliente(dados) {
+        const cliente: Cliente = { ...dados, id: novoId("cli") };
+        set((s) => ({ clientes: [cliente, ...s.clientes] }));
+        return cliente;
+      },
+      atualizarCliente(id, parcial) {
+        const hoje = paraISO(new Date());
+        set((s) => ({
+          clientes: s.clientes.map((c) => {
+            if (c.id !== id) return c;
+            const mudouDeEtapa = parcial.etapaFunil !== undefined && parcial.etapaFunil !== c.etapaFunil;
+            return { ...c, ...parcial, ...(mudouDeEtapa ? { etapaDesde: hoje } : {}) };
+          }),
+        }));
+      },
+      removerCliente(id) {
+        set((s) => {
+          const casosDoCliente = new Set(s.casos.filter((c) => c.clienteId === id).map((c) => c.id));
+          return {
+            clientes: s.clientes.filter((c) => c.id !== id),
+            casos: s.casos.filter((c) => c.clienteId !== id),
+            andamentos: s.andamentos.filter((a) => !casosDoCliente.has(a.casoId)),
+            prazos: s.prazos.filter((p) => !casosDoCliente.has(p.casoId)),
+            eventos: s.eventos.filter((e) => e.clienteId !== id),
+            contratos: s.contratos.filter((c) => c.clienteId !== id),
+            lancamentos: s.lancamentos.filter((l) => l.clienteId !== id),
+            conversas: s.conversas.map((c) => (c.clienteId === id ? { ...c, clienteId: undefined } : c)),
+            interacoes: s.interacoes.filter((i) => i.clienteId !== id),
+          };
+        });
+      },
+      moverLead(id, etapa) {
+        const contato = get().clientes.find((c) => c.id === id);
+        if (!contato || contato.etapaFunil === etapa) return;
+        get().atualizarCliente(id, { etapaFunil: etapa });
+        marco(id, contato.responsavelId, `Passou para "${ETAPAS_FUNIL[etapa]}".`);
+      },
+      converterLead(id) {
+        const contato = get().clientes.find((c) => c.id === id);
+        if (!contato) return;
+        get().atualizarCliente(id, { status: "ativo", etapaFunil: undefined, proximoPasso: undefined, convertidoEm: paraISO(new Date()) });
+        marco(id, contato.responsavelId, "Virou cliente.");
+      },
 
-    adicionarAndamento(dados) {
-      set((s) => ({ andamentos: [{ ...dados, id: novoId("and") }, ...s.andamentos] }));
-    },
-    responderSugestao(andamentoId, decisao) {
-      const andamento = get().andamentos.find((a) => a.id === andamentoId);
-      if (!andamento?.sugestao || andamento.sugestao.estado !== "pendente") return;
-      const sugestao = andamento.sugestao;
-      set((s) => ({
-        andamentos: s.andamentos.map((a) => (a.id === andamentoId ? { ...a, sugestao: { ...sugestao, estado: decisao } } : a)),
-        prazos:
-          decisao === "confirmada"
-            ? [
-                {
-                  id: novoId("prz"),
-                  casoId: andamento.casoId,
-                  titulo: sugestao.titulo,
-                  dataFatal: sugestao.dataFatal,
-                  dataInterna: sugestao.dataInterna,
-                  responsavelId: sugestao.responsavelId,
-                  origem: "ia" as const,
-                },
-                ...s.prazos,
-              ]
-            : s.prazos,
-      }));
-    },
+      registrarInteracao(dados) {
+        const resumo = dados.resumo.trim();
+        if (!resumo) return;
+        const interacao: Interacao = { ...dados, resumo: resumo.slice(0, 2000), id: novoId("int") };
+        set((s) => ({ interacoes: [interacao, ...s.interacoes] }));
+      },
+      definirProximoPasso(id, passo) {
+        const limpo = passo && passo.descricao.trim() ? { descricao: passo.descricao.trim().slice(0, 200), data: passo.data } : undefined;
+        set((s) => ({ clientes: s.clientes.map((c) => (c.id === id ? { ...c, proximoPasso: limpo } : c)) }));
+      },
+      marcarPerdido(id, motivo, detalhe) {
+        const contato = get().clientes.find((c) => c.id === id);
+        if (!contato) return;
+        get().atualizarCliente(id, { status: "perdido", perdidoEm: paraISO(new Date()), motivoPerda: motivo, proximoPasso: undefined });
+        const extra = detalhe?.trim() ? ` ${detalhe.trim()}` : "";
+        marco(id, contato.responsavelId, `Contato perdido: ${MOTIVOS_PERDA[motivo].toLowerCase()}.${extra}`);
+      },
+      reabrirContato(id) {
+        const contato = get().clientes.find((c) => c.id === id);
+        if (!contato) return;
+        get().atualizarCliente(id, {
+          status: "lead",
+          etapaFunil: contato.etapaFunil ?? "novo",
+          perdidoEm: undefined,
+          motivoPerda: undefined,
+        });
+        marco(id, contato.responsavelId, "Negociação reaberta.");
+      },
 
-    adicionarPrazo(dados) {
-      set((s) => ({ prazos: [{ ...dados, id: novoId("prz") }, ...s.prazos] }));
-    },
-    alternarPrazo(id) {
-      const hoje = paraISO(new Date());
-      set((s) => ({
-        prazos: s.prazos.map((p) => (p.id === id ? { ...p, concluidoEm: p.concluidoEm ? undefined : hoje } : p)),
-      }));
-    },
-    removerPrazo(id) {
-      set((s) => ({ prazos: s.prazos.filter((p) => p.id !== id) }));
-    },
+      adicionarCaso(dados) {
+        const caso: Caso = { ...dados, id: novoId("cas") };
+        set((s) => ({ casos: [caso, ...s.casos] }));
+        return caso;
+      },
+      atualizarCaso(id, parcial) {
+        set((s) => ({ casos: s.casos.map((c) => (c.id === id ? { ...c, ...parcial } : c)) }));
+      },
+      removerCaso(id) {
+        set((s) => ({
+          casos: s.casos.filter((c) => c.id !== id),
+          andamentos: s.andamentos.filter((a) => a.casoId !== id),
+          prazos: s.prazos.filter((p) => p.casoId !== id),
+          eventos: s.eventos.map((e) => (e.casoId === id ? { ...e, casoId: undefined } : e)),
+          lancamentos: s.lancamentos.map((l) => (l.casoId === id ? { ...l, casoId: undefined } : l)),
+        }));
+      },
 
-    adicionarEvento(dados) {
-      const evento: Evento = { ...dados, id: novoId("evt") };
-      set((s) => ({ eventos: [...s.eventos, evento] }));
-      return evento;
-    },
-    removerEvento(id) {
-      set((s) => ({ eventos: s.eventos.filter((e) => e.id !== id) }));
-    },
+      adicionarAndamento(dados) {
+        set((s) => ({ andamentos: [{ ...dados, id: novoId("and") }, ...s.andamentos] }));
+      },
+      responderSugestao(andamentoId, decisao) {
+        const andamento = get().andamentos.find((a) => a.id === andamentoId);
+        if (!andamento?.sugestao || andamento.sugestao.estado !== "pendente") return;
+        const sugestao = andamento.sugestao;
+        set((s) => ({
+          andamentos: s.andamentos.map((a) => (a.id === andamentoId ? { ...a, sugestao: { ...sugestao, estado: decisao } } : a)),
+          prazos:
+            decisao === "confirmada"
+              ? [
+                  {
+                    id: novoId("prz"),
+                    casoId: andamento.casoId,
+                    titulo: sugestao.titulo,
+                    dataFatal: sugestao.dataFatal,
+                    dataInterna: sugestao.dataInterna,
+                    responsavelId: sugestao.responsavelId,
+                    origem: "ia" as const,
+                  },
+                  ...s.prazos,
+                ]
+              : s.prazos,
+        }));
+      },
 
-    adicionarContrato(dados, parcelas, forma) {
-      const contrato: Contrato = { ...dados, id: novoId("ctr") };
-      const novos: Lancamento[] = parcelas.map((parcela, indice) => ({
-        id: novoId("lan"),
-        tipo: "receita",
-        descricao: parcelas.length > 1 ? `${contrato.descricao} — parcela ${indice + 1}/${parcelas.length}` : contrato.descricao,
-        valor: parcela.valor,
-        vencimento: parcela.vencimento,
-        forma,
-        clienteId: contrato.clienteId,
-        casoId: contrato.casoId,
-        contratoId: contrato.id,
-      }));
-      set((s) => ({ contratos: [contrato, ...s.contratos], lancamentos: [...novos, ...s.lancamentos] }));
-    },
-    adicionarLancamento(dados) {
-      set((s) => ({ lancamentos: [{ ...dados, id: novoId("lan") }, ...s.lancamentos] }));
-    },
-    marcarPago(id, forma) {
-      const hoje = paraISO(new Date());
-      set((s) => ({
-        lancamentos: s.lancamentos.map((l) => (l.id === id ? { ...l, pagoEm: hoje, forma: forma ?? l.forma } : l)),
-      }));
-    },
-    desfazerPagamento(id) {
-      set((s) => ({ lancamentos: s.lancamentos.map((l) => (l.id === id ? { ...l, pagoEm: undefined } : l)) }));
-    },
-    removerLancamento(id) {
-      set((s) => ({ lancamentos: s.lancamentos.filter((l) => l.id !== id) }));
-    },
+      adicionarPrazo(dados) {
+        set((s) => ({ prazos: [{ ...dados, id: novoId("prz") }, ...s.prazos] }));
+      },
+      alternarPrazo(id) {
+        const hoje = paraISO(new Date());
+        set((s) => ({
+          prazos: s.prazos.map((p) => (p.id === id ? { ...p, concluidoEm: p.concluidoEm ? undefined : hoje } : p)),
+        }));
+      },
+      removerPrazo(id) {
+        set((s) => ({ prazos: s.prazos.filter((p) => p.id !== id) }));
+      },
 
-    enviarMensagem(conversaId, de, texto) {
-      const limpo = texto.trim();
-      if (!limpo) return;
-      set((s) => ({
-        conversas: s.conversas.map((c) =>
-          c.id === conversaId
-            ? {
-                ...c,
-                naoLidas: de === "cliente" && c.modo === "humano" ? c.naoLidas + 1 : de === "equipe" ? 0 : c.naoLidas,
-                mensagens: [...c.mensagens, { id: novoId("msg"), de, texto: limpo, enviadaEm: agoraLocal() }],
-              }
-            : c,
-        ),
-      }));
-    },
-    definirModoConversa(conversaId, modo) {
-      set((s) => ({ conversas: s.conversas.map((c) => (c.id === conversaId ? { ...c, modo } : c)) }));
-    },
-    marcarConversaLida(conversaId) {
-      set((s) => ({ conversas: s.conversas.map((c) => (c.id === conversaId ? { ...c, naoLidas: 0 } : c)) }));
-    },
-    transferirParaEquipe(conversaId) {
-      set((s) => ({
-        conversas: s.conversas.map((c) => (c.id === conversaId ? { ...c, modo: "humano", naoLidas: c.naoLidas + 1 } : c)),
-      }));
-    },
-    novaConversa(nome, telefone, clienteId) {
-      const conversa: Conversa = { id: novoId("cvs"), nome, telefone, clienteId, modo: "ia", naoLidas: 0, mensagens: [] };
-      set((s) => ({ conversas: [conversa, ...s.conversas] }));
-      return conversa;
-    },
+      adicionarEvento(dados) {
+        const evento: Evento = { ...dados, id: novoId("evt") };
+        set((s) => ({ eventos: [...s.eventos, evento] }));
+        return evento;
+      },
+      removerEvento(id) {
+        set((s) => ({ eventos: s.eventos.filter((e) => e.id !== id) }));
+      },
 
-    atualizarEscritorio(parcial) {
-      set((s) => ({ escritorio: { ...s.escritorio, ...parcial } }));
-    },
-    restaurarDemonstracao() {
-      set(criarSemente(new Date()));
-    },
-  }));
+      adicionarContrato(dados, parcelas, forma) {
+        const contrato: Contrato = { ...dados, id: novoId("ctr") };
+        const novos: Lancamento[] = parcelas.map((parcela, indice) => ({
+          id: novoId("lan"),
+          tipo: "receita",
+          descricao: parcelas.length > 1 ? `${contrato.descricao} — parcela ${indice + 1}/${parcelas.length}` : contrato.descricao,
+          valor: parcela.valor,
+          vencimento: parcela.vencimento,
+          forma,
+          clienteId: contrato.clienteId,
+          casoId: contrato.casoId,
+          contratoId: contrato.id,
+        }));
+        set((s) => ({ contratos: [contrato, ...s.contratos], lancamentos: [...novos, ...s.lancamentos] }));
+      },
+      adicionarLancamento(dados) {
+        set((s) => ({ lancamentos: [{ ...dados, id: novoId("lan") }, ...s.lancamentos] }));
+      },
+      marcarPago(id, forma) {
+        const hoje = paraISO(new Date());
+        set((s) => ({
+          lancamentos: s.lancamentos.map((l) => (l.id === id ? { ...l, pagoEm: hoje, forma: forma ?? l.forma } : l)),
+        }));
+      },
+      desfazerPagamento(id) {
+        set((s) => ({ lancamentos: s.lancamentos.map((l) => (l.id === id ? { ...l, pagoEm: undefined } : l)) }));
+      },
+      removerLancamento(id) {
+        set((s) => ({ lancamentos: s.lancamentos.filter((l) => l.id !== id) }));
+      },
+
+      enviarMensagem(conversaId, de, texto) {
+        const limpo = texto.trim();
+        if (!limpo) return;
+        set((s) => ({
+          conversas: s.conversas.map((c) =>
+            c.id === conversaId
+              ? {
+                  ...c,
+                  naoLidas: de === "cliente" && c.modo === "humano" ? c.naoLidas + 1 : de === "equipe" ? 0 : c.naoLidas,
+                  mensagens: [...c.mensagens, { id: novoId("msg"), de, texto: limpo, enviadaEm: agoraLocal() }],
+                }
+              : c,
+          ),
+        }));
+      },
+      definirModoConversa(conversaId, modo) {
+        set((s) => ({ conversas: s.conversas.map((c) => (c.id === conversaId ? { ...c, modo } : c)) }));
+      },
+      marcarConversaLida(conversaId) {
+        set((s) => ({ conversas: s.conversas.map((c) => (c.id === conversaId ? { ...c, naoLidas: 0 } : c)) }));
+      },
+      transferirParaEquipe(conversaId) {
+        set((s) => ({
+          conversas: s.conversas.map((c) => (c.id === conversaId ? { ...c, modo: "humano", naoLidas: c.naoLidas + 1 } : c)),
+        }));
+      },
+      novaConversa(nome, telefone, clienteId) {
+        const conversa: Conversa = { id: novoId("cvs"), nome, telefone, clienteId, modo: "ia", naoLidas: 0, mensagens: [] };
+        set((s) => ({ conversas: [conversa, ...s.conversas] }));
+        return conversa;
+      },
+
+      atualizarEscritorio(parcial) {
+        set((s) => ({ escritorio: { ...s.escritorio, ...parcial } }));
+      },
+      restaurarDemonstracao() {
+        set(criarSemente(new Date()));
+      },
+    };
+  });
 
   loja.subscribe(salvar);
   return loja;

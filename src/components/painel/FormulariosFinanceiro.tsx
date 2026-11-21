@@ -8,7 +8,7 @@ import { Entrada, Selecao } from "@/components/ui/Campos";
 import { Modal, RodapeModal } from "@/components/ui/Modal";
 import { useLoja } from "@/lib/dados/loja";
 import { paraISO } from "@/lib/datas";
-import { brl, dataCurta } from "@/lib/formatos";
+import { brl, dataCurta, lerValor } from "@/lib/formatos";
 import {
   CATEGORIAS_DESPESA,
   FORMAS_PAGAMENTO,
@@ -18,7 +18,6 @@ import {
   type Lancamento,
   type TipoContrato,
 } from "@/lib/tipos";
-import { lerValor } from "./FormulariosCadastro";
 import { useHoje } from "./ganchos";
 
 function campo(dados: FormData, nome: string): string {

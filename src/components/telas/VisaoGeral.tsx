@@ -11,9 +11,9 @@ import { LinhaPrazo, SugestoesDaIA } from "@/components/painel/Pecas";
 import { CabecalhoCartao, CabecalhoPagina, Cartao, Etiqueta, Vazio } from "@/components/ui/Basicos";
 import { Botao, BotaoLink } from "@/components/ui/Botao";
 import { useDialogo } from "@/components/ui/Modal";
+import { funilComValores, resumoCRM } from "@/lib/dados/crm";
 import { fotografarDados, useLoja } from "@/lib/dados/loja";
 import {
-  contagemFunil,
   montarBriefing,
   prazosAbertos,
   proximosEventos,
@@ -24,7 +24,7 @@ import {
   sugestoesPendentes,
 } from "@/lib/dados/metricas";
 import { emRecessoForense, feriadoEm } from "@/lib/datas";
-import { brl, dataLonga, dataSemana, hora, mesAno, mesCurto, milhares, percentual, plural } from "@/lib/formatos";
+import { brl, brlCompacto, dataLonga, dataSemana, hora, mesAno, mesCurto, milhares, percentual, plural } from "@/lib/formatos";
 import { AREAS, ETAPAS_FUNIL, TIPOS_EVENTO } from "@/lib/tipos";
 import { linkCompartilharWhatsApp } from "@/lib/whatsapp";
 import { MARCA } from "@/lib/marca";
@@ -55,7 +55,8 @@ export function TelaVisaoGeral() {
   const porArea = useMemo(() => receitaPorArea(lancamentos, casos, hoje), [lancamentos, casos, hoje]);
   const abertos = useMemo(() => prazosAbertos(prazos).slice(0, 6), [prazos]);
   const agenda = useMemo(() => proximosEventos(eventos, hoje, 5), [eventos, hoje]);
-  const funil = useMemo(() => contagemFunil(clientes), [clientes]);
+  const funil = useMemo(() => funilComValores(clientes), [clientes]);
+  const crm = useMemo(() => resumoCRM(clientes, hoje), [clientes, hoje]);
   const resumoDeClientes = useMemo(() => resumoClientes(clientes, hoje), [clientes, hoje]);
   const pendentes = useMemo(() => sugestoesPendentes(andamentos).length, [andamentos]);
   const casosAtivos = casos.filter((c) => c.fase !== "encerrado").length;
@@ -182,7 +183,7 @@ export function TelaVisaoGeral() {
         <Indicador
           rotulo="Casos ativos"
           valor={String(casosAtivos)}
-          apoio={`${plural(resumoDeClientes.ativos, "cliente", "clientes")} · ${plural(resumoDeClientes.leads, "contato no funil", "contatos no funil")}`}
+          apoio={`${plural(resumoDeClientes.ativos, "cliente", "clientes")} · ${plural(resumoDeClientes.leads, "contato em negociação", "contatos em negociação")}`}
         />
       </section>
 
@@ -295,22 +296,39 @@ export function TelaVisaoGeral() {
 
         <Cartao>
           <CabecalhoCartao
-            titulo="Novos clientes"
-            descricao="Contatos em cada etapa do funil"
+            titulo="CRM"
+            descricao={`${brl(crm.emNegociacao, { centavos: false })} em honorários negociando`}
             acao={
-              <Link href="/painel/clientes" className="inline-flex items-center gap-1 text-sm font-medium text-mudo hover:text-tinta">
+              <Link href="/painel/crm" className="inline-flex items-center gap-1 text-sm font-medium text-mudo hover:text-tinta">
                 Abrir <ArrowRight className="size-3.5" aria-hidden="true" />
               </Link>
             }
           />
-          <ul className="space-y-1 px-5 pb-4 sm:px-6">
+          <ul className="space-y-1 px-5 pb-3 sm:px-6">
             {funil.map((etapa) => (
-              <li key={etapa.etapa} className="flex items-center justify-between rounded-xl px-3 py-2.5 odd:bg-fundo/70">
+              <li key={etapa.etapa} className="flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 odd:bg-fundo/70">
                 <span className="text-sm text-tinta-2">{ETAPAS_FUNIL[etapa.etapa]}</span>
-                <span className="text-sm font-semibold tabular-nums">{etapa.quantidade}</span>
+                <span className="text-sm tabular-nums">
+                  <span className="font-semibold">{etapa.quantidade}</span>
+                  {etapa.valor > 0 && <span className="ml-2 text-xs text-mudo">{brlCompacto(etapa.valor)}</span>}
+                </span>
               </li>
             ))}
           </ul>
+          {(crm.retornosHoje > 0 || crm.retornosAtrasados > 0) && (
+            <Link
+              href="/painel/crm?aba=retornos"
+              className="mx-5 mb-4 flex items-center justify-between gap-3 rounded-xl bg-ouro-50 px-3 py-2.5 text-sm ring-1 ring-ouro-200 hover:bg-ouro-100 sm:mx-6"
+            >
+              <span>
+                {plural(crm.retornosHoje, "retorno para hoje", "retornos para hoje")}
+                {crm.retornosAtrasados > 0 && (
+                  <span className="text-critico"> · {plural(crm.retornosAtrasados, "atrasado", "atrasados")}</span>
+                )}
+              </span>
+              <ArrowRight className="size-3.5 shrink-0" aria-hidden="true" />
+            </Link>
+          )}
           <div className="border-t border-linha px-5 py-3.5 sm:px-6">
             <Link href="/painel/atendimento" className="flex items-center gap-2 text-sm text-mudo hover:text-tinta">
               <MessageCircle className="size-4" aria-hidden="true" />

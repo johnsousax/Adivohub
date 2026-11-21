@@ -1,7 +1,8 @@
 import { addDays } from "date-fns";
 import { paraISO, proximoDiaUtil, somarDiasUteis } from "../datas";
+import { resumoCRM } from "../dados/crm";
 import { prazosAbertos, resumoFinanceiro, sugestoesPendentes } from "../dados/metricas";
-import { AREAS, ETAPAS_FUNIL, FASES, TIPOS_EVENTO, type Conversa, type DadosEscritorio } from "../tipos";
+import { AREAS, ETAPAS_FUNIL, FASES, TEMPERATURAS, TIPOS_EVENTO, type Conversa, type DadosEscritorio } from "../tipos";
 import type { ContextoIA, PedidoAtendimento } from "./esquemas";
 
 /**
@@ -79,6 +80,11 @@ export function montarContextoIA(dados: DadosEscritorio, hoje: Date, usuario: st
         .slice(0, 15)
         .map(cobranca),
     },
+    totais: {
+      casosAtivos: dados.casos.filter((c) => c.fase !== "encerrado").length,
+      clientesAtivos: dados.clientes.filter((c) => c.status === "ativo").length,
+    },
+    crm: resumoCRM(dados.clientes, hoje),
     casos: dados.casos
       .filter((c) => c.fase !== "encerrado")
       .slice(0, 40)
@@ -95,14 +101,20 @@ export function montarContextoIA(dados: DadosEscritorio, hoje: Date, usuario: st
           ultimoAndamento: ultimo ? cortar(`${ultimo.data}: ${ultimo.titulo}`, 300) : undefined,
         };
       }),
+    // Quem tem retorno mais perto vem primeiro: é o que a equipe precisa resolver.
     leads: dados.clientes
       .filter((c) => c.status === "lead")
+      .sort((a, b) => (a.proximoPasso?.data ?? "9999").localeCompare(b.proximoPasso?.data ?? "9999"))
       .slice(0, 20)
       .map((c) => ({
         nome: cortar(c.nome, 120),
         etapa: c.etapaFunil ? ETAPAS_FUNIL[c.etapaFunil] : "Novo contato",
         area: c.areaInteresse ? AREAS[c.areaInteresse] : undefined,
         observacoes: c.observacoes ? cortar(c.observacoes, 300) : undefined,
+        valorEstimado: c.valorEstimado,
+        temperatura: c.temperatura ? TEMPERATURAS[c.temperatura] : undefined,
+        proximoPasso: c.proximoPasso ? cortar(c.proximoPasso.descricao, 200) : undefined,
+        proximoPassoEm: c.proximoPasso?.data,
       })),
     conversasAguardando: dados.conversas
       .filter((c) => c.naoLidas > 0)

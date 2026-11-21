@@ -11,6 +11,7 @@ import { Avisos } from "@/components/ui/Avisos";
 import { cn } from "@/lib/cn";
 import { useLoja } from "@/lib/dados/loja";
 import { grupoDoPrazo } from "@/lib/dados/metricas";
+import { paraISO } from "@/lib/datas";
 import { BuscaGlobal } from "./BuscaGlobal";
 import { ProvedorSessao, useHoje, useSessao } from "./ganchos";
 import { itemAtivo, MENU } from "./navegacao";
@@ -115,14 +116,22 @@ function MenuLateral({ pathname, aoFechar }: { pathname: string; aoFechar?: () =
   const escritorio = useLoja((s) => s.escritorio);
   const prazos = useLoja((s) => s.prazos);
   const conversas = useLoja((s) => s.conversas);
+  const clientes = useLoja((s) => s.clientes);
 
-  const contadores = useMemo(
-    () => ({
+  // A ficha de quem ainda negocia (ou foi perdido) pertence ao CRM, não à lista de clientes.
+  const fichaAberta = /^\/painel\/clientes\/([^/]+)$/.exec(pathname)?.[1];
+  const statusDaFicha = fichaAberta ? clientes.find((c) => c.id === fichaAberta)?.status : undefined;
+  const secao = statusDaFicha === "lead" || statusDaFicha === "perdido" ? "/painel/crm" : pathname;
+
+  const contadores = useMemo(() => {
+    const hojeISO = paraISO(hoje);
+    return {
       prazos: prazos.filter((p) => ["hoje", "atrasados"].includes(grupoDoPrazo(p, hoje))).length,
       atendimento: conversas.filter((c) => c.naoLidas > 0).length,
-    }),
-    [prazos, conversas, hoje],
-  );
+      // Retornos do CRM para hoje ou já atrasados.
+      crm: clientes.filter((c) => c.status === "lead" && c.proximoPasso && c.proximoPasso.data <= hojeISO).length,
+    };
+  }, [prazos, conversas, clientes, hoje]);
 
   async function sair() {
     await fetch("/api/auth/logout", { method: "POST" }).catch(() => undefined);
@@ -155,7 +164,7 @@ function MenuLateral({ pathname, aoFechar }: { pathname: string; aoFechar?: () =
             )}
             <ul className="space-y-0.5">
               {grupo.itens.map((item) => {
-                const ativo = itemAtivo(pathname, item.href);
+                const ativo = itemAtivo(secao, item.href);
                 const contagem = item.contador ? contadores[item.contador] : 0;
                 return (
                   <li key={item.href}>

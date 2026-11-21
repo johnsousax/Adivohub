@@ -12,9 +12,9 @@ O aplicativo roda em **modo demonstração**: tudo funciona de ponta a ponta, ma
 | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | Landing page com animações e botões para o WhatsApp de vendas | Pronta                                                                                                     |
 | Política de privacidade e termos de uso                       | Publicados em `/privacidade` e `/termos`. Falta preencher razão social e CNPJ em `src/lib/marca.ts`        |
-| Demonstração pública                                          | Pronta. Entra por um botão, sem senha, e nunca usa a IA paga                                               |
-| Acesso privado (e-mail e senha)                               | Pronto, para uma conta, definida por variáveis de ambiente. Provisório até o provedor de autenticação      |
-| Visão geral, casos, prazos, agenda, clientes, funil, finanças | Prontos, gravando no navegador                                                                             |
+| Demonstração pública                                          | Pronta. Entra por um botão, sem senha, e nunca usa a IA paga. É a única porta aberta em `/entrar`          |
+| Acesso privado (e-mail e senha)                               | Pronto, para uma conta. O formulário só aparece em `/entrar` quando as variáveis `ACESSO_*` existem        |
+| Visão geral, casos, prazos, agenda, clientes, CRM, finanças   | Prontos, gravando no navegador. A demonstração traz 128 casos ativos                                       |
 | Contagem de prazos em dias úteis                              | Pronta (fins de semana, feriados nacionais e recesso forense; feriados locais não entram)                  |
 | Assistente do advogado e atendente de clientes                | Prontos. Sem `ANTHROPIC_API_KEY` respondem com regras locais; com a chave, usam o Claude no acesso privado |
 | Segurança                                                     | Camadas ativas descritas em `docs/SEGURANCA.md`; regras do projeto em `SECURITY.md`                        |
@@ -33,7 +33,7 @@ cp .env.example .env.local   # e preencha AUTH_SECRET (openssl rand -base64 48)
 npm run dev                  # http://localhost:3000
 ```
 
-Entre em `/entrar` e use o botão **Abrir a demonstração**. Não existe senha de demonstração.
+Entre em `/entrar` e use o botão **Abrir a demonstração**. Não existe senha de demonstração nem cadastro aberto: quem quiser contratar fala no WhatsApp de vendas (`MARCA.whatsapp` em `src/lib/marca.ts`).
 
 Os dados da demonstração nascem com datas relativas ao dia de hoje. Depois da primeira alteração, eles ficam gravados no navegador e as datas deixam de acompanhar o calendário. Para voltar ao estado inicial, com as datas recalculadas, use **Configurações → Restaurar a demonstração**.
 
@@ -77,7 +77,7 @@ src/
   app/                  rotas (Next.js App Router)
     page.tsx            landing page
     privacidade/, termos/  textos legais
-    entrar/             login
+    entrar/             demonstração (e o login privado, se configurado)
     painel/             telas do sistema (protegidas pelo proxy)
     api/                back-end: auth, IA, integrações, webhook do WhatsApp
     .well-known/        security.txt

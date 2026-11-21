@@ -41,6 +41,8 @@ export function TelaAtendimento() {
   const adicionarCliente = useLoja((s) => s.adicionarCliente);
   const adicionarEvento = useLoja((s) => s.adicionarEvento);
   const moverLead = useLoja((s) => s.moverLead);
+  const registrarInteracao = useLoja((s) => s.registrarInteracao);
+  const definirProximoPasso = useLoja((s) => s.definirProximoPasso);
 
   const ordenadas = useMemo(
     () =>
@@ -130,7 +132,19 @@ export function TelaAtendimento() {
           responsavelId: cliente?.responsavelId ?? dadosAtuais.usuarios[0]?.id ?? "",
           criadoPorIA: true,
         });
-        if (cliente?.status === "lead") moverLead(cliente.id, "consulta");
+        if (cliente?.status === "lead") {
+          moverLead(cliente.id, "consulta");
+          // O CRM fica sabendo: histórico do contato e próximo passo já marcado.
+          registrarInteracao({
+            clienteId: cliente.id,
+            tipo: "whatsapp",
+            resumo: `Triagem e consulta agendadas pelo atendente virtual para ${dataSemana(dados.horario)} às ${hora(dados.horario)}.`,
+            em: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
+            usuarioId: cliente.responsavelId,
+            porIA: true,
+          });
+          definirProximoPasso(cliente.id, { descricao: "Consulta agendada pelo atendente virtual", data: dados.horario.slice(0, 10) });
+        }
         avisar(`A IA agendou uma consulta para ${dataSemana(dados.horario)} às ${hora(dados.horario)}.`);
       }
       if (dados.acao === "transferir") {

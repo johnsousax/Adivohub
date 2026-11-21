@@ -170,10 +170,20 @@ function responderCaso(caso: ContextoIA["casos"][number], ctx: ContextoIA, hoje:
 }
 
 function responderLeads(ctx: ContextoIA): string {
-  if (!ctx.leads.length) return "Nenhum contato no funil de captação agora.";
-  return `**Funil de captação (${ctx.leads.length})**\n${ctx.leads
-    .map((l) => `- **${l.nome}** — ${l.etapa}${l.area ? `, ${l.area}` : ""}${l.observacoes ? `. ${l.observacoes}` : ""}`)
-    .join("\n")}`;
+  if (!ctx.leads.length) return "Nenhum contato em negociação no CRM agora.";
+  const c = ctx.crm;
+  const cabecalho = [
+    `**CRM: ${c.emAberto} ${c.emAberto === 1 ? "contato" : "contatos"} em negociação, ${brl(c.emNegociacao)} em honorários estimados**`,
+    `- Retornos: **${c.retornosHoje}** para hoje${c.retornosAtrasados ? `, **${c.retornosAtrasados} atrasados**` : ""}`,
+    `- Últimos 90 dias: ${c.ganhos} fechados e ${c.perdidos} perdidos${c.taxaConversao !== null ? ` (conversão de ${percentual(c.taxaConversao, 0)})` : ""}`,
+  ];
+  const linhas = ctx.leads.slice(0, 10).map((l) => {
+    const passo = l.proximoPasso
+      ? ` Próximo passo: ${l.proximoPasso}${l.proximoPassoEm ? ` (${l.proximoPassoEm < ctx.hoje ? "atrasado, " : ""}${dataSemana(l.proximoPassoEm)})` : ""}.`
+      : " Sem próximo passo.";
+    return `- **${l.nome}** — ${l.etapa}${l.area ? `, ${l.area}` : ""}${l.valorEstimado ? `, ${brl(l.valorEstimado)}` : ""}.${passo}`;
+  });
+  return `${cabecalho.join("\n")}\n\n**Quem chamar primeiro**\n${linhas.join("\n")}`;
 }
 
 const AJUDA = [
@@ -182,7 +192,8 @@ const AJUDA = [
   "- “Quais prazos vencem esta semana?”",
   "- “Quem está com parcela em atraso?”",
   "- “Como está o caso Ferreira?”",
-  "- “Como está o funil de novos clientes?”",
+  "- “Como está o CRM?”",
+  "- “Quantos casos ativos temos?”",
 ].join("\n");
 
 export function responderAssistenteLocal(perguntaOriginal: string, ctx: ContextoIA): string {
@@ -192,13 +203,16 @@ export function responderAssistenteLocal(perguntaOriginal: string, ctx: Contexto
   if (contem(pergunta, /resumo|briefing|bom dia|meu dia|o que (eu )?tenho/)) return briefing(ctx, hoje);
   if (contem(pergunta, /prazo|fatal|vence/) && !contem(pergunta, /parcela|boleto|pagament/)) return responderPrazos(pergunta, ctx, hoje);
 
+  if (contem(pergunta, /quantos (casos|processos)|casos ativos|processos ativos|quantos clientes/))
+    return `**${ctx.totais.casosAtivos} casos ativos** de ${ctx.totais.clientesAtivos} clientes ativos. Para ver um caso, pergunte pelo nome do cliente ou abra a tela Casos.`;
+
   const caso = encontrarCaso(pergunta, ctx);
   if (caso && !contem(pergunta, /agenda|audiencia/)) return responderCaso(caso, ctx, hoje);
 
   if (contem(pergunta, /agenda|audiencia|compromisso|reuniao|consulta|amanha/)) return responderAgenda(pergunta, ctx, hoje);
   if (contem(pergunta, /receb|fatur|financ|inadimpl|atras|cobran|deve|caixa|despesa|parcela|dinheiro|honorario/))
     return responderFinanceiro(pergunta, ctx, hoje);
-  if (contem(pergunta, /lead|funil|capta|novos? client|contatos? novo/)) return responderLeads(ctx);
+  if (contem(pergunta, /lead|funil|capta|novos? client|contatos? novo|crm|negocia|retorno/)) return responderLeads(ctx);
   if (contem(pergunta, /sugest|publicac|intimac/)) {
     if (!ctx.sugestoes.length) return "Nenhuma publicação aguardando confirmação.";
     return `**Publicações aguardando confirmação (${ctx.sugestoes.length})**\n${ctx.sugestoes

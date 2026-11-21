@@ -63,7 +63,7 @@ export function BuscaGlobal({ aberta, aoFechar }: { aberta: boolean; aoFechar: (
         chave: c.id,
         href: `/painel/clientes/${c.id}`,
         titulo: c.nome,
-        detalhe: c.status === "lead" ? "Contato no funil" : `Cliente · ${c.cidade}`,
+        detalhe: c.status === "lead" ? "Contato no CRM" : c.status === "perdido" ? "Contato perdido (CRM)" : `Cliente · ${c.cidade}`,
         tipo: "cliente",
       }));
     return [...doCaso, ...doCliente];

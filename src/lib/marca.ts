@@ -58,6 +58,7 @@ export const PLANOS: Plano[] = [
     destaque: false,
     recursos: [
       `${MARCA.nome} completo e configurado`,
+      "CRM jurídico: funil, retornos e indicadores",
       "Áreas: professor, bancário, previdenciário e trabalhista",
       "Cadastro inicial de clientes e processos",
       "Treinamento da equipe",
@@ -103,6 +104,7 @@ export type CelulaComparacao = boolean | string;
 /** Itens da tabela "Compare os planos", na ordem Essencial, Crescimento, Escritório Completo. */
 export const COMPARACAO_PLANOS: Array<{ item: string; valores: [CelulaComparacao, CelulaComparacao, CelulaComparacao] }> = [
   { item: "Sistema completo", valores: [true, true, true] },
+  { item: "CRM jurídico", valores: [true, true, true] },
   { item: "Hospedagem, manutenção e atualizações", valores: [true, true, true] },
   { item: "Treinamento e suporte", valores: [true, true, "Prioritário"] },
   { item: "Aplicativo do escritório", valores: [false, true, true] },

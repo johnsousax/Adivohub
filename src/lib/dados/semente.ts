@@ -1,6 +1,7 @@
 import { addDays, addMonths, format } from "date-fns";
 import { montarCNJ } from "../cnj";
 import { paraISO, proximoDiaUtil, somarDiasUteis, sugerirPrazo } from "../datas";
+import { completarDemonstracao } from "./sementeCRM";
 import type { Andamento, Caso, Cliente, Contrato, Conversa, DadosEscritorio, Evento, Lancamento, Mensagem, Prazo, Usuario } from "../tipos";
 
 /**
@@ -1287,7 +1288,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       mensagens: [
         mensagem(
           "ia",
-          "Olá, Ana Paula! Lembrete: sua audiência de conciliação está chegando, às 14h30, na 2ª Vara de Família. Chegue 20 minutos antes, com documento com foto. A Dra. Ana estará com você.",
+          "Olá, Ana Paula! Lembrete: sua audiência de conciliação está chegando, às 14h30, na 2ª Vara de Família. Chegue 20 minutos antes, com documento com foto. O Dr. Gabriel estará com você.",
           ontem,
           "17:00",
         ),
@@ -1295,6 +1296,9 @@ export function criarSemente(hoje: Date): DadosEscritorio {
       ],
     },
   ];
+
+  // CRM (contatos em negociação, perdidos e histórico) e o volume de casos de um escritório movimentado.
+  const interacoes = completarDemonstracao({ clientes, casos }, { dia, hojeISO, origemCNJ: ORIGEM_FICTICIA });
 
   // Valores em dinheiro escritos acima em escala menor e multiplicados aqui, num ponto só.
   // Textos que citam valores (proposta, bloqueio, lembrete de parcela) já estão na escala final.
@@ -1313,6 +1317,7 @@ export function criarSemente(hoje: Date): DadosEscritorio {
     contratos,
     lancamentos,
     conversas,
+    interacoes,
     geradoEm: hojeISO,
   };
 }

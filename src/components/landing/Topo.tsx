@@ -11,6 +11,7 @@ import { IconeWhatsApp, Janela } from "./Pecas";
 
 const LINKS = [
   { href: "#recursos", rotulo: "Recursos" },
+  { href: "#crm", rotulo: "CRM" },
   { href: "#ia", rotulo: "Inteligência artificial" },
   { href: "#duvidas", rotulo: "Dúvidas" },
   { href: "#planos", rotulo: "Planos" },
@@ -35,7 +36,7 @@ export function Navegacao() {
         </nav>
         <div className="ml-auto flex items-center gap-2">
           <Link href="/entrar" className="rounded-full px-3 py-1.5 text-sm font-medium text-white/80 transition-colors hover:text-white">
-            Entrar
+            Demonstração
           </Link>
           <span className="hidden sm:block">
             <BotaoLink href={linkWhatsApp(MENSAGENS_VENDA.geral)} variante="ouro" tamanho="p">

@@ -7,7 +7,7 @@ import { formatarContexto, formatarPedidoAtendimento } from "./prompts";
 
 const hoje = new Date(2026, 10, 24); // terça, 24/11/2026
 const dados = criarSemente(hoje);
-const contexto = montarContextoIA(dados, hoje, "Dra. Ana Almeida");
+const contexto = montarContextoIA(dados, hoje, "Dr. Gabriel Ogando");
 
 describe("contexto enviado à IA", () => {
   it("respeita o contrato da rota (tamanhos e formatos)", () => {
@@ -52,6 +52,19 @@ describe("assistente em modo demonstração", () => {
     const resposta = responderAssistenteLocal("Como está o caso Ferreira?", contexto);
     expect(resposta).toContain("Ferreira × Transportadora Litoral");
     expect(resposta).toContain("Instrução");
+  });
+
+  it("responde sobre o CRM com retornos e valores", () => {
+    const resposta = responderAssistenteLocal("Como está o CRM?", contexto);
+    expect(resposta).toContain("em negociação");
+    expect(resposta).toContain("Quem chamar primeiro");
+    expect(resposta).toMatch(/Retornos: \*\*\d+\*\* para hoje/);
+  });
+
+  it("sabe o total de casos ativos, não só a amostra", () => {
+    expect(contexto.casos.length).toBeLessThanOrEqual(40);
+    expect(contexto.totais.casosAtivos).toBe(128);
+    expect(responderAssistenteLocal("Quantos casos ativos temos?", contexto)).toContain("**128 casos ativos**");
   });
 
   it("mostra o funil e oferece ajuda quando não entende", () => {

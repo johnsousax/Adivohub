@@ -130,6 +130,11 @@ const t = (nome, cond, det) => {
     "planos",
   );
   t(
+    "secao do CRM juridico na landing",
+    (await page.locator("#crm").count()) === 1 && texto.includes("Do primeiro contato ao contrato assinado"),
+    "crm",
+  );
+  t(
     "secao de seguranca e links legais",
     (await page.locator("#seguranca").count()) === 1 && (await page.locator("a[href$=privacidade]").count()) > 0,
     "secao",
@@ -155,6 +160,12 @@ const t = (nome, cond, det) => {
   await page.goto(BASE + "/entrar", { waitUntil: "networkidle" });
   const botao = page.getByRole("button", { name: /demonstra/i });
   t("botao da demonstracao aparece", (await botao.count()) === 1, (await page.evaluate(() => document.body.innerText)).slice(0, 120));
+  t("entrada sem cadastro nem senha", (await page.locator("input[type=password], input[type=email]").count()) === 0, "campos");
+  t(
+    "entrada leva ao whatsapp de vendas",
+    (await page.locator('a[href^="https://wa.me/5598983385000"]').count()) === 1,
+    await page.locator("a[href*='wa.me']").count(),
+  );
   if ((await botao.count()) === 1) {
     await botao.click();
     await page.waitForURL((u) => u.pathname.startsWith("/painel"), { timeout: 20000 }).catch(() => {});
@@ -162,8 +173,12 @@ const t = (nome, cond, det) => {
     await page.waitForTimeout(1500);
     const painel = await page.evaluate(() => document.body.innerText);
     t("painel mostra os dados da demonstracao", painel.includes("Dr. Gabriel") && painel.includes("Prazos"), painel.slice(0, 80));
+    t("demonstracao com 128 casos ativos", /Casos ativos\s*128/.test(painel), (painel.match(/Casos ativos\s*\S+/) || [""])[0]);
     await page.goto(BASE + "/painel/financeiro", { waitUntil: "networkidle" });
     t("financeiro abre", (await page.evaluate(() => document.body.innerText)).includes("receber"), page.url());
+    await page.goto(BASE + "/painel/crm", { waitUntil: "networkidle" });
+    const crm = await page.evaluate(() => document.body.innerText);
+    t("CRM abre com funil e indicadores", crm.includes("Em negociação") && crm.includes("Proposta enviada"), crm.slice(0, 80));
   }
 
   const cel = await b.newContext(devices["iPhone 13"]);

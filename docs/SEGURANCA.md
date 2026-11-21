@@ -48,7 +48,7 @@ Não se aplicam hoje, por não existirem no sistema: **Pagamentos**, **Uploads d
 - Sem `X-Powered-By`, sem mapas de código em produção, sem `console.log` com dados.
 - Nenhum serviço de terceiros no navegador: sem pixel, sem analytics, sem fontes externas.
 - Links externos com `rel="noopener noreferrer"`. O único `dangerouslySetInnerHTML` é o bloco de dados estruturados, gerado de constantes e com `<` escapado.
-- Formulário de login com campo-armadilha contra robôs.
+- Formulário de login com campo-armadilha contra robôs. Sem cadastro aberto: `/entrar` mostra só a demonstração e o WhatsApp de vendas, e o formulário de senha só existe quando o acesso privado está configurado no servidor.
 
 ### Autenticação e sessões
 
@@ -102,16 +102,17 @@ Não se aplicam hoje, por não existirem no sistema: **Pagamentos**, **Uploads d
 - Pré-visualizações protegidas por login da Vercel; só o endereço de produção é público.
 - Bloqueio na borda (`vercel.json`) de caminhos que só robôs de ataque pedem e de métodos HTTP que o site não usa. Conferido em produção: `/wp-admin`, `/.env`, `/.git/config` e semelhantes recebem 403 antes de chegar ao site.
 - A proteção automática da Vercel também agiu durante os testes: depois de algumas sondagens em sequência, ela passou a exigir verificação do computador que as fazia, antes de responder qualquer página.
-- Conferência externa depois de cada publicação: `node scripts/conferir-site.cjs <endereço>` abre o site em um navegador e confere 50 pontos (cabeçalhos, CSP, bloqueios, cookie, demonstração, preços e animações).
+- Conferência externa depois de cada publicação: `node scripts/conferir-site.cjs <endereço>` abre o site em um navegador e confere 55 pontos (cabeçalhos, CSP, bloqueios, cookie, demonstração, CRM, preços e animações).
 
 ### Banco de dados (projeto, ainda não conectado)
 
 - `database/schema.sql` segue o padrão: schemas `private` e `audit`; RLS em todas as tabelas, com uma policy por ação e só para usuário logado; quatro papéis por escritório; lista branca de campos por coluna; dinheiro em centavos; exclusão lógica por função; auditoria por gatilho, somente inserção; evento de webhook processado uma única vez.
 - **CPF e CNPJ** ficam cifrados (AES-256-GCM, `src/lib/servidor/cripto.ts`) em tabela fora da API, com índice cego para busca. Cada revelação, atendida ou recusada, gera registro. O banco confere de novo o escritório e o papel de quem pede, mesmo quando o pedido vem do servidor.
-- **Sigilo profissional:** observações do cliente e descrição do caso não entram na auditoria. Fica só a marca de que existiam ou mudaram.
+- **Sigilo profissional:** observações do cliente, descrição do caso, próximo passo e texto do histórico do CRM não entram na auditoria. Fica só a marca de que existiam ou mudaram.
+- **CRM:** o histórico de contatos (`interacoes`) só cresce: ninguém edita um registro, a equipe registra só em nome próprio, nunca como IA, nunca no futuro e nunca em contato de outro escritório. Marcos de etapa (mudou de etapa, virou cliente, perdido) e as datas do funil são gravados pelo banco, não pelo navegador. Financeiro não vê o histórico.
 - **Quem sai perde o acesso na hora:** usuário desativado e escritório encerrado deixam de enxergar qualquer dado.
-- `database/teste-isolamento.sql` tenta 172 ataques e regras em PostgreSQL 16, e todos são barrados. Exemplos: escritório A lendo o B, estagiário abrindo o financeiro, advogado se promovendo, sócio mudando o próprio plano sem pagar, visitante sem login, mensagem forjada em nome do cliente, edição da auditoria, evento de webhook repetido. O teste roda em todo push.
-- **Prova inversa:** 33 regras do esquema foram enfraquecidas de propósito, uma por vez, e o teste acusou as 33.
+- `database/teste-isolamento.sql` tenta 217 ataques e regras em PostgreSQL 16, e todos são barrados. Exemplos: escritório A lendo o B, estagiário abrindo o financeiro, advogado se promovendo, sócio mudando o próprio plano sem pagar, visitante sem login, mensagem forjada em nome do cliente, marco de etapa forjado no CRM, data de conversão forjada, edição da auditoria, evento de webhook repetido. O teste roda em todo push.
+- **Prova inversa:** 48 regras do esquema foram enfraquecidas de propósito, uma por vez, e o teste acusou as 48.
 - Falta o que só um projeto real mostra: aplicar no Supabase e rodar o Security Advisor.
 
 ### Logs, LGPD e incidentes
@@ -177,7 +178,7 @@ Não se aplicam hoje, por não existirem no sistema: **Pagamentos**, **Uploads d
 
 | Item | Situação |
 | --- | --- |
-| RLS em 100% das tabelas e Security Advisor sem alerta crítico | Não se aplica ainda: banco não conectado. O esquema pronto tem RLS em todas as tabelas e passa nos 172 cenários do teste. O Security Advisor só roda depois de aplicado no Supabase |
+| RLS em 100% das tabelas e Security Advisor sem alerta crítico | Não se aplica ainda: banco não conectado. O esquema pronto tem RLS em todas as tabelas e passa nos 217 cenários do teste. O Security Advisor só roda depois de aplicado no Supabase |
 | Usuário A não lê nem edita dado do B; empresa A não vê a B | Não se aplica ainda (sem dados no servidor). Coberto pelo teste do esquema |
 | Usuário comum recebe 403 nas ações de administrador | Não se aplica ainda (não há área de administrador). Coberto pelo teste do esquema |
 | Nenhum segredo no frontend, no app ou no Git | Feito. Busca no histórico sem achados do projeto; ver item 3 da seção 4 sobre o arquivo antigo |

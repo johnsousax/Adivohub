@@ -1,6 +1,7 @@
 import {
   AlarmClock,
   CalendarDays,
+  Handshake,
   LayoutDashboard,
   MessageCircle,
   Scale,
@@ -16,7 +17,7 @@ export interface ItemMenu {
   rotulo: string;
   icone: LucideIcon;
   /** Qual contador mostrar ao lado do item. */
-  contador?: "prazos" | "atendimento";
+  contador?: "prazos" | "atendimento" | "crm";
 }
 
 export interface GrupoMenu {
@@ -32,6 +33,7 @@ export const MENU: GrupoMenu[] = [
       { href: "/painel/prazos", rotulo: "Prazos", icone: AlarmClock, contador: "prazos" },
       { href: "/painel/agenda", rotulo: "Agenda", icone: CalendarDays },
       { href: "/painel/clientes", rotulo: "Clientes", icone: Users },
+      { href: "/painel/crm", rotulo: "CRM", icone: Handshake, contador: "crm" },
       { href: "/painel/financeiro", rotulo: "Financeiro", icone: Wallet },
     ],
   },

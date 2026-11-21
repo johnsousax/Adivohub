@@ -8,27 +8,22 @@ import { Modal, RodapeModal } from "@/components/ui/Modal";
 import { mascararCNJ, validarCNJ } from "@/lib/cnj";
 import { useLoja } from "@/lib/dados/loja";
 import { paraISO } from "@/lib/datas";
+import { lerValor } from "@/lib/formatos";
 import {
   AREAS,
   ETAPAS_FUNIL,
   FASES,
   ORIGENS,
+  TEMPERATURAS,
   type AreaDireito,
   type Caso,
   type Cliente,
   type EtapaFunil,
   type FaseCaso,
   type OrigemCliente,
+  type Temperatura,
 } from "@/lib/tipos";
 import { useSessao } from "./ganchos";
-
-/** "1.234,56" ou "1234.56" → 1234.56 */
-export function lerValor(texto: string): number {
-  const limpo = texto.replace(/[^\d,.-]/g, "");
-  const normalizado = limpo.includes(",") ? limpo.replace(/\./g, "").replace(",", ".") : limpo;
-  const numero = Number(normalizado);
-  return Number.isFinite(numero) ? numero : 0;
-}
 
 function campo(dados: FormData, nome: string): string {
   return String(dados.get(nome) ?? "").trim();
@@ -60,10 +55,9 @@ function CamposCliente({ aoFechar, cliente, comoLead = false, aoSalvar }: PropsF
   const usuarios = useLoja((s) => s.usuarios);
   const adicionar = useLoja((s) => s.adicionarCliente);
   const atualizar = useLoja((s) => s.atualizarCliente);
+  const converterLead = useLoja((s) => s.converterLead);
   const [tipo, definirTipo] = useState<Cliente["tipo"]>(cliente?.tipo ?? "PF");
-  const [status, definirStatus] = useState<"ativo" | "lead">(
-    cliente ? (cliente.status === "lead" ? "lead" : "ativo") : comoLead ? "lead" : "ativo",
-  );
+  const [status, definirStatus] = useState<Cliente["status"]>(cliente?.status ?? (comoLead ? "lead" : "ativo"));
   const [erro, definirErro] = useState<string>();
 
   function enviar(evento: FormEvent<HTMLFormElement>) {
@@ -83,17 +77,29 @@ function CamposCliente({ aoFechar, cliente, comoLead = false, aoSalvar }: PropsF
       responsavelId: campo(dados, "responsavelId"),
       observacoes: campo(dados, "observacoes") || undefined,
       status,
-      etapaFunil: status === "lead" ? (campo(dados, "etapaFunil") as EtapaFunil) : undefined,
-      areaInteresse: status === "lead" ? (campo(dados, "areaInteresse") as AreaDireito) : undefined,
+      // Perdido guarda a etapa e a área em que parou, para os indicadores e para reabrir.
+      etapaFunil: status === "lead" ? (campo(dados, "etapaFunil") as EtapaFunil) : status === "perdido" ? cliente?.etapaFunil : undefined,
+      areaInteresse:
+        status === "lead" ? (campo(dados, "areaInteresse") as AreaDireito) : status === "perdido" ? cliente?.areaInteresse : undefined,
+      ...(status === "lead"
+        ? {
+            valorEstimado: lerValor(campo(dados, "valorEstimado")) || undefined,
+            temperatura: (campo(dados, "temperatura") || undefined) as Temperatura | undefined,
+          }
+        : {}),
     } satisfies Partial<Cliente>;
 
     if (cliente) {
-      atualizar(cliente.id, comum);
-      avisar("Cadastro atualizado.");
+      // Fechar negócio pelo formulário passa pelo mesmo caminho do CRM (data de conversão e marco no histórico).
+      const fechou = cliente.status === "lead" && status === "ativo";
+      atualizar(cliente.id, fechou ? { ...comum, status: "lead", etapaFunil: cliente.etapaFunil } : comum);
+      if (fechou) converterLead(cliente.id);
+      avisar(fechou ? `${nome} agora é cliente.` : "Cadastro atualizado.");
       aoSalvar?.({ ...cliente, ...comum });
     } else {
-      const novo = adicionar({ ...comum, criadoEm: paraISO(new Date()) });
-      avisar(status === "lead" ? "Contato adicionado ao funil." : "Cliente cadastrado.");
+      const hoje = paraISO(new Date());
+      const novo = adicionar({ ...comum, criadoEm: hoje, ...(status === "lead" ? { etapaDesde: hoje } : {}) });
+      avisar(status === "lead" ? "Contato adicionado ao CRM." : "Cliente cadastrado.");
       aoSalvar?.(novo);
     }
     aoFechar();
@@ -101,9 +107,11 @@ function CamposCliente({ aoFechar, cliente, comoLead = false, aoSalvar }: PropsF
 
   return (
     <form onSubmit={enviar} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <Selecao rotulo="Situação" value={status} onChange={(e) => definirStatus(e.target.value as "ativo" | "lead")}>
+      <Selecao rotulo="Situação" value={status} onChange={(e) => definirStatus(e.target.value as Cliente["status"])}>
         <option value="ativo">Cliente (já contratou)</option>
-        <option value="lead">Contato no funil (ainda não contratou)</option>
+        <option value="lead">Contato em negociação (CRM)</option>
+        {cliente && cliente.status !== "lead" && <option value="inativo">Cliente inativo</option>}
+        {cliente?.status === "perdido" && <option value="perdido">Contato perdido</option>}
       </Selecao>
       <Selecao rotulo="Tipo" value={tipo} onChange={(e) => definirTipo(e.target.value as Cliente["tipo"])}>
         <option value="PF">Pessoa física</option>
@@ -147,6 +155,21 @@ function CamposCliente({ aoFechar, cliente, comoLead = false, aoSalvar }: PropsF
           </Selecao>
           <Selecao rotulo="Área de interesse" name="areaInteresse" defaultValue={cliente?.areaInteresse ?? "civel"}>
             {Object.entries(AREAS).map(([valor, rotulo]) => (
+              <option key={valor} value={valor}>
+                {rotulo}
+              </option>
+            ))}
+          </Selecao>
+          <Entrada
+            rotulo="Honorários estimados (R$)"
+            name="valorEstimado"
+            inputMode="decimal"
+            defaultValue={cliente?.valorEstimado ? String(cliente.valorEstimado).replace(".", ",") : ""}
+            placeholder="Ex.: 15.000"
+          />
+          <Selecao rotulo="Temperatura" name="temperatura" defaultValue={cliente?.temperatura ?? ""}>
+            <option value="">Sem avaliação</option>
+            {Object.entries(TEMPERATURAS).map(([valor, rotulo]) => (
               <option key={valor} value={valor}>
                 {rotulo}
               </option>

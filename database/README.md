@@ -16,7 +16,8 @@ O aplicativo ainda roda sem banco (os dados ficam no navegador). Esta pasta guar
 | Nada é apagado de verdade pelo usuário        | Não existe permissão de `DELETE`. Excluir é marcar `excluido_em`, pela função `excluir_registro`                         |
 | Quem saiu perde o acesso na hora              | Usuário desativado e escritório encerrado deixam de enxergar qualquer dado                                               |
 | Tudo que importa deixa rastro                 | Gatilhos gravam em `audit.logs` quem fez, quando, e o antes e depois. Ninguém edita nem apaga esse registro              |
-| Sigilo profissional fora do registro          | Observações do cliente e descrição do caso não vão para a auditoria: fica só a marca de que mudaram                      |
+| Sigilo profissional fora do registro          | Observações do cliente, descrição do caso, próximo passo e histórico do CRM não vão para a auditoria                     |
+| Histórico do CRM confiável                    | `interacoes` só cresce, em nome de quem registrou. Marcos de etapa e datas do funil são gravados pelo banco              |
 | CPF e CNPJ cifrados                           | Ficam em tabela fora da API, cifrados pelo servidor (`src/lib/servidor/cripto.ts`). Cada revelação gera registro         |
 | Dinheiro sem erro de arredondamento           | Valores em centavos, em número inteiro                                                                                   |
 | Evento de webhook não é processado duas vezes | `registrar_evento_webhook` devolve verdadeiro só na primeira vez                                                         |
@@ -31,7 +32,7 @@ psql -v ON_ERROR_STOP=1 -d justixup_teste -f database/teste-isolamento.sql
 dropdb justixup_teste
 ```
 
-A saída lista cada cenário conferido e termina com `OK: 172 cenários conferidos. Nenhum ataque passou.`
+A saída lista cada cenário conferido e termina com `OK: 217 cenários conferidos. Nenhum ataque passou.`
 
 O teste cria o schema `auth` e os papéis `anon`, `authenticated` e `service_role`, que no Supabase já existem. Por isso, **no Supabase aplique só o `schema.sql`**. Os papéis ficam no servidor PostgreSQL local depois do `dropdb`; isso não atrapalha rodar de novo.
 

@@ -6,6 +6,8 @@ import { cn } from "@/lib/cn";
 export interface ColunaQuadro<C extends string> {
   id: C;
   titulo: string;
+  /** Linha pequena abaixo do título (ex.: valor somado da coluna). */
+  subtitulo?: string;
 }
 
 /**
@@ -56,8 +58,11 @@ export function Quadro<C extends string, T extends { id: string }>({
               sobre === coluna.id && "bg-ouro-100/70 ring-2 ring-ouro-300 ring-inset",
             )}
           >
-            <header className="flex items-center justify-between px-3 py-2">
-              <h3 className="text-sm font-semibold">{coluna.titulo}</h3>
+            <header className="flex items-start justify-between gap-2 px-3 py-2">
+              <div className="min-w-0">
+                <h3 className="text-sm font-semibold">{coluna.titulo}</h3>
+                {coluna.subtitulo && <p className="mt-0.5 text-xs text-mudo tabular-nums">{coluna.subtitulo}</p>}
+              </div>
               <span className="text-xs text-mudo tabular-nums">{daColuna.length}</span>
             </header>
             <ul className="flex min-h-24 flex-1 flex-col gap-2">
